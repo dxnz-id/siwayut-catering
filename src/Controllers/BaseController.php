@@ -3,7 +3,7 @@ declare(strict_types=1);
 // File: src/Controllers/BaseController.php
 
 namespace App\Controllers;
-use App\Core\View;
+use App\Core\{View, Response, Session};
 
 abstract class BaseController {
     protected View $view;
@@ -18,26 +18,24 @@ abstract class BaseController {
     }
 
     protected function redirect(string $url): never {
-        // TODO: implement
-        exit;
+        Response::redirect($url);
     }
 
     protected function redirectWithFlash(string $url, string $type, string $message): never {
-        // TODO: implement
-        exit;
+        Session::flash($type, $message);
+        Response::redirect($url);
     }
 
     protected function currentUser(): ?array {
-        // TODO: implement
-        return null;
+        return Session::get('user');
     }
 
     protected function back(string $fallback = '/dashboard'): never {
-        // TODO: implement
-        exit;
+        $referer = $_SERVER['HTTP_REFERER'] ?? $fallback;
+        Response::redirect($referer);
     }
 
     protected function withOldInput(array $data): void {
-        // TODO: implement
+        Session::setOld($data);
     }
 }

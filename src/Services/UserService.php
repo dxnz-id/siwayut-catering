@@ -4,34 +4,44 @@ declare(strict_types=1);
 
 namespace App\Services;
 use App\Models\User;
+use App\Exceptions\NotFoundException;
 
 class UserService {
     public function __construct(private User $userModel) {
-        // TODO: implement
     }
 
     public function getAll(int $page = 1, int $perPage = 15): array {
-        // TODO: implement
-        return [];
+        return $this->userModel->paginate($page, $perPage);
     }
 
     public function getById(int $id): array {
-        // TODO: implement
-        return [];
+        $user = $this->userModel->find($id);
+        if (!$user) {
+            throw new NotFoundException('User not found');
+        }
+        return $user;
     }
 
     public function create(array $data): int {
-        // TODO: implement
-        return 0;
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->userModel->create($data);
     }
 
     public function update(int $id, array $data): bool {
-        // TODO: implement
-        return false;
+        $this->getById($id); // ensure exists
+        if (isset($data['password']) && $data['password'] !== '') {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        } else {
+            unset($data['password']);
+        }
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->userModel->update($id, $data);
     }
 
     public function delete(int $id): bool {
-        // TODO: implement
-        return false;
+        $this->getById($id); // ensure exists
+        return $this->userModel->delete($id);
     }
 }

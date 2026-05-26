@@ -8,22 +8,27 @@ class Csrf {
     private const SESSION_KEY = '_csrf_token';
 
     public static function token(): string {
-        // TODO: implement
-        return '';
+        if (!Session::has(self::SESSION_KEY)) {
+            return self::regenerate();
+        }
+        return Session::get(self::SESSION_KEY);
     }
 
     public static function verify(string $token): bool {
-        // TODO: implement
-        return false;
+        $stored = Session::get(self::SESSION_KEY);
+        if ($stored === null || $token === '') {
+            return false;
+        }
+        return hash_equals($stored, $token);
     }
 
     public static function field(): string {
-        // TODO: implement
-        return '';
+        return '<input type="hidden" name="_csrf_token" value="' . self::token() . '">';
     }
 
     public static function regenerate(): string {
-        // TODO: implement
-        return '';
+        $token = bin2hex(random_bytes(32));
+        Session::set(self::SESSION_KEY, $token);
+        return $token;
     }
 }

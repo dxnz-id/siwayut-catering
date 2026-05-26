@@ -3,11 +3,13 @@ declare(strict_types=1);
 // File: src/Middleware/AuthMiddleware.php
 
 namespace App\Middleware;
-use App\Core\Request;
+use App\Core\{Request, Session, Response};
 
 class AuthMiddleware implements MiddlewareInterface {
     public function handle(Request $request): bool {
-        // TODO: implement real check
+        if (!Session::has('user')) {
+            Response::redirect('/login');
+        }
         return true;
     }
 }

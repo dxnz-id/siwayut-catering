@@ -9,33 +9,138 @@ class Validator {
     private array $errors = [];
 
     public function __construct(private ?PDO $db = null) {
-        // TODO: implement
     }
 
     public function validate(array $data, array $rules): bool {
-        // TODO: implement
-        return false;
+        $this->errors = [];
+        foreach ($rules as $field => $ruleString) {
+            $ruleList = explode('|', $ruleString);
+            $value = $data[$field] ?? null;
+            foreach ($ruleList as $rule) {
+                if (!$this->applyRule($field, $value, trim($rule), $data)) {
+                    break; // stop on first failure for this field
+                }
+            }
+        }
+        return empty($this->errors);
     }
 
     public function errors(): array {
-        // TODO: implement
-        return [];
+        return $this->errors;
     }
 
     public function error(string $field): ?string {
-        // TODO: implement
-        return null;
+        return $this->errors[$field] ?? null;
     }
 
     public function fails(): bool {
-        // TODO: implement
-        return false;
+        return !empty($this->errors);
     }
 
     // CONTRACT: Rule parsing MUST use: explode(':', $rule, 3)
     // For "in:" rules, argument parsing MUST use: explode(',', $argument)
     private function applyRule(string $field, mixed $value, string $rule, array $data): bool {
-        // TODO: implement
-        return false;
+        $parts = explode(':', $rule, 3);
+        $ruleName = $parts[0];
+        $argument = $parts[1] ?? null;
+
+        $label = str_replace('_', ' ', $field);
+
+        switch ($ruleName) {
+            case 'required':
+                if ($value === null || $value === '') {
+                    $this->errors[$field] = "The {$label} field is required.";
+                    return false;
+                }
+                return true;
+
+            case 'email':
+                if ($value !== null && $value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $this->errors[$field] = "The {$label} field must be a valid email address.";
+                    return false;
+                }
+                return true;
+
+            case 'min':
+                $min = (int) $argument;
+                if (is_string($value) && mb_strlen($value) < $min) {
+                    $this->errors[$field] = "The {$label} field must be at least {$min} characters.";
+                    return false;
+                }
+                return true;
+
+            case 'max':
+                $max = (int) $argument;
+                if (is_string($value) && mb_strlen($value) > $max) {
+                    $this->errors[$field] = "The {$label} field must not exceed {$max} characters.";
+                    return false;
+                }
+                return true;
+
+            case 'confirmed':
+                $confirmField = $field . '_confirmation';
+                if (($data[$confirmField] ?? null) !== $value) {
+                    $this->errors[$field] = "The {$label} confirmation does not match.";
+                    return false;
+                }
+                return true;
+
+            case 'unique':
+                // argument format: table,column
+                if ($this->db !== null && $argument !== null) {
+                    $argParts = explode(',', $argument);
+                    $table = $argParts[0];
+                    $column = $argParts[1] ?? $field;
+                    $exceptId = $argParts[2] ?? null;
+
+                    $sql = "SELECT COUNT(*) FROM `{$table}` WHERE `{$column}` = ?";
+                    $params = [$value];
+                    if ($exceptId !== null) {
+                        $sql .= " AND `id` != ?";
+                        $params[] = $exceptId;
+                    }
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute($params);
+                    if ((int) $stmt->fetchColumn() > 0) {
+                        $this->errors[$field] = "The {$label} has already been taken.";
+                        return false;
+                    }
+                }
+                return true;
+
+            case 'in':
+                if ($argument !== null) {
+                    $allowed = explode(',', $argument);
+                    if (!in_array((string) $value, $allowed, true)) {
+                        $this->errors[$field] = "The selected {$label} is invalid.";
+                        return false;
+                    }
+                }
+                return true;
+
+            case 'numeric':
+                if ($value !== null && $value !== '' && !is_numeric($value)) {
+                    $this->errors[$field] = "The {$label} field must be a number.";
+                    return false;
+                }
+                return true;
+
+            case 'string':
+                if ($value !== null && !is_string($value)) {
+                    $this->errors[$field] = "The {$label} field must be a string.";
+                    return false;
+                }
+                return true;
+
+            case 'nullable':
+                // If value is null or empty, skip remaining rules
+                if ($value === null || $value === '') {
+                    return false; // false to break rule chain, but no error added
+                }
+                return true;
+
+            default:
+                return true;
+        }
     }
 }

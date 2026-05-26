@@ -1,0 +1,1006 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+// File: vanilla
+
+define('BASE_PATH', __DIR__);
+require BASE_PATH . '/vendor/autoload.php';
+
+// Load environment
+if (file_exists(BASE_PATH . '/.env')) {
+    $env = parse_ini_file(BASE_PATH . '/.env');
+    if ($env !== false) {
+        foreach ($env as $key => $value) {
+            $_ENV[$key] = $value;
+        }
+    }
+}
+
+require BASE_PATH . '/config/app.php';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANSI Colors
+// ─────────────────────────────────────────────────────────────────────────────
+function color(string $text, string $color): string {
+    $colors = [
+        'green'   => "\033[32m",
+        'red'     => "\033[31m",
+        'yellow'  => "\033[33m",
+        'blue'    => "\033[34m",
+        'cyan'    => "\033[36m",
+        'magenta' => "\033[35m",
+        'white'   => "\033[97m",
+        'gray'    => "\033[90m",
+        'bold'    => "\033[1m",
+        'reset'   => "\033[0m",
+    ];
+    return ($colors[$color] ?? '') . $text . "\033[0m";
+}
+
+function info(string $msg): void    { echo color('  INFO  ', 'green') . "  {$msg}\n"; }
+function success(string $msg): void { echo color('  DONE  ', 'green') . "  {$msg}\n"; }
+function warn(string $msg): void    { echo color('  WARN  ', 'yellow') . "  {$msg}\n"; }
+function error(string $msg): void   { echo color('  ERROR ', 'red') . "  {$msg}\n"; }
+function line(string $msg = ''): void { echo "  {$msg}\n"; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Database helper
+// ─────────────────────────────────────────────────────────────────────────────
+function getDb(): PDO {
+    return \App\Core\Database::getInstance();
+}
+
+function dbConfigured(): bool {
+    return !empty($_ENV['DB_DATABASE'] ?? '');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Commands Registry
+// ─────────────────────────────────────────────────────────────────────────────
+
+$commands = [
+    // ── Server ──
+    'serve' => [
+        'description' => 'Start the PHP development server',
+        'usage'       => 'serve [--port=8000] [--host=localhost]',
+        'handler'     => 'cmd_serve',
+    ],
+
+    // ── Database ──
+    'db:create' => [
+        'description' => 'Create the database defined in .env',
+        'usage'       => 'db:create',
+        'handler'     => 'cmd_db_create',
+    ],
+    'migrate' => [
+        'description' => 'Run all pending migrations',
+        'usage'       => 'migrate',
+        'handler'     => 'cmd_migrate',
+    ],
+    'migrate:fresh' => [
+        'description' => 'Drop all tables and re-run all migrations',
+        'usage'       => 'migrate:fresh',
+        'handler'     => 'cmd_migrate_fresh',
+    ],
+    'migrate:status' => [
+        'description' => 'Show the status of each migration',
+        'usage'       => 'migrate:status',
+        'handler'     => 'cmd_migrate_status',
+    ],
+    'db:seed' => [
+        'description' => 'Run database seeders',
+        'usage'       => 'db:seed [--class=AdminSeeder]',
+        'handler'     => 'cmd_db_seed',
+    ],
+
+    // ── Make (Scaffolding) ──
+    'make:controller' => [
+        'description' => 'Create a new controller class',
+        'usage'       => 'make:controller <Name>',
+        'handler'     => 'cmd_make_controller',
+    ],
+    'make:model' => [
+        'description' => 'Create a new model class',
+        'usage'       => 'make:model <Name>',
+        'handler'     => 'cmd_make_model',
+    ],
+    'make:middleware' => [
+        'description' => 'Create a new middleware class',
+        'usage'       => 'make:middleware <Name>',
+        'handler'     => 'cmd_make_middleware',
+    ],
+    'make:service' => [
+        'description' => 'Create a new service class',
+        'usage'       => 'make:service <Name>',
+        'handler'     => 'cmd_make_service',
+    ],
+    'make:exception' => [
+        'description' => 'Create a new exception class',
+        'usage'       => 'make:exception <Name>',
+        'handler'     => 'cmd_make_exception',
+    ],
+    'make:migration' => [
+        'description' => 'Create a new migration file',
+        'usage'       => 'make:migration <name>',
+        'handler'     => 'cmd_make_migration',
+    ],
+    'make:seeder' => [
+        'description' => 'Create a new seeder class',
+        'usage'       => 'make:seeder <Name>',
+        'handler'     => 'cmd_make_seeder',
+    ],
+
+    // ── Utility ──
+    'routes' => [
+        'description' => 'List all registered routes',
+        'usage'       => 'routes',
+        'handler'     => 'cmd_routes',
+    ],
+    'env' => [
+        'description' => 'Display current environment configuration',
+        'usage'       => 'env',
+        'handler'     => 'cmd_env',
+    ],
+    'key:generate' => [
+        'description' => 'Generate a new application key',
+        'usage'       => 'key:generate',
+        'handler'     => 'cmd_key_generate',
+    ],
+    'cache:clear' => [
+        'description' => 'Clear application cache and logs',
+        'usage'       => 'cache:clear',
+        'handler'     => 'cmd_cache_clear',
+    ],
+    'tinker' => [
+        'description' => 'Interactive PHP shell with framework loaded',
+        'usage'       => 'tinker',
+        'handler'     => 'cmd_tinker',
+    ],
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Argument Parsing
+// ─────────────────────────────────────────────────────────────────────────────
+$argv = $_SERVER['argv'] ?? [];
+$script = $argv[0] ?? 'vanilla';
+$command = $argv[1] ?? null;
+$args = array_slice($argv, 2);
+
+function getOption(array $args, string $name, string $default = ''): string {
+    foreach ($args as $arg) {
+        if (str_starts_with($arg, "--{$name}=")) {
+            return substr($arg, strlen("--{$name}="));
+        }
+    }
+    return $default;
+}
+
+function hasFlag(array $args, string $name): bool {
+    return in_array("--{$name}", $args, true);
+}
+
+function getArgument(array $args, int $index, string $default = ''): string {
+    // Filter out --options
+    $positional = array_values(array_filter($args, fn($a) => !str_starts_with($a, '--')));
+    return $positional[$index] ?? $default;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Banner
+// ─────────────────────────────────────────────────────────────────────────────
+function showBanner(): void {
+    echo "\n";
+    echo color("  Vanilla Framework ", 'bold') . color("v1.0.0", 'gray') . " " . color("(PHP " . PHP_VERSION . ")", 'gray') . "\n";
+    echo "\n";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Help
+// ─────────────────────────────────────────────────────────────────────────────
+function showHelp(array $commands): void {
+    showBanner();
+    echo color("  Usage:", 'yellow') . "\n";
+    echo "    php vanilla <command> [arguments] [options]\n\n";
+
+    $groups = [
+        'Server'      => ['serve'],
+        'Database'    => ['db:create', 'migrate', 'migrate:fresh', 'migrate:status', 'db:seed'],
+        'Scaffolding' => ['make:controller', 'make:model', 'make:middleware', 'make:service', 'make:exception', 'make:migration', 'make:seeder'],
+        'Utility'     => ['routes', 'env', 'key:generate', 'cache:clear', 'tinker'],
+    ];
+
+    foreach ($groups as $group => $cmds) {
+        echo color("  {$group}", 'yellow') . "\n";
+        foreach ($cmds as $cmd) {
+            if (isset($commands[$cmd])) {
+                $padded = str_pad($cmd, 22);
+                echo "    " . color($padded, 'green') . $commands[$cmd]['description'] . "\n";
+            }
+        }
+        echo "\n";
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: serve
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_serve(array $args): void {
+    $host = getOption($args, 'host', 'localhost');
+    $port = getOption($args, 'port', '8000');
+    showBanner();
+    info("Starting development server on " . color("http://{$host}:{$port}", 'cyan'));
+    line();
+    passthru("php -S {$host}:{$port} -t public");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: db:create
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_db_create(array $args): void {
+    $dbName = $_ENV['DB_DATABASE'] ?? '';
+    if ($dbName === '') {
+        error('DB_DATABASE is not set in .env');
+        return;
+    }
+
+    $driver   = $_ENV['DB_DRIVER']   ?? 'mysql';
+    $host     = $_ENV['DB_HOST']     ?? '127.0.0.1';
+    $port     = $_ENV['DB_PORT']     ?? '3306';
+    $username = $_ENV['DB_USERNAME'] ?? 'root';
+    $password = $_ENV['DB_PASSWORD'] ?? '';
+
+    try {
+        $dsn = "{$driver}:host={$host};port={$port}";
+        $pdo = new PDO($dsn, $username, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ]);
+        $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        success("Database '{$dbName}' created successfully.");
+    } catch (PDOException $e) {
+        error("Failed to create database: " . $e->getMessage());
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Migration Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+function ensureMigrationsTable(PDO $db): void {
+    $db->exec("CREATE TABLE IF NOT EXISTS `migrations` (
+        `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `migration` VARCHAR(255) NOT NULL,
+        `batch` INT NOT NULL,
+        `executed_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+function getExecutedMigrations(PDO $db): array {
+    $stmt = $db->query("SELECT `migration` FROM `migrations` ORDER BY `id`");
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+function getMigrationFiles(): array {
+    $path = BASE_PATH . '/database/migrations';
+    if (!is_dir($path)) {
+        return [];
+    }
+    $files = glob($path . '/*.sql');
+    sort($files);
+    return $files;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: migrate
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_migrate(array $args): void {
+    try {
+        $db = getDb();
+    } catch (PDOException $e) {
+        error("Database connection failed: " . $e->getMessage());
+        line("Run " . color("php vanilla db:create", 'cyan') . " first.");
+        return;
+    }
+
+    ensureMigrationsTable($db);
+    $executed = getExecutedMigrations($db);
+    $files = getMigrationFiles();
+    $batch = 0;
+
+    // Get current max batch
+    $stmt = $db->query("SELECT COALESCE(MAX(`batch`), 0) FROM `migrations`");
+    $batch = (int) $stmt->fetchColumn() + 1;
+
+    $ran = 0;
+    foreach ($files as $file) {
+        $name = basename($file);
+        if (in_array($name, $executed, true)) {
+            continue;
+        }
+
+        $sql = file_get_contents($file);
+        if (empty(trim($sql)) || trim($sql) === '--') {
+            warn("Skipping empty migration: {$name}");
+            continue;
+        }
+
+        info("Migrating: " . color($name, 'cyan'));
+        try {
+            // Strip comment-only lines, then split on semicolons
+            $lines = explode("\n", $sql);
+            $cleanLines = array_filter($lines, fn($l) => !str_starts_with(trim($l), '--'));
+            $cleanSql = implode("\n", $cleanLines);
+            $statements = array_filter(
+                array_map('trim', explode(';', $cleanSql)),
+                fn($s) => $s !== ''
+            );
+            foreach ($statements as $statement) {
+                $db->exec($statement);
+            }
+            $stmt = $db->prepare("INSERT INTO `migrations` (`migration`, `batch`) VALUES (?, ?)");
+            $stmt->execute([$name, $batch]);
+            success("Migrated:  " . color($name, 'cyan'));
+            $ran++;
+        } catch (PDOException $e) {
+            error("Failed to migrate {$name}: " . $e->getMessage());
+            return;
+        }
+    }
+
+    if ($ran === 0) {
+        info("Nothing to migrate. All migrations are up to date.");
+    } else {
+        line();
+        success("Ran {$ran} migration(s).");
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: migrate:fresh
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_migrate_fresh(array $args): void {
+    try {
+        $db = getDb();
+    } catch (PDOException $e) {
+        error("Database connection failed: " . $e->getMessage());
+        return;
+    }
+
+    info("Dropping all tables...");
+
+    // Disable FK checks
+    $db->exec("SET FOREIGN_KEY_CHECKS = 0");
+    $stmt = $db->query("SHOW TABLES");
+    $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($tables as $table) {
+        $db->exec("DROP TABLE IF EXISTS `{$table}`");
+        line("  Dropped: {$table}");
+    }
+    $db->exec("SET FOREIGN_KEY_CHECKS = 1");
+    success("All tables dropped.");
+    line();
+
+    // Re-run migrations
+    cmd_migrate($args);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: migrate:status
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_migrate_status(array $args): void {
+    try {
+        $db = getDb();
+    } catch (PDOException $e) {
+        error("Database connection failed: " . $e->getMessage());
+        return;
+    }
+
+    ensureMigrationsTable($db);
+    $executed = getExecutedMigrations($db);
+    $files = getMigrationFiles();
+
+    if (empty($files)) {
+        info("No migration files found.");
+        return;
+    }
+
+    echo "\n";
+    $header = sprintf("  %-6s %-50s %s", "Ran?", "Migration", "Status");
+    echo color($header, 'gray') . "\n";
+    echo "  " . str_repeat('─', 70) . "\n";
+
+    foreach ($files as $file) {
+        $name = basename($file);
+        $ran = in_array($name, $executed, true);
+        $status = $ran ? color('Yes', 'green') : color('No ', 'yellow');
+        $label = $ran ? color('Migrated', 'green') : color('Pending ', 'yellow');
+        printf("  %-15s %-50s %s\n", $status, $name, $label);
+    }
+    echo "\n";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: db:seed
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_db_seed(array $args): void {
+    $class = getOption($args, 'class', '');
+
+    $seedsPath = BASE_PATH . '/database/seeds';
+    if (!is_dir($seedsPath)) {
+        error("Seeds directory not found.");
+        return;
+    }
+
+    if ($class !== '') {
+        // Run specific seeder
+        $file = $seedsPath . '/' . $class . '.php';
+        if (!file_exists($file)) {
+            error("Seeder file not found: {$class}.php");
+            return;
+        }
+        info("Seeding: " . color($class, 'cyan'));
+        runSeederFile($file);
+        success("Seeded:  " . color($class, 'cyan'));
+    } else {
+        // Run all seeders
+        $files = glob($seedsPath . '/*.php');
+        if (empty($files)) {
+            info("No seeder files found.");
+            return;
+        }
+        foreach ($files as $file) {
+            $name = basename($file, '.php');
+            info("Seeding: " . color($name, 'cyan'));
+            runSeederFile($file);
+            success("Seeded:  " . color($name, 'cyan'));
+        }
+    }
+    line();
+    success("Database seeding completed.");
+}
+
+function runSeederFile(string $file): void {
+    // Seeders are self-bootstrapping scripts, but when run from vanilla CLI
+    // the environment is already loaded. We need to handle the define() conflicts.
+    // Use a subprocess to run the seeder in isolation.
+    $output = [];
+    $code = 0;
+    exec('php ' . escapeshellarg($file) . ' 2>&1', $output, $code);
+    foreach ($output as $l) {
+        line("  " . $l);
+    }
+    if ($code !== 0) {
+        error("Seeder exited with code {$code}");
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:controller
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_controller(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide a controller name.");
+        line("  Usage: php vanilla make:controller UserController");
+        return;
+    }
+    // Ensure suffix
+    if (!str_ends_with($name, 'Controller')) {
+        $name .= 'Controller';
+    }
+
+    $path = BASE_PATH . '/src/Controllers/' . $name . '.php';
+    if (file_exists($path)) {
+        error("Controller already exists: {$name}");
+        return;
+    }
+
+    $content = <<<PHP
+<?php
+declare(strict_types=1);
+
+namespace App\\Controllers;
+use App\\Core\\Request;
+
+class {$name} extends BaseController {
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function index(Request \$request): void {
+        // TODO: implement
+    }
+}
+PHP;
+
+    file_put_contents($path, $content . "\n");
+    success("Controller created: " . color("src/Controllers/{$name}.php", 'cyan'));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:model
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_model(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide a model name.");
+        line("  Usage: php vanilla make:model Product");
+        return;
+    }
+
+    $path = BASE_PATH . '/src/Models/' . $name . '.php';
+    if (file_exists($path)) {
+        error("Model already exists: {$name}");
+        return;
+    }
+
+    $table = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)) . 's';
+
+    $content = <<<PHP
+<?php
+declare(strict_types=1);
+
+namespace App\\Models;
+
+class {$name} extends BaseModel {
+    public function __construct() {
+        parent::__construct();
+        \$this->table = '{$table}';
+    }
+}
+PHP;
+
+    file_put_contents($path, $content . "\n");
+    success("Model created: " . color("src/Models/{$name}.php", 'cyan'));
+    line("  Table name: {$table}");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:middleware
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_middleware(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide a middleware name.");
+        line("  Usage: php vanilla make:middleware ThrottleMiddleware");
+        return;
+    }
+    if (!str_ends_with($name, 'Middleware')) {
+        $name .= 'Middleware';
+    }
+
+    $path = BASE_PATH . '/src/Middleware/' . $name . '.php';
+    if (file_exists($path)) {
+        error("Middleware already exists: {$name}");
+        return;
+    }
+
+    $content = <<<PHP
+<?php
+declare(strict_types=1);
+
+namespace App\\Middleware;
+use App\\Core\\Request;
+
+class {$name} implements MiddlewareInterface {
+    public function handle(Request \$request): bool {
+        // TODO: implement
+        return true;
+    }
+}
+PHP;
+
+    file_put_contents($path, $content . "\n");
+    success("Middleware created: " . color("src/Middleware/{$name}.php", 'cyan'));
+    line("  Register alias in " . color("public/index.php", 'cyan') . ":");
+    line("    \$router->addMiddleware('alias', \\App\\Middleware\\{$name}::class);");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:service
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_service(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide a service name.");
+        line("  Usage: php vanilla make:service PaymentService");
+        return;
+    }
+    if (!str_ends_with($name, 'Service')) {
+        $name .= 'Service';
+    }
+
+    $path = BASE_PATH . '/src/Services/' . $name . '.php';
+    if (file_exists($path)) {
+        error("Service already exists: {$name}");
+        return;
+    }
+
+    $content = <<<PHP
+<?php
+declare(strict_types=1);
+
+namespace App\\Services;
+
+class {$name} {
+    public function __construct() {
+        // TODO: inject dependencies
+    }
+}
+PHP;
+
+    file_put_contents($path, $content . "\n");
+    success("Service created: " . color("src/Services/{$name}.php", 'cyan'));
+    line("  Register binding in " . color("config/bindings.php", 'cyan'));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:exception
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_exception(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide an exception name.");
+        line("  Usage: php vanilla make:exception PaymentFailedException");
+        return;
+    }
+    if (!str_ends_with($name, 'Exception')) {
+        $name .= 'Exception';
+    }
+
+    $path = BASE_PATH . '/src/Exceptions/' . $name . '.php';
+    if (file_exists($path)) {
+        error("Exception already exists: {$name}");
+        return;
+    }
+
+    $content = <<<PHP
+<?php
+declare(strict_types=1);
+
+namespace App\\Exceptions;
+
+class {$name} extends AppException {
+}
+PHP;
+
+    file_put_contents($path, $content . "\n");
+    success("Exception created: " . color("src/Exceptions/{$name}.php", 'cyan'));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:migration
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_migration(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide a migration name.");
+        line("  Usage: php vanilla make:migration create_products_table");
+        return;
+    }
+
+    $dir = BASE_PATH . '/database/migrations';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+
+    // Determine next sequence number
+    $existing = glob($dir . '/*.sql');
+    $maxSeq = 0;
+    foreach ($existing as $f) {
+        $base = basename($f);
+        if (preg_match('/^(\d+)_/', $base, $m)) {
+            $maxSeq = max($maxSeq, (int) $m[1]);
+        }
+    }
+    $seq = str_pad((string) ($maxSeq + 1), 3, '0', STR_PAD_LEFT);
+    $filename = "{$seq}_{$name}.sql";
+    $path = $dir . '/' . $filename;
+
+    // Guess table name from migration name
+    $table = '';
+    if (preg_match('/create_(\w+)_table/', $name, $m)) {
+        $table = $m[1];
+    }
+
+    if ($table) {
+        $content = <<<SQL
+-- File: database/migrations/{$filename}
+CREATE TABLE IF NOT EXISTS `{$table}` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL;
+    } else {
+        $content = <<<SQL
+-- File: database/migrations/{$filename}
+-- TODO: Write your SQL migration here
+SQL;
+    }
+
+    file_put_contents($path, $content . "\n");
+    success("Migration created: " . color("database/migrations/{$filename}", 'cyan'));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: make:seeder
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_make_seeder(array $args): void {
+    $name = getArgument($args, 0);
+    if ($name === '') {
+        error("Please provide a seeder name.");
+        line("  Usage: php vanilla make:seeder ProductSeeder");
+        return;
+    }
+    if (!str_ends_with($name, 'Seeder')) {
+        $name .= 'Seeder';
+    }
+
+    $path = BASE_PATH . '/database/seeds/' . $name . '.php';
+    if (file_exists($path)) {
+        error("Seeder already exists: {$name}");
+        return;
+    }
+
+    $content = <<<'PHP'
+<?php
+declare(strict_types=1);
+
+namespace Database\Seeds;
+
+define('BASE_PATH', dirname(__DIR__, 2));
+require BASE_PATH . '/vendor/autoload.php';
+
+if (file_exists(BASE_PATH . '/.env')) {
+    $env = parse_ini_file(BASE_PATH . '/.env');
+    if ($env !== false) {
+        foreach ($env as $key => $value) {
+            $_ENV[$key] = $value;
+        }
+    }
+}
+
+require BASE_PATH . '/config/app.php';
+
+use App\Core\Database;
+
+PHP;
+    $content .= <<<PHP
+class {$name} {
+    public static function run(): void {
+        \$db = Database::getInstance();
+        // TODO: implement seeder
+    }
+}
+
+{$name}::run();
+PHP;
+
+    file_put_contents($path, $content . "\n");
+    success("Seeder created: " . color("database/seeds/{$name}.php", 'cyan'));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: routes
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_routes(array $args): void {
+    // Parse routes from config/routes.php source
+    $source = file_get_contents(BASE_PATH . '/config/routes.php');
+
+    echo "\n";
+    echo color("  Registered Routes", 'bold') . "\n";
+    echo "  " . str_repeat('─', 72) . "\n";
+    printf("  %-8s %-28s %-30s %s\n",
+        color('Method', 'gray'),
+        color('URI', 'gray'),
+        color('Handler', 'gray'),
+        color('Middleware', 'gray')
+    );
+    echo "  " . str_repeat('─', 72) . "\n";
+
+    // Quick parse — read route definitions from config/routes.php
+    // We'll actually instantiate the router to get the real route list
+    $container = new \App\Core\Container();
+
+    // Bind minimal dependencies (no DB needed)
+    $container->bind(\App\Controllers\WelcomeController::class, fn($c) => new \App\Controllers\WelcomeController());
+
+    $router = new \App\Core\Router($container);
+    $router->addMiddleware('auth', \App\Middleware\AuthMiddleware::class);
+    $router->addMiddleware('role', \App\Middleware\RoleMiddleware::class);
+    $router->addMiddleware('csrf', \App\Middleware\CsrfMiddleware::class);
+
+    $registerRoutes = require BASE_PATH . '/config/routes.php';
+    $registerRoutes($router);
+
+    // Access private routes via reflection
+    $ref = new ReflectionClass($router);
+    $prop = $ref->getProperty('routes');
+    $routes = $prop->getValue($router);
+
+    foreach ($routes as $route) {
+        $method = $route['method'];
+        $path = $route['path'];
+        $mw = !empty($route['middleware']) ? implode(', ', $route['middleware']) : color('—', 'gray');
+
+        if (is_array($route['handler'])) {
+            $class = basename(str_replace('\\', '/', $route['handler'][0]));
+            $handler = $class . '@' . $route['handler'][1];
+        } else {
+            $handler = 'Closure';
+        }
+
+        $methodColor = match($method) {
+            'GET'    => 'green',
+            'POST'   => 'blue',
+            'PUT'    => 'yellow',
+            'PATCH'  => 'magenta',
+            'DELETE' => 'red',
+            default  => 'white',
+        };
+
+        printf("  %-17s %-28s %-30s %s\n",
+            color(str_pad($method, 7), $methodColor),
+            $path,
+            $handler,
+            $mw
+        );
+    }
+    echo "\n";
+    line(color((string)count($routes), 'bold') . " route(s) registered.");
+    echo "\n";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: env
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_env(array $args): void {
+    echo "\n";
+    echo color("  Environment Configuration", 'bold') . "\n";
+    echo "  " . str_repeat('─', 50) . "\n";
+
+    $vars = [
+        'APP_NAME'     => APP_NAME,
+        'APP_ENV'      => APP_ENV,
+        'APP_DEBUG'    => APP_DEBUG ? 'true' : 'false',
+        'APP_URL'      => APP_URL,
+        'APP_TIMEZONE' => $_ENV['APP_TIMEZONE'] ?? 'Asia/Jakarta',
+        'DB_DRIVER'    => $_ENV['DB_DRIVER']   ?? 'mysql',
+        'DB_HOST'      => $_ENV['DB_HOST']     ?? '127.0.0.1',
+        'DB_PORT'      => $_ENV['DB_PORT']     ?? '3306',
+        'DB_DATABASE'  => $_ENV['DB_DATABASE'] ?? '',
+        'DB_USERNAME'  => $_ENV['DB_USERNAME'] ?? '',
+        'DB_PASSWORD'  => str_repeat('*', strlen($_ENV['DB_PASSWORD'] ?? '')),
+    ];
+
+    foreach ($vars as $key => $value) {
+        $keyPad = str_pad($key, 16);
+        echo "  " . color($keyPad, 'cyan') . " = " . $value . "\n";
+    }
+    echo "\n";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: key:generate
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_key_generate(array $args): void {
+    $key = 'base64:' . base64_encode(random_bytes(32));
+
+    // Try to update .env
+    $envPath = BASE_PATH . '/.env';
+    if (file_exists($envPath)) {
+        $content = file_get_contents($envPath);
+        if (preg_match('/^APP_KEY=/m', $content)) {
+            $content = preg_replace('/^APP_KEY=.*/m', "APP_KEY={$key}", $content);
+        } else {
+            $content .= "\nAPP_KEY={$key}\n";
+        }
+        file_put_contents($envPath, $content);
+    }
+
+    success("Application key generated: " . color($key, 'cyan'));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: cache:clear
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_cache_clear(array $args): void {
+    $cleared = 0;
+
+    // Clear logs
+    $logPath = BASE_PATH . '/storage/logs';
+    if (is_dir($logPath)) {
+        $files = glob($logPath . '/*.log');
+        foreach ($files as $file) {
+            unlink($file);
+            $cleared++;
+        }
+        info("Cleared " . count($files) . " log file(s).");
+    }
+
+    // Clear cache files
+    $cachePath = BASE_PATH . '/storage/cache';
+    if (is_dir($cachePath)) {
+        $files = glob($cachePath . '/*');
+        foreach ($files as $file) {
+            if (basename($file) !== '.gitkeep') {
+                unlink($file);
+                $cleared++;
+            }
+        }
+    }
+
+    // Clear OPcache if available
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+        info("OPcache cleared.");
+    }
+
+    success("Cache cleared. {$cleared} file(s) removed.");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMAND: tinker
+// ─────────────────────────────────────────────────────────────────────────────
+function cmd_tinker(array $args): void {
+    showBanner();
+    info("Interactive shell. Type " . color("exit", 'cyan') . " to quit.");
+    line();
+
+    // Set up the environment
+    $container = new \App\Core\Container();
+    require BASE_PATH . '/config/bindings.php';
+
+    while (true) {
+        $input = readline(color(">>> ", 'green'));
+        if ($input === false || trim($input) === 'exit' || trim($input) === 'quit') {
+            line();
+            info("Goodbye!");
+            break;
+        }
+        if (trim($input) === '') {
+            continue;
+        }
+        readline_add_history($input);
+
+        try {
+            // If it starts with $, it's likely an expression
+            $code = trim($input);
+            if (!str_ends_with($code, ';')) {
+                $code .= ';';
+            }
+            // Wrap in try/catch and output
+            $result = eval("return ({$code});") ?? eval($code);
+            if ($result !== null) {
+                echo color("=> ", 'gray');
+                if (is_array($result) || is_object($result)) {
+                    print_r($result);
+                } else {
+                    var_export($result);
+                    echo "\n";
+                }
+            }
+        } catch (\Throwable $e) {
+            error($e->getMessage());
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dispatch
+// ─────────────────────────────────────────────────────────────────────────────
+if ($command === null || $command === 'help' || $command === '--help' || $command === '-h') {
+    showHelp($commands);
+    exit(0);
+}
+
+if (!isset($commands[$command])) {
+    showBanner();
+    error("Unknown command: {$command}");
+    line();
+    line("Run " . color("php vanilla help", 'cyan') . " to see available commands.");
+    exit(1);
+}
+
+showBanner();
+($commands[$command]['handler'])($args);
+echo "\n";

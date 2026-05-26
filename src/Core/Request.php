@@ -21,51 +21,57 @@ class Request {
     }
 
     public function input(string $key, mixed $default = null): mixed {
-        // TODO: implement
-        return null;
+        return $this->all()[$key] ?? $default;
     }
 
     public function only(array $keys): array {
-        // TODO: implement
-        return [];
+        $all = $this->all();
+        $result = [];
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $all)) {
+                $result[$key] = $all[$key];
+            }
+        }
+        return $result;
     }
 
     public function all(): array {
-        // TODO: implement
-        return [];
+        $method = $this->method();
+        if ($method === 'GET') {
+            return $_GET;
+        }
+        return array_merge($_GET, $_POST);
     }
 
     public function file(string $key): ?array {
-        // TODO: implement
+        if (isset($_FILES[$key]) && $_FILES[$key]['error'] !== UPLOAD_ERR_NO_FILE) {
+            return $_FILES[$key];
+        }
         return null;
     }
 
     public function has(string $key): bool {
-        // TODO: implement
-        return false;
+        return array_key_exists($key, $this->all());
     }
 
     public function setRouteParams(array $params): void {
-        // TODO: implement
+        $this->routeParams = $params;
     }
 
     public function param(string $key, mixed $default = null): mixed {
-        // TODO: implement
-        return null;
+        return $this->routeParams[$key] ?? $default;
     }
 
     public function isAjax(): bool {
-        // TODO: implement
-        return false;
+        return strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest';
     }
 
     public function expectsJson(): bool {
-        // TODO: implement
-        return false;
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        return str_contains($accept, 'application/json');
     }
 
     public function ip(): string {
-        // TODO: implement
-        return '';
+        return $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
     }
 }

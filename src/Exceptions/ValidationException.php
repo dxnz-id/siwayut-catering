@@ -6,12 +6,11 @@ namespace App\Exceptions;
 
 class ValidationException extends AppException {
     public function __construct(private array $errors, string $message = 'Validation failed') {
-        // TODO: implement
+        parent::__construct($message);
     }
 
     // CONTRACT: getErrors() MUST return the promoted $errors property.
     public function getErrors(): array {
-        // TODO: implement
         return $this->errors;
     }
 }

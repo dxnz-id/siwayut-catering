@@ -9,16 +9,25 @@ class Database {
     private static ?PDO $instance = null;
 
     public static function getInstance(): PDO {
-        // TODO: implement
-        return new PDO('sqlite::memory:');
+        if (self::$instance === null) {
+            $config = require BASE_PATH . '/config/database.php';
+            $dsn = sprintf(
+                '%s:host=%s;port=%d;dbname=%s;charset=%s',
+                $config['driver'],
+                $config['host'],
+                $config['port'],
+                $config['database'],
+                $config['charset']
+            );
+            self::$instance = new PDO($dsn, $config['username'], $config['password'], $config['options']);
+        }
+        return self::$instance;
     }
 
     private function __construct() {
-        // TODO: implement
     }
 
     private function __clone(): void {
-        // TODO: implement
     }
 
     public function __wakeup(): never {

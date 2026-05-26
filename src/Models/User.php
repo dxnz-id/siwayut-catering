@@ -7,11 +7,11 @@ namespace App\Models;
 class User extends BaseModel {
     public function __construct() {
         parent::__construct();
-        // TODO: implement
+        $this->table = 'users';
+        $this->sortableColumns = ['id', 'name', 'email', 'role', 'created_at', 'updated_at'];
     }
 
     public function findByEmail(string $email): ?array {
-        // TODO: implement
-        return null;
+        return $this->findWhere(['email' => $email]);
     }
 }
