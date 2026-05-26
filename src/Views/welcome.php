@@ -1,72 +1,524 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= \App\Core\View::e($title ?? 'Welcome') ?></title>
+    <title><?= \App\Core\View::e($title ?? 'Siwayut Catering') ?></title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-gold: #e58e26;
+            --accent-gold-glow: rgba(229, 142, 38, 0.3);
+            --accent-red: #ea2027;
+            --text-light: #f4f4f5;
+            --text-muted: #a1a1aa;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 15% 25%, rgba(229, 142, 38, 0.12) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 75%, rgba(234, 32, 39, 0.08) 0%, transparent 45%),
+                        var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .logo-text {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Container */
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Glass Navbar */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(9, 9, 11, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-light);
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 8px var(--accent-gold-glow));
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-login {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-light);
+            padding: 0.6rem 1.5rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(8px);
+        }
+
+        .btn-login:hover {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px var(--accent-gold-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0 3rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(229, 142, 38, 0.1);
+            border: 1px solid rgba(229, 142, 38, 0.2);
+            color: var(--accent-gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #ffffff, #f4f4f5, var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 2.5rem auto;
+            line-height: 1.8;
+        }
+
+        /* Glassmorphism Section Cards */
+        .section-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.8rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -0.9rem;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent-gold);
+            box-shadow: 0 0 8px var(--accent-gold);
+        }
+
+        /* Active Events Carousel/Grid */
+        .grid-events {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .event-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px) saturate(120%);
+            -webkit-backdrop-filter: blur(16px) saturate(120%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-gold);
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(229, 142, 38, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(229, 142, 38, 0.1);
+        }
+
+        .event-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .event-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+
+        .event-date {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .event-date-icon {
+            color: var(--accent-gold);
+        }
+
+        /* Menus Grid */
+        .grid-menus {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(229, 142, 38, 0.25);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-img-container {
+            height: 180px;
+            background: linear-gradient(135deg, rgba(229, 142, 38, 0.2) 0%, rgba(234, 32, 39, 0.1) 100%);
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f8fafc;
-            color: #334155;
-            text-align: center;
+            color: rgba(255, 255, 255, 0.15);
         }
-        .container {
-            max-width: 600px;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+        .menu-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        h1 {
-            font-size: 2.5rem;
+
+        .menu-tag {
+            position: absolute;
+            bottom: 0.8rem;
+            left: 0.8rem;
+            background: rgba(9, 9, 11, 0.8);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(6px);
+            color: var(--accent-gold);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .menu-body {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .menu-title {
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            color: #0f172a;
+            margin-bottom: 0.5rem;
+            color: #fff;
         }
-        p {
-            font-size: 1.125rem;
-            line-height: 1.75;
-            margin-bottom: 2rem;
+
+        .menu-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .links a {
-            display: inline-block;
-            margin: 0 0.5rem;
-            padding: 0.5rem 1rem;
-            color: #3b82f6;
-            text-decoration: none;
+
+        .menu-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--card-border);
+            padding-top: 0.8rem;
+            margin-top: auto;
+        }
+
+        .menu-price {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .menu-portions {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            transition: all 0.2s;
+            border: 1px solid var(--card-border);
         }
-        .links a:hover {
-            background-color: #eff6ff;
-            color: #2563eb;
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            background: var(--card-bg);
+            border: 1px dashed var(--card-border);
+            border-radius: 20px;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
         }
-        .version {
-            margin-top: 3rem;
-            font-size: 0.875rem;
-            color: #94a3b8;
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--card-border);
+            padding: 2.5rem 0;
+            background: rgba(9, 9, 11, 0.4);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Utilities */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .grid-events, .grid-menus {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Vanilla Framework</h1>
-        <p>You have successfully installed the Vanilla PHP Framework. It's fast, simple, and ready for your next big idea.</p>
-        <div class="links">
-            <a href="/login">Login</a>
-            <a href="https://github.com" target="_blank">Documentation</a>
-            <a href="https://github.com" target="_blank">GitHub</a>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="wrapper nav-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🍲</span>
+                <span class="logo-text">Siwayut Catering</span>
+            </a>
+            <a href="/login" class="btn-login">Dashboard Admin</a>
         </div>
-        <div class="version">
-            Vanilla Framework v1.0.0 (PHP <?= PHP_VERSION ?>)
+    </header>
+
+    <!-- Main Content -->
+    <main class="wrapper">
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <span class="hero-badge">✨ Katering Premium Hari Raya</span>
+            <h1>Cita Rasa Istimewa<br>Untuk Momen Paling Suci</h1>
+            <p>Siwayut Catering menyediakan menu katering eksklusif yang diracik khusus untuk menyemarakkan perayaan Hari Raya Anda. Nikmati sajian lezat tanpa repot bersama kerabat tercinta.</p>
+            <a href="/login" class="btn-login" style="background: var(--accent-gold); border-color: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold-glow); padding: 0.8rem 2.2rem; font-size: 1rem;">Pesan Sekarang</a>
+        </section>
+
+        <?php
+        // Map categories for efficient O(1) rendering lookup
+        $catMap = [];
+        foreach ($categories as $cat) {
+            $catMap[$cat['id']] = $cat['name'];
+        }
+
+        // Map events for O(1) lookup
+        $eventMap = [];
+        foreach ($events as $ev) {
+            $eventMap[$ev['id']] = $ev['name'];
+        }
+        ?>
+
+        <!-- Active Events (Hari Raya) -->
+        <section style="margin-top: 2rem;">
+            <div class="section-header">
+                <h2>Hari Raya Aktif</h2>
+            </div>
+            <div class="grid-events">
+                <?php if (empty($events)): ?>
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <p>Belum ada perayaan Hari Raya aktif saat ini.</p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($events as $event): ?>
+                        <div class="event-card">
+                            <span class="event-status">Buka Pemesanan</span>
+                            <h3 class="event-name"><?= \App\Core\View::e($event['name']) ?></h3>
+                            <div class="event-date">
+                                <span class="event-date-icon">🗓️</span>
+                                <span>
+                                    <?= date('d M Y', strtotime($event['start_date'])) ?>
+                                    -
+                                    <?= date('d M Y', strtotime($event['end_date'])) ?>
+                                </span>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <!-- Featured Menus -->
+        <section>
+            <div class="section-header">
+                <h2>Menu Pilihan Hari Raya</h2>
+            </div>
+            <div class="grid-menus">
+                <?php if (empty($menus)): ?>
+                    <div class="empty-state">
+                        <div class="empty-icon">🍽️</div>
+                        <p>Belum ada daftar menu makanan tersedia saat ini.</p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($menus as $menu): ?>
+                        <?php if (($menu['status'] ?? 'active') === 'active'): ?>
+                            <div class="menu-card">
+                                <div class="menu-img-container">
+                                    <?php if ($menu['image']): ?>
+                                        <img src="/storage/uploads/<?= \App\Core\View::e($menu['image']) ?>" alt="<?= \App\Core\View::e($menu['name']) ?>" class="menu-img">
+                                    <?php else: ?>
+                                        <span style="font-size: 3.5rem;">🍱</span>
+                                    <?php endif; ?>
+                                    
+                                    <!-- Event Tag -->
+                                    <?php if (isset($eventMap[$menu['event_id']])): ?>
+                                        <span class="menu-tag"><?= \App\Core\View::e($eventMap[$menu['event_id']]) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="menu-body">
+                                    <h3 class="menu-title"><?= \App\Core\View::e($menu['name']) ?></h3>
+                                    <p class="menu-desc"><?= \App\Core\View::e($menu['description']) ?></p>
+                                    
+                                    <div class="menu-meta">
+                                        <span class="menu-price">Rp <?= number_format((float)$menu['price'], 0, ',', '.') ?></span>
+                                        <span class="menu-portions">Min. <?= (int)$menu['minimum_portions'] ?> Porsi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="wrapper">
+            <p>&copy; <?= date('Y') ?> Siwayut Catering. All rights reserved.</p>
+            <p style="font-size: 0.78rem; opacity: 0.6;">Powered by Vanilla PHP MVC Framework</p>
         </div>
-    </div>
+    </footer>
+
 </body>
 </html>

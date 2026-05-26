@@ -25,7 +25,11 @@ $container->bind(OrderService::class, fn(Container $c): object => new OrderServi
 $container->bind(EventService::class, fn(Container $c): object => new EventService($c->make(Event::class)));
 
 // Controllers
-$container->bind(WelcomeController::class, fn(Container $c): object => new WelcomeController());
+$container->bind(WelcomeController::class, fn(Container $c): object => new WelcomeController(
+    $c->make(EventService::class),
+    $c->make(MenuService::class),
+    $c->make(CategoryService::class)
+));
 $container->bind(AuthController::class, fn(Container $c): object => new AuthController($c->make(AuthService::class)));
 $container->bind(UserController::class, fn(Container $c): object => new UserController($c->make(UserService::class)));
 $container->bind(CategoryController::class, fn(Container $c): object => new CategoryController($c->make(CategoryService::class)));

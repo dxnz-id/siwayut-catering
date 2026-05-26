@@ -11,6 +11,6 @@ class Event extends BaseModel {
     }
 
     public function getActive(): array {
-        return $this->db->query("SELECT * FROM {$this->table} WHERE status = 'active' ORDER BY start_date ASC")->fetchAll();
+        return $this->query("SELECT * FROM `{$this->table}` WHERE `status` = 'active' ORDER BY `start_date` ASC");
     }
 }
