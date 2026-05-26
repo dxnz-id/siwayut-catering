@@ -1,0 +1,16 @@
+<div class="content-header">
+    <h1 class="content-title">Add Category</h1>
+    <a href="/categories" class="btn btn-secondary">&larr; Back to Categories</a>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form action="/categories" method="POST">
+            <input type="hidden" name="csrf_token" value="<h1>Exception Caught</h1><p><strong>Type:</strong> Error</p><p><strong>Message:</strong> Call to undefined function csrf_token()</p><p><strong>File:</strong> /home/dxnz/Downloads/siwayut-catering/src/Views/category/create.php on line 9</p><pre>#0 /home/dxnz/Downloads/siwayut-catering/src/Core/View.php(29): require()
+#1 /home/dxnz/Downloads/siwayut-catering/src/Core/View.php(17): App\Core\View-&gt;partial()
+#2 /home/dxnz/Downloads/siwayut-catering/src/Controllers/BaseController.php(17): App\Core\View-&gt;render()
+#3 /home/dxnz/Downloads/siwayut-catering/src/Controllers/CategoryController.php(25): App\Controllers\BaseController-&gt;render()
+#4 /home/dxnz/Downloads/siwayut-catering/src/Core/Router.php(142): App\Controllers\CategoryController-&gt;create()
+#5 /home/dxnz/Downloads/siwayut-catering/src/Core/Router.php(79): App\Core\Router-&gt;runHandler()
+#6 /home/dxnz/Downloads/siwayut-catering/public/index.php(30): App\Core\Router-&gt;dispatch()
+#7 {main}</pre>

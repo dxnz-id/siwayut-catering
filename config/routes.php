@@ -3,7 +3,7 @@ declare(strict_types=1);
 // File: config/routes.php
 
 use App\Core\Router;
-use App\Controllers\{AuthController, UserController, WelcomeController};
+use App\Controllers\{AuthController, UserController, WelcomeController, MenuController, CategoryController, OrderController};
 
 return function (Router $router): void {
     $router->get('/', [WelcomeController::class, 'index']);
@@ -14,12 +14,36 @@ return function (Router $router): void {
 
     $router->group(['middleware' => ['auth'], 'prefix' => ''], function (Router $r): void {
         $r->group(['middleware' => ['role:admin']], function (Router $r): void {
+            // Users
             $r->get('/users',              [UserController::class, 'index']);
             $r->get('/users/create',       [UserController::class, 'create']);
             $r->post('/users',             [UserController::class, 'store']);
             $r->get('/users/{id}/edit',    [UserController::class, 'edit']);
             $r->post('/users/{id}',        [UserController::class, 'update']);
             $r->post('/users/{id}/delete', [UserController::class, 'destroy']);
+            
+            // Categories
+            $r->get('/categories',              [CategoryController::class, 'index']);
+            $r->get('/categories/create',       [CategoryController::class, 'create']);
+            $r->post('/categories',             [CategoryController::class, 'store']);
+            $r->get('/categories/{id}/edit',    [CategoryController::class, 'edit']);
+            $r->post('/categories/{id}',        [CategoryController::class, 'update']);
+            $r->post('/categories/{id}/delete', [CategoryController::class, 'destroy']);
+
+            // Menus
+            $r->get('/menus',              [MenuController::class, 'index']);
+            $r->get('/menus/create',       [MenuController::class, 'create']);
+            $r->post('/menus',             [MenuController::class, 'store']);
+            $r->get('/menus/{id}/edit',    [MenuController::class, 'edit']);
+            $r->post('/menus/{id}',        [MenuController::class, 'update']);
+            $r->post('/menus/{id}/delete', [MenuController::class, 'destroy']);
+            
+            // Orders
+            $r->get('/orders',              [OrderController::class, 'index']);
+            $r->get('/orders/create',       [OrderController::class, 'create']);
+            $r->post('/orders',             [OrderController::class, 'store']);
+            $r->get('/orders/{id}/edit',    [OrderController::class, 'edit']);
+            $r->post('/orders/{id}',        [OrderController::class, 'update']);
         });
     });
 };

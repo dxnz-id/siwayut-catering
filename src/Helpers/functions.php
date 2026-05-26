@@ -77,3 +77,20 @@ if (!function_exists('now')) {
         return date('Y-m-d H:i:s');
     }
 }
+if (!function_exists('component')) {
+    function component(string $_componentName_, array $_componentData_ = []): void {
+        extract($_componentData_);
+        require base_path('src/Views/components/' . ltrim($_componentName_, '/') . '.php');
+    }
+}
+if (!function_exists('error')) {
+    function error(string $key): ?string {
+        $errorsJson = \App\Core\Session::getFlash('errors');
+        if (!empty($errorsJson)) {
+            \App\Core\Session::flash('errors', $errorsJson);
+        }
+        $errorsArray = json_decode($errorsJson ?? '{}', true);
+        return $errorsArray[$key] ?? null;
+    }
+}
+
