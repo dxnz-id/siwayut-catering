@@ -1,8 +1,8 @@
-# Routing
+# Rute (Routing)
 
-## Route Definition
+## Definisi Rute
 
-Routes are defined in `config/routes.php` using HTTP verb methods:
+Rute didefinisikan dalam `config/routes.php` menggunakan metode kata kerja HTTP (HTTP verb methods):
 
 ```php
 // config/routes.php
@@ -15,15 +15,15 @@ return function (\App\Core\Router $router): void {
 };
 ```
 
-Handler formats:
-- **Array**: `[ControllerClass::class, 'methodName']` — resolved via Container
-- **Callable**: `function(Request $request) { ... }` — called directly
+Format penangan (Handler formats):
+- **Array**: `[ControllerClass::class, 'methodName']` — diselesaikan melalui Kontainer (Container)
+- **Callable**: `function(Request $request) { ... }` — dipanggil secara langsung
 
-Path normalization: trailing slashes are stripped, empty path defaults to `/`.
+Normalisasi jalur (Path normalization): garis miring akhir (trailing slashes) akan dihapus, jalur kosong akan dialihkan ke `/` secara default.
 
-## Route Groups
+## Grup Rute (Route Groups)
 
-Groups apply shared prefix and/or middleware to a set of routes:
+Grup menerapkan awalan (prefix) dan/atau middleware yang sama ke sekumpulan rute:
 
 ```php
 $router->group([
@@ -31,27 +31,27 @@ $router->group([
     'middleware' => ['auth', 'role:admin'],
 ], function ($router) {
     $router->get('/users', [UserController::class, 'index']);
-    // resolves to: GET /admin/users with auth + role:admin middleware
+    // diselesaikan menjadi: GET /admin/users dengan middleware auth + role:admin
 });
 ```
 
-### Nesting
+### Bersarang (Nesting)
 
-Groups can nest. Prefixes concatenate, middleware merges:
+Grup rute dapat bersarang. Awalan (prefix) akan digabungkan, dan middleware akan digabungkan:
 
 ```php
 $router->group(['prefix' => '/api', 'middleware' => ['auth']], function ($router) {
     $router->group(['prefix' => '/v1'], function ($router) {
         $router->get('/users', ...);
-        // resolves to: GET /api/v1/users with auth middleware
+        // diselesaikan menjadi: GET /api/v1/users dengan middleware auth
     });
 });
 ```
 
-### Actual route table from `config/routes.php`
+### Tabel Rute dari `config/routes.php`
 
-| Method | URI | Handler | Middleware |
-|--------|-----|---------|------------|
+| Metode | URI | Penangan (Handler) | Middleware |
+|--------|-----|--------------------|------------|
 | GET | `/` | `WelcomeController@index` | — |
 | GET | `/login` | `AuthController@index` | — |
 | POST | `/login` | `AuthController@login` | — |
@@ -86,19 +86,19 @@ $router->group(['prefix' => '/api', 'middleware' => ['auth']], function ($router
 | GET | `/orders/{id}/edit` | `OrderController@edit` | auth, role:admin |
 | POST | `/orders/{id}` | `OrderController@update` | auth, role:admin |
 
-View live: `php vanilla routes`
+Melihat tabel rute secara langsung: `php vanilla routes`
 
-## Route Parameters
+## Parameter Rute (Route Parameters)
 
-Parameters use `{paramName}` syntax:
+Parameter rute menggunakan sintaksis `{paramName}`:
 
 ```php
 $router->get('/users/{id}/edit', [UserController::class, 'edit']);
 ```
 
-Regex conversion: `{id}` → `(?P<id>[^/]+)` — matched via `#^/users/(?P<id>[^/]+)/edit$#`.
+Konversi Regex: `{id}` → `(?P<id>[^/]+)` — dicocokkan melalui `#^/users/(?P<id>[^/]+)/edit$#`.
 
-Access in controller:
+Mengakses parameter di controller:
 
 ```php
 public function edit(Request $request): void {
@@ -106,27 +106,27 @@ public function edit(Request $request): void {
 }
 ```
 
-## Dispatch Flow
+## Alur Pengiriman (Dispatch Flow)
 
 ```
 Router::dispatch(Request)
          │
-         ├── For each registered route:
-         │     ├── Method matches? (GET, POST, etc.)
-         │     └── URI matches regex?
-         │           YES → extract params → Request::setRouteParams()
-         │                 → run middleware pipeline
-         │                 → resolve + call handler
-         │           NO  → next route
+         ├── Untuk setiap rute yang terdaftar:
+         │     ├── Metode cocok? (GET, POST, dll.)
+         │     └── URI cocok dengan regex?
+         │           YA → ekstrak parameter → Request::setRouteParams()
+         │                 → jalankan pipeline middleware
+         │                 → selesaikan & panggil handler
+         │           TIDAK → rute berikutnya
          │
-         └── No match found → throw NotFoundException (404)
+         └── Tidak ada kecocokan ditemukan → lemparkan NotFoundException (404)
 ```
 
-**First-match-wins**: Routes are checked sequentially. The first matching route is used.
+**Pertama cocok yang menang (First-match-wins)**: Rute diperiksa secara berurutan. Rute pertama yang cocok akan digunakan.
 
-## Middleware Assignment
+## Penugasan Middleware
 
-Middleware is assigned via route groups:
+Middleware ditetapkan melalui grup rute:
 
 ```php
 $router->group(['middleware' => ['auth', 'csrf']], function ($router) {
@@ -134,36 +134,36 @@ $router->group(['middleware' => ['auth', 'csrf']], function ($router) {
 });
 ```
 
-See: [MIDDLEWARE.md](MIDDLEWARE.md) for middleware details.
+Lihat: [MIDDLEWARE.md](MIDDLEWARE.md) untuk detail tentang middleware.
 
-## Handler Resolution
+## Resolusi Penangan (Handler Resolution)
 
-| Handler Type | Resolution |
-|-------------|------------|
+| Jenis Penangan | Resolusi |
+|----------------|----------|
 | `callable` | `call_user_func($handler, $request)` |
-| `[Class, 'method']` | `$container->make(Class)` → `$instance->method($request)` |
+| `[Kelas, 'metode']` | `$container->make(Kelas)` → `$instance->metode($request)` |
 
-## Request API
+## API Request
 
-The `Request` object is passed to every handler:
+Objek `Request` diteruskan ke setiap penangan (handler):
 
 ```php
-$request->method(): string               // 'GET', 'POST', etc.
-$request->uri(): string                  // '/users/1/edit' (no query string)
-$request->input(string $key, $default)   // GET/POST parameter
-$request->only(array $keys): array       // subset of input
-$request->all(): array                   // all GET+POST merged
-$request->file(string $key): ?array      // $_FILES entry
-$request->has(string $key): bool         // parameter exists?
-$request->param(string $key, $default)   // route parameter
+$request->method(): string               // 'GET', 'POST', dll.
+$request->uri(): string                  // '/users/1/edit' (tanpa query string)
+$request->input(string $key, $default)   // parameter GET/POST
+$request->only(array $keys): array       // bagian dari input
+$request->all(): array                   // gabungan semua data GET+POST
+$request->file(string $key): ?array      // masukan $_FILES
+$request->has(string $key): bool         // parameter tersedia?
+$request->param(string $key, $default)   // parameter rute
 $request->isAjax(): bool                 // XMLHttpRequest?
 $request->expectsJson(): bool            // Accept: application/json?
-$request->ip(): string                   // client IP (proxy-aware)
+$request->ip(): string                   // IP klien (mendukung proxy)
 ```
 
-## Response API
+## API Response
 
-`App\Core\Response` provides static methods — all `never`-return methods terminate with `exit`:
+`App\Core\Response` menyediakan metode statis — semua metode pengembalian `never` akan menghentikan eksekusi dengan `exit`:
 
 ```php
 Response::redirect(string $url, int $code = 302): never
@@ -177,4 +177,4 @@ Response::setStatusCode(int $code): void
 
 ---
 
-See: [CONTAINER.md](CONTAINER.md) · [MIDDLEWARE.md](MIDDLEWARE.md) · [ARCHITECTURE.md](ARCHITECTURE.md)
+Lihat: [CONTAINER.md](CONTAINER.md) · [MIDDLEWARE.md](MIDDLEWARE.md) · [ARCHITECTURE.md](ARCHITECTURE.md)

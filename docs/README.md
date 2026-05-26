@@ -8,6 +8,7 @@
 ## Features
 
 ### Implemented
+
 - IoC Container with reflection-based auto-wiring
 - Router with HTTP verb methods, route parameters, and grouped middleware
 - Middleware pipeline (Auth, CSRF, Role-based access)
@@ -21,9 +22,10 @@
 - Database migrations and seeding
 - `vanilla` CLI tool (artisan-like)
 
-### Scaffolded
+### Scaffolded / Implemented Resources
+
 - File upload service
-- Multi-resource CRUD pattern (Users implemented as reference)
+- Multi-resource CRUD pattern (Users, Categories, Events, Menus, and Orders implemented)
 
 ## Tech Stack
 
@@ -79,22 +81,22 @@ siwayut-catering/
 
 ## Documentation
 
-| # | Document | Description |
-|---|----------|-------------|
-| 1 | [INSTALLATION.md](INSTALLATION.md) | Setup from zero to running server |
-| 2 | [QUICKSTART.md](QUICKSTART.md) | Build your first feature in 5 minutes |
-| 3 | [ARCHITECTURE.md](ARCHITECTURE.md) | Request lifecycle and system design |
-| 4 | [CONTAINER.md](CONTAINER.md) | IoC container and auto-wiring |
-| 5 | [ROUTING.md](ROUTING.md) | Routes, parameters, and groups |
-| 6 | [MIDDLEWARE.md](MIDDLEWARE.md) | Middleware pipeline and built-in middleware |
-| 7 | [DATABASE.md](DATABASE.md) | Database connection and BaseModel API |
-| 8 | [VALIDATION.md](VALIDATION.md) | Input validation rules |
-| 9 | [VIEWS.md](VIEWS.md) | Templates, layouts, and partials |
-| 10 | [ERROR_HANDLING.md](ERROR_HANDLING.md) | Exception hierarchy and error pages |
-| 11 | [SECURITY.md](SECURITY.md) | XSS, CSRF, SQL injection, auth |
-| 12 | [CONVENTIONS.md](CONVENTIONS.md) | Naming and code style rules |
-| 13 | [EXAMPLES.md](EXAMPLES.md) | Copy-paste recipes |
-| 14 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributor guide |
+| #   | Document                               | Description                                 |
+| --- | -------------------------------------- | ------------------------------------------- |
+| 1   | [INSTALLATION.md](INSTALLATION.md)     | Setup from zero to running server           |
+| 2   | [QUICKSTART.md](QUICKSTART.md)         | Build your first feature in 5 minutes       |
+| 3   | [ARCHITECTURE.md](ARCHITECTURE.md)     | Request lifecycle and system design         |
+| 4   | [CONTAINER.md](CONTAINER.md)           | IoC container and auto-wiring               |
+| 5   | [ROUTING.md](ROUTING.md)               | Routes, parameters, and groups              |
+| 6   | [MIDDLEWARE.md](MIDDLEWARE.md)         | Middleware pipeline and built-in middleware |
+| 7   | [DATABASE.md](DATABASE.md)             | Database connection and BaseModel API       |
+| 8   | [VALIDATION.md](VALIDATION.md)         | Input validation rules                      |
+| 9   | [VIEWS.md](VIEWS.md)                   | Templates, layouts, and partials            |
+| 10  | [ERROR_HANDLING.md](ERROR_HANDLING.md) | Exception hierarchy and error pages         |
+| 11  | [SECURITY.md](SECURITY.md)             | XSS, CSRF, SQL injection, auth              |
+| 12  | [CONVENTIONS.md](CONVENTIONS.md)       | Naming and code style rules                 |
+| 13  | [EXAMPLES.md](EXAMPLES.md)             | Copy-paste recipes                          |
+| 14  | [CONTRIBUTING.md](CONTRIBUTING.md)     | Contributor guide                           |
 
 ## License
 
