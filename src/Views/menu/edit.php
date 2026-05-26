@@ -77,7 +77,7 @@
                 <label for="image" class="form-label">Menu Image (Optional)</label>
                 <?php if ($menu['image']): ?>
                     <div style="margin-bottom: 0.5rem;">
-                        <img src="/uploads/<?= e($menu['image']) ?>" alt="Current Image" style="width: 100px; height: 100px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--color-border);">
+                        <img src="<?= str_starts_with($menu['image'], 'http') ? e($menu['image']) : '/uploads/' . e($menu['image']) ?>" alt="Current Image" style="width: 100px; height: 100px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--color-border);">
                     </div>
                 <?php endif; ?>
                 <input type="file" id="image" name="image" class="form-input" accept="image/jpeg,image/png,image/webp">

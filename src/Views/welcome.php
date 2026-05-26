@@ -484,7 +484,7 @@
                             <div class="menu-card">
                                 <div class="menu-img-container">
                                     <?php if ($menu['image']): ?>
-                                        <img src="<?= str_starts_with($menu['image'], 'http') ? \App\Core\View::e($menu['image']) : '/storage/uploads/' . \App\Core\View::e($menu['image']) ?>" alt="<?= \App\Core\View::e($menu['name']) ?>" class="menu-img">
+                                        <img src="<?= str_starts_with($menu['image'], 'http') ? \App\Core\View::e($menu['image']) : '/uploads/' . \App\Core\View::e($menu['image']) ?>" alt="<?= \App\Core\View::e($menu['name']) ?>" class="menu-img">
                                     <?php else: ?>
                                         <span style="font-size: 3.5rem;">🍱</span>
                                     <?php endif; ?>

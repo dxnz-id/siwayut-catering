@@ -169,7 +169,7 @@ class MenuSeeder {
                 'category_slug' => 'paket-katering',
                 'event_name' => 'Tahun Baru Imlek 2026',
                 'minimum_portions' => 5,
-                'image' => 'https://images.unsplash.com/photo-1555126634-f5826ac18d6a?auto=format&fit=crop&w=500&q=80',
+                'image' => 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
             [
@@ -179,7 +179,7 @@ class MenuSeeder {
                 'category_slug' => 'menu-ala-carte',
                 'event_name' => 'Tahun Baru Imlek 2026',
                 'minimum_portions' => 1,
-                'image' => 'https://images.unsplash.com/photo-1615486171448-4395aef40212?auto=format&fit=crop&w=500&q=80',
+                'image' => 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
             [
