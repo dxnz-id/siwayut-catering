@@ -12,7 +12,9 @@ return function (Router $router): void {
     $router->post('/login',  [AuthController::class, 'login']);
     $router->post('/logout', [AuthController::class, 'logout']);
 
-    // Public: Order Tracking
+    // Public: Order Form & Tracking
+    $router->get('/order-form',              [OrderController::class, 'publicForm']);
+    $router->post('/order-form',             [OrderController::class, 'publicSubmit']);
     $router->get('/track-order',             [OrderController::class, 'trackForm']);
     $router->post('/track-order',            [OrderController::class, 'track']);
     $router->get('/track-order/{id}',        [OrderController::class, 'trackResult']);

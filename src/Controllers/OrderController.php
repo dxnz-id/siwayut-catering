@@ -23,6 +23,53 @@ class OrderController extends BaseController {
         parent::__construct();
     }
 
+    public function publicForm(Request $request): void {
+        $menus = $this->menuService->all();
+        $activeMenus = array_filter($menus, fn($m) => ($m['status'] ?? 'active') === 'active');
+        $events = $this->eventService->getActive();
+
+        $this->render('order/public-form', [
+            'title' => 'Pesan Catering — Siwayut Catering',
+            'menus' => $activeMenus,
+            'events' => $events,
+        ], '');
+    }
+
+    public function publicSubmit(Request $request): void {
+        $data = $request->only(['name', 'menu', 'event_date', 'quantity', 'address', 'notes']);
+
+        $validator = new Validator();
+        $validator->validate($data, [
+            'name' => 'required|min:3|max:255',
+            'menu' => 'required',
+            'event_date' => 'required',
+            'quantity' => 'required|numeric|min:1',
+            'address' => 'required|min:10',
+        ]);
+
+        if ($validator->fails()) {
+            $this->withOldInput($data);
+            $firstError = reset($validator->errors());
+            Session::flash('error', $firstError);
+            $this->redirect('/order-form');
+        }
+
+        $message = "Halo Siwayut Catering, saya ingin memesan katering:\n\n"
+                 . "Nama: {$data['name']}\n"
+                 . "Menu: {$data['menu']}\n"
+                 . "Tanggal Acara: {$data['event_date']}\n"
+                 . "Jumlah Porsi: {$data['quantity']}\n"
+                 . "Alamat Pengiriman: {$data['address']}\n";
+
+        if (!empty($data['notes'])) {
+            $message .= "Catatan: {$data['notes']}\n";
+        }
+
+        $message .= "\nTerima kasih.";
+
+        $this->redirect('https://wa.me/6287865252313?text=' . urlencode($message));
+    }
+
     public function trackForm(Request $request): void {
         $this->render('order/track', [
             'title' => 'Lacak Pesanan — Siwayut Catering'
