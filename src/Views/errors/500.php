@@ -15,8 +15,8 @@
 <body>
     <div>
         <h1>500</h1>
-        <p><?= htmlspecialchars($message ?? 'Terjadi kesalahan pada server kami.') ?></p>
-        <a href="/">Kembali ke Beranda</a>
+        <p><?= htmlspecialchars($message ?? 'An error occurred on our server.') ?></p>
+        <a href="/">Back to Home</a>
     </div>
 </body>
 </html>

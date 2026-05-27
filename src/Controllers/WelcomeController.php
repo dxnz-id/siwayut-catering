@@ -22,7 +22,7 @@ class WelcomeController extends BaseController {
         $menus = $this->menuService->all();
 
         $this->render('welcome', [
-            'title' => 'Siwayut Catering — Layanan Katering Hari Raya Terbaik',
+            'title' => 'Siwayut Catering — Premium Holiday Catering Service',
             'events' => $events,
             'categories' => $categories,
             'menus' => $menus

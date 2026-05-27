@@ -37,7 +37,7 @@
 
                 <?php component('form/select', [
                     'name' => 'event_id',
-                    'label' => 'Hari Raya / Event',
+                    'label' => 'Event',
                     'options' => array_column($events ?? [], 'name', 'id'),
                     'selected' => old('event_id', $menu['event_id'] ?? ''),
                     'placeholder' => '-- Select Event --',

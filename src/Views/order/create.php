@@ -34,7 +34,7 @@
 
             <?php component('form/select', [
                 'name' => 'event_id',
-                'label' => 'Hari Raya / Event',
+                'label' => 'Event',
                 'options' => array_column($events ?? [], 'name', 'id'),
                 'value' => old('event_id'),
                 'required' => true

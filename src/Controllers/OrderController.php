@@ -29,7 +29,7 @@ class OrderController extends BaseController {
         $events = $this->eventService->getActive();
 
         $this->render('order/public-form', [
-            'title' => 'Pesan Catering — Siwayut Catering',
+            'title' => 'Order Catering — Siwayut Catering',
             'menus' => $activeMenus,
             'events' => $events,
         ], '');
@@ -54,25 +54,25 @@ class OrderController extends BaseController {
             $this->redirect('/order-form');
         }
 
-        $message = "Halo Siwayut Catering, saya ingin memesan katering:\n\n"
-                 . "Nama: {$data['name']}\n"
+        $message = "Hello Siwayut Catering, I would like to order:\n\n"
+                 . "Name: {$data['name']}\n"
                  . "Menu: {$data['menu']}\n"
-                 . "Tanggal Acara: {$data['event_date']}\n"
-                 . "Jumlah Porsi: {$data['quantity']}\n"
-                 . "Alamat Pengiriman: {$data['address']}\n";
+                 . "Event Date: {$data['event_date']}\n"
+                 . "Portions: {$data['quantity']}\n"
+                 . "Delivery Address: {$data['address']}\n";
 
         if (!empty($data['notes'])) {
-            $message .= "Catatan: {$data['notes']}\n";
+            $message .= "Notes: {$data['notes']}\n";
         }
 
-        $message .= "\nTerima kasih.";
+        $message .= "\nThank you.";
 
         $this->redirect('https://wa.me/6287865252313?text=' . urlencode($message));
     }
 
     public function trackForm(Request $request): void {
         $this->render('order/track', [
-            'title' => 'Lacak Pesanan — Siwayut Catering'
+            'title' => 'Track Order — Siwayut Catering'
         ], '');
     }
 
@@ -96,7 +96,7 @@ class OrderController extends BaseController {
         $order = $this->orderService->find((int)$orderId);
         if (!$order) {
             $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
-            Session::flash('error', 'Pesanan tidak ditemukan. Periksa kembali nomor pesanan Anda.');
+            Session::flash('error', 'Order not found. Please check your order number.');
             $this->redirect('/track-order');
         }
 
@@ -106,7 +106,7 @@ class OrderController extends BaseController {
 
         if ($cleanCustomerPhone !== $cleanPhone) {
             $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
-            Session::flash('error', 'Nomor HP tidak sesuai dengan data pesanan.');
+            Session::flash('error', 'Phone number does not match the order.');
             $this->redirect('/track-order');
         }
 
@@ -133,7 +133,7 @@ class OrderController extends BaseController {
         $event = $this->eventService->find((int)$order['event_id']);
 
         $this->render('order/track-result', [
-            'title' => 'Detail Pesanan #' . $orderId . ' — Siwayut Catering',
+            'title' => 'Order Detail #' . $orderId . ' — Siwayut Catering',
             'order' => $order,
             'customer' => $customer,
             'menu' => $menu,

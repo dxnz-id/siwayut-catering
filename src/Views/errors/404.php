@@ -15,8 +15,8 @@
 <body>
     <div>
         <h1>404</h1>
-        <p><?= htmlspecialchars($message ?? 'Halaman yang Anda cari tidak ditemukan.') ?></p>
-        <a href="/">Kembali ke Beranda</a>
+        <p><?= htmlspecialchars($message ?? 'The page you are looking for was not found.') ?></p>
+        <a href="/">Back to Home</a>
     </div>
 </body>
 </html>

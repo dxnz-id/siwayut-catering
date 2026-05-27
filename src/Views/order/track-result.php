@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= \App\Core\View::e($title ?? 'Detail Pesanan — Siwayut Catering') ?></title>
+    <title><?= \App\Core\View::e($title ?? 'Order Detail — Siwayut Catering') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-dark: #09090b;
@@ -22,32 +25,71 @@
             --text-light: #f4f4f5;
             --text-muted: #a1a1aa;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background: radial-gradient(circle at 15% 25%, rgba(229, 142, 38, 0.12) 0%, transparent 45%),
-                        radial-gradient(circle at 85% 75%, rgba(234, 32, 39, 0.08) 0%, transparent 45%),
-                        var(--bg-dark);
+                radial-gradient(circle at 85% 75%, rgba(234, 32, 39, 0.08) 0%, transparent 45%),
+                var(--bg-dark);
             color: var(--text-light);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             line-height: 1.6;
         }
-        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
-        .wrapper { max-width: 640px; margin: 0 auto; padding: 0 1.5rem; }
+
+        h1,
+        h2,
+        h3,
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
         header {
             background: rgba(9, 9, 11, 0.6);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--card-border);
             padding: 1rem 0;
         }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--text-light); }
-        .logo-icon { font-size: 1.5rem; filter: drop-shadow(0 0 8px var(--accent-gold-glow)); }
-        .logo-text {
-            font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-light);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px var(--accent-gold-glow));
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .btn-outline {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--card-border);
@@ -59,7 +101,13 @@
             font-size: 0.85rem;
             transition: all 0.3s ease;
         }
-        .btn-outline:hover { background: var(--accent-gold); border-color: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold-glow); }
+
+        .btn-outline:hover {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px var(--accent-gold-glow);
+        }
+
         .result-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -68,6 +116,7 @@
             padding: 2rem;
             margin-top: 2.5rem;
         }
+
         .order-header {
             display: flex;
             justify-content: space-between;
@@ -76,16 +125,19 @@
             border-bottom: 1px solid var(--card-border);
             margin-bottom: 1.5rem;
         }
+
         .order-id {
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
         }
+
         .order-id small {
             font-size: 0.85rem;
             font-weight: 400;
             color: var(--text-muted);
         }
+
         .badge {
             display: inline-flex;
             align-items: center;
@@ -96,50 +148,101 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .badge-pending { background: rgba(245, 158, 11, 0.15); color: var(--status-pending); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-processing { background: rgba(79, 70, 229, 0.15); color: var(--status-processing); border: 1px solid rgba(79, 70, 229, 0.3); }
-        .badge-delivering { background: rgba(79, 70, 229, 0.15); color: var(--status-delivering); border: 1px solid rgba(79, 70, 229, 0.3); }
-        .badge-completed { background: rgba(16, 185, 129, 0.15); color: var(--status-completed); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-cancelled { background: rgba(239, 68, 68, 0.15); color: var(--status-cancelled); border: 1px solid rgba(239, 68, 68, 0.3); }
-        .badge-unpaid { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-paid { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-refunded { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--status-pending);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-processing {
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--status-processing);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .badge-delivering {
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--status-delivering);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .badge-completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--status-completed);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-cancelled {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--status-cancelled);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-unpaid {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-paid {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-refunded {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
         .status-row {
             display: flex;
             gap: 0.75rem;
             align-items: center;
         }
+
         .detail-grid {
             display: grid;
             grid-template-columns: 140px 1fr;
             gap: 1rem 0.75rem;
             font-size: 0.9rem;
         }
+
         .detail-label {
             color: var(--text-muted);
             font-weight: 500;
         }
-        .detail-value { color: var(--text-light); }
+
+        .detail-value {
+            color: var(--text-light);
+        }
+
         .detail-value.price {
             font-weight: 700;
             color: var(--accent-gold);
             font-size: 1.1rem;
         }
+
         .divider {
             border: none;
             border-top: 1px solid var(--card-border);
             margin: 1.5rem 0;
         }
+
         .timeline {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .timeline-step {
             display: flex;
             gap: 1rem;
             align-items: flex-start;
         }
+
         .timeline-dot {
             width: 12px;
             height: 12px;
@@ -147,11 +250,28 @@
             margin-top: 4px;
             flex-shrink: 0;
         }
-        .timeline-dot.active { background: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold-glow); }
-        .timeline-dot.inactive { background: rgba(255, 255, 255, 0.1); }
+
+        .timeline-dot.active {
+            background: var(--accent-gold);
+            box-shadow: 0 0 8px var(--accent-gold-glow);
+        }
+
+        .timeline-dot.inactive {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .timeline-content {}
-        .timeline-content .step-label { font-weight: 600; font-size: 0.9rem; }
-        .timeline-content .step-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+        .timeline-content .step-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .timeline-content .step-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
         .action-link {
             display: block;
             text-align: center;
@@ -162,7 +282,11 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        .action-link:hover { text-shadow: 0 0 8px var(--accent-gold-glow); }
+
+        .action-link:hover {
+            text-shadow: 0 0 8px var(--accent-gold-glow);
+        }
+
         .footer-text {
             text-align: center;
             color: var(--text-muted);
@@ -170,15 +294,34 @@
             margin-top: 2rem;
             padding-bottom: 2rem;
         }
-        .footer-text a { color: var(--accent-gold); text-decoration: none; }
+
+        .footer-text a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
         @media (max-width: 768px) {
-            .result-card { padding: 1.25rem; }
-            .order-header { flex-direction: column; gap: 1rem; }
-            .detail-grid { grid-template-columns: 1fr; gap: 0.25rem; }
-            .detail-label { font-size: 0.8rem; }
+            .result-card {
+                padding: 1.25rem;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+
+            .detail-label {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="wrapper nav-container">
@@ -186,7 +329,7 @@
                 <span class="logo-icon">🍲</span>
                 <span class="logo-text">Siwayut Catering</span>
             </a>
-            <a href="/track-order" class="btn-outline">&larr; Cari Lagi</a>
+            <a href="/track-order" class="btn-outline">&larr; Search Again</a>
         </div>
     </header>
     <main class="wrapper">
@@ -194,19 +337,19 @@
             <div class="order-header">
                 <div>
                     <div class="order-id">
-                        Pesanan #<?= (int)$order['id'] ?>
-                        <small>dibuat <?= date('d M Y, H:i', strtotime($order['created_at'])) ?></small>
+                        Order #<?= (int) $order['id'] ?>
+                        <small>created <?= date('d M Y, H:i', strtotime($order['created_at'])) ?></small>
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                     <span class="badge badge-<?= \App\Core\View::e($order['status']) ?>">
                         <?php
                         $statusLabels = [
-                            'pending' => 'Menunggu',
-                            'processing' => 'Diproses',
-                            'delivering' => 'Dikirim',
-                            'completed' => 'Selesai',
-                            'cancelled' => 'Dibatalkan',
+                            'pending' => 'Pending',
+                            'processing' => 'Processing',
+                            'delivering' => 'Delivering',
+                            'completed' => 'Completed',
+                            'cancelled' => 'Cancelled',
                         ];
                         echo \App\Core\View::e($statusLabels[$order['status']] ?? $order['status']);
                         ?>
@@ -214,9 +357,9 @@
                     <span class="badge badge-<?= \App\Core\View::e($order['payment_status']) ?>">
                         <?php
                         $paymentLabels = [
-                            'unpaid' => 'Belum Bayar',
-                            'paid' => 'Lunas',
-                            'refunded' => 'Dikembalikan',
+                            'unpaid' => 'Unpaid',
+                            'paid' => 'Paid',
+                            'refunded' => 'Refunded',
                         ];
                         echo \App\Core\View::e($paymentLabels[$order['payment_status']] ?? $order['payment_status']);
                         ?>
@@ -225,48 +368,51 @@
             </div>
 
             <div class="detail-grid">
-                <div class="detail-label">Nama Pemesan</div>
+                <div class="detail-label">Customer Name</div>
                 <div class="detail-value"><?= \App\Core\View::e($customer['name'] ?? '-') ?></div>
 
-                <div class="detail-label">No. HP</div>
+                <div class="detail-label">Phone No.</div>
                 <div class="detail-value"><?= \App\Core\View::e($customer['phone'] ?? '-') ?></div>
 
                 <div class="detail-label">Menu</div>
                 <div class="detail-value"><?= \App\Core\View::e($menu['name'] ?? '-') ?></div>
 
-                <div class="detail-label">Acara</div>
+                <div class="detail-label">Event</div>
                 <div class="detail-value"><?= \App\Core\View::e($event['name'] ?? '-') ?></div>
 
-                <div class="detail-label">Jumlah Porsi</div>
-                <div class="detail-value"><?= (int)$order['quantity'] ?> porsi</div>
+                <div class="detail-label">Portions</div>
+                <div class="detail-value"><?= (int) $order['quantity'] ?> portions</div>
 
-                <div class="detail-label">Total Harga</div>
-                <div class="detail-value price">Rp <?= number_format((float)$order['total_price'], 0, ',', '.') ?></div>
+                <div class="detail-label">Total Price</div>
+                <div class="detail-value price">Rp <?= number_format((float) $order['total_price'], 0, ',', '.') ?>
+                </div>
 
-                <div class="detail-label">Tanggal Acara</div>
+                <div class="detail-label">Event Date</div>
                 <div class="detail-value"><?= date('d F Y, H:i', strtotime($order['event_date'])) ?></div>
 
-                <div class="detail-label">Alamat</div>
+                <div class="detail-label">Address</div>
                 <div class="detail-value"><?= nl2br(\App\Core\View::e($order['delivery_address'])) ?></div>
 
                 <?php if ($order['notes']): ?>
-                <div class="detail-label">Catatan</div>
-                <div class="detail-value"><?= nl2br(\App\Core\View::e($order['notes'])) ?></div>
+                    <div class="detail-label">Notes</div>
+                    <div class="detail-value"><?= nl2br(\App\Core\View::e($order['notes'])) ?></div>
                 <?php endif; ?>
             </div>
 
             <hr class="divider">
 
-            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-                Status Pesanan
+
+            <div
+                style="font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                Order Status
             </div>
             <div class="timeline">
                 <?php
                 $statuses = [
-                    'pending'    => ['label' => 'Pesanan Diterima', 'desc' => 'Pesanan Anda sedang kami review'],
-                    'processing' => ['label' => 'Sedang Diproses', 'desc' => 'Kami sedang menyiapkan pesanan Anda'],
-                    'delivering' => ['label' => 'Dalam Pengiriman', 'desc' => 'Pesanan sedang dalam perjalanan'],
-                    'completed'  => ['label' => 'Selesai', 'desc' => 'Pesanan telah sampai'],
+                    'pending' => ['label' => 'Order Received', 'desc' => 'Your order is being reviewed'],
+                    'processing' => ['label' => 'Processing', 'desc' => 'We are preparing your order'],
+                    'delivering' => ['label' => 'Delivering', 'desc' => 'Your order is on its way'],
+                    'completed' => ['label' => 'Completed', 'desc' => 'Your order has arrived'],
                 ];
                 $orderStatus = $order['status'];
                 $reached = $orderStatus === 'completed';
@@ -281,33 +427,40 @@
                     if ($orderStatus === 'cancelled') {
                         $isActive = $key === 'pending';
                     }
-                ?>
-                <div class="timeline-step">
-                    <div class="timeline-dot <?= $isActive ? 'active' : 'inactive' ?>"></div>
-                    <div class="timeline-content">
-                        <div class="step-label" style="<?= $isActive ? 'color: var(--text-light);' : 'color: var(--text-muted);' ?>"><?= \App\Core\View::e($step['label']) ?></div>
-                        <div class="step-desc"><?= \App\Core\View::e($step['desc']) ?></div>
+                    ?>
+                    <div class="timeline-step">
+                        <div class="timeline-dot <?= $isActive ? 'active' : 'inactive' ?>"></div>
+                        <div class="timeline-conten
+     t                      ">
+
+                            <div class="step-label"
+                                style="<?= $isActive ? 'color: var(--text-light);' : 'color: var(--text-muted);' ?>">
+                                <?= \App\Core\View::e($step['label']) ?></div>
+                            <div class="step-desc"><?= \App\Core\View::e($step['desc']) ?></div>
+                        </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
 
                 <?php if ($orderStatus === 'cancelled'): ?>
-                <div class="timeline-step">
-                    <div class="timeline-dot active" style="background: var(--status-cancelled); box-shadow: 0 0 8px rgba(239,68,68,0.3);"></div>
-                    <div class="timeline-content">
-                        <div class="step-label" style="color: var(--status-cancelled);">Dibatalkan</div>
-                        <div class="step-desc">Pesanan telah dibatalkan</div>
+                    <div class="timeline-step">
+
+                        <div class="timeline-dot active"
+                            style="background: var(--status-cancelled); box-shadow: 0 0 8px rgba(239,68,68,0.3);"></div>
+                        <div class="timeline-content">
+                            <div class="step-label" style="color: var(--status-cancelled);">Cancelled</div>
+                            <div class="step-desc">Order has been cancelled</div>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
             </div>
 
-            <a href="/track-order" class="action-link">&larr; Lacak pesanan lain</a>
+            <a href="/track-order" class="action-link">&larr; Track another order</a>
         </div>
 
         <div class="footer-text">
-            <a href="/">Siwayut Catering</a> — Cita Rasa Istimewa Untuk Momen Paling Suci
+            <a href="/">Siwayut Catering</a> — Exquisite Taste For Your Most Sacred Moments
         </div>
-    </main>
+        </m ain>
 </body>
+
 </html>

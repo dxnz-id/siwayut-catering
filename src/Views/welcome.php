@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -476,10 +476,10 @@
 
         <!-- Hero Section -->
         <section class="hero">
-            <span class="hero-badge">✨ Katering Premium Hari Raya</span>
-            <h1>Cita Rasa Istimewa<br>Untuk Momen Paling Suci</h1>
-            <p>Siwayut Catering menyediakan menu katering eksklusif yang diracik khusus untuk menyemarakkan perayaan
-                Hari Raya Anda. Nikmati sajian lezat tanpa repot bersama kerabat tercinta.</p>
+            <span class="hero-badge">✨ Premium Holiday Catering</span>
+            <h1>Exquisite Taste<br>For Your Most Sacred Moments</h1>
+            <p>Siwayut Catering provides exclusive catering menus specially crafted to celebrate your holidays. Enjoy
+                delicious dishes without the hassle together with your loved ones.</p>
             <div class="hero-buttons">
                 <a href="/order-form" class="hero-btn hero-btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -487,9 +487,9 @@
                         <path
                             d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                     </svg>
-                    Pesan Sekarang
+                    Order Now
                 </a>
-                <a href="/track-order" class="hero-btn hero-btn-outline">Lacak Pesanan</a>
+                <a href="/track-order" class="hero-btn hero-btn-outline">Track Order</a>
             </div>
         </section>
 
@@ -510,18 +510,18 @@
         <!-- Active Events (Hari Raya) -->
         <section style="margin-top: 2rem;">
             <div class="section-header">
-                <h2>Hari Raya Aktif</h2>
+                <h2>Active Events</h2>
             </div>
             <div class="grid-events">
                 <?php if (empty($events)): ?>
                     <div class="empty-state">
                         <div class="empty-icon">📅</div>
-                        <p>Belum ada perayaan Hari Raya aktif saat ini.</p>
+                        <p>No active events at the moment.</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($events as $event): ?>
                         <div class="event-card">
-                            <span class="event-status">Buka Pemesanan</span>
+                            <span class="event-status">Open for Orders</span>
                             <h3 class="event-name"><?= \App\Core\View::e($event['name']) ?></h3>
                             <div class="event-date">
                                 <span class="event-date-icon">🗓️</span>
@@ -540,13 +540,13 @@
         <!-- Featured Menus -->
         <section>
             <div class="section-header">
-                <h2>Menu Pilihan Hari Raya</h2>
+                <h2>Featured Holiday Menu</h2>
             </div>
             <div class="grid-menus">
                 <?php if (empty($menus)): ?>
                     <div class="empty-state">
                         <div class="empty-icon">🍽️</div>
-                        <p>Belum ada daftar menu makanan tersedia saat ini.</p>
+                        <p>No menu items available at the moment.</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($menus as $menu): ?>
@@ -571,7 +571,7 @@
 
                                     <div class="menu-meta">
                                         <span class="menu-price">Rp <?= number_format((float) $menu['price'], 0, ',', '.') ?></span>
-                                        <span class="menu-portions">Min. <?= (int) $menu['minimum_portions'] ?> Porsi</span>
+                                        <span class="menu-portions">Min. <?= (int) $menu['minimum_portions'] ?> Portions</span>
                                     </div>
                                 </div>
                             </div>
@@ -587,7 +587,7 @@
     <footer>
         <div class="wrapper">
             <p>&copy; <?= date('Y') ?> Siwayut Catering. All rights reserved.</p>
-            <p style="font-size: 0.78rem; opacity: 0.6;">Powered by Vanilla PHP MVC Framework</p>
+            <!-- <p style="font-size: 0.78rem; opacity: 0.6;">Powered by Vanilla PHP MVC Framework</p> -->
         </div>
     </footer>
 
