@@ -195,6 +195,115 @@ class MenuSeeder {
             ]
         ];
 
+        // Additional menus to reach 20 items
+        $menus = array_merge($menus, [
+            // Idul Fitri
+            [
+                'name' => 'Rendang Daging Sapi Padang',
+                'description' => 'Daging sapi pilihan dimasak perlahan dengan santan kental dan 15 rempah pilihan hingga hitam pekat, gurih, dan empuk. Cocok disantap dengan ketupat.',
+                'price' => 175000,
+                'category_slug' => 'menu-ala-carte',
+                'event_name' => 'Idul Fitri 2026',
+                'minimum_portions' => 1,
+                'image' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Es Buah Segar Special (Jar 1L)',
+                'description' => 'Campuran buah segar musiman: melon, semangka, nanas, alpukat, anggur, dan kelapa muda dengan siraman sirup susu vanila dan es serut.',
+                'price' => 55000,
+                'category_slug' => 'minuman-spesial',
+                'event_name' => 'Idul Fitri 2026',
+                'minimum_portions' => 1,
+                'image' => 'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Gulai Kambing Komplit',
+                'description' => 'Potongan daging dan tulang kambing muda empuk dalam kuah gulai kuning pekat, dilengkapi nasi impit, acar, dan kerupuk.',
+                'price' => 165000,
+                'category_slug' => 'menu-ala-carte',
+                'event_name' => 'Idul Fitri 2026',
+                'minimum_portions' => 1,
+                'image' => 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+
+            // Natal
+            [
+                'name' => 'Ikan Kakap Asam Manis',
+                'description' => 'Ikan kakap merah segar digoreng garing krispi, disiram saus asam manis kental dengan potongan nanas, paprika, dan bawang bombay.',
+                'price' => 155000,
+                'category_slug' => 'menu-ala-carte',
+                'event_name' => 'Natal & Tahun Baru 2026',
+                'minimum_portions' => 1,
+                'image' => 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Sup Krim Jamur Truffle',
+                'description' => 'Sup krim jamur kaya rasa dengan campuran jamur kancing, shitake, dan minyak truffle, disajikan dengan garlic bread croutons.',
+                'price' => 85000,
+                'category_slug' => 'paket-katering',
+                'event_name' => 'Natal & Tahun Baru 2026',
+                'minimum_portions' => 2,
+                'image' => 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Panna Cotta Mangga Markisa',
+                'description' => 'Panna cotta Italia yang lembut dengan lapisan saus mangga markisa segar, cocok sebagai dessert Natal yang ringan.',
+                'price' => 45000,
+                'category_slug' => 'snack-kue-kering',
+                'event_name' => 'Natal & Tahun Baru 2026',
+                'minimum_portions' => 4,
+                'image' => 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+
+            // Imlek
+            [
+                'name' => 'Yee Sang (Salad Ikan)',
+                'description' => 'Salad ikan salmon asap dengan irisan sayuran segar berwarna-warni, saus plum asam manis, dan taburan biji wijen. Disajikan dingin.',
+                'price' => 125000,
+                'category_slug' => 'menu-ala-carte',
+                'event_name' => 'Tahun Baru Imlek 2026',
+                'minimum_portions' => 2,
+                'image' => 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Siomay Udang & Ayam (10 Pcs)',
+                'description' => 'Siomay kukus premium isi udang utuh dan daging ayam cincang halus, dibungkus kulit pangsit kuning, disajikan dengan saus sambal kedelai.',
+                'price' => 65000,
+                'category_slug' => 'snack-kue-kering',
+                'event_name' => 'Tahun Baru Imlek 2026',
+                'minimum_portions' => 2,
+                'image' => 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Babi Kecap Goreng Mentega',
+                'description' => 'Irisan daging babi empuk dimasak dengan kecap manis, bawang putih, dan mentega, dengan tambahan cabai hijau dan bawang bombay.',
+                'price' => 135000,
+                'category_slug' => 'menu-ala-carte',
+                'event_name' => 'Tahun Baru Imlek 2026',
+                'minimum_portions' => 1,
+                'image' => 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+            [
+                'name' => 'Teh Bunga Krisan Es',
+                'description' => 'Teh bunga krisan alami pilihan disajikan dingin dengan tambahan es batu dan madu manis alami, menyegarkan dahaga.',
+                'price' => 25000,
+                'category_slug' => 'minuman-spesial',
+                'event_name' => 'Tahun Baru Imlek 2026',
+                'minimum_portions' => 1,
+                'image' => 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=500&q=80',
+                'status' => 'active'
+            ],
+        ]);
+
         echo "Seeding menus...\n";
         $fileUpload = new FileUploadService(BASE_PATH . '/storage/uploads');
         $stmtMenu = $db->prepare(
