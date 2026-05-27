@@ -40,17 +40,9 @@
                 'required' => true
             ]); ?>
 
-            <?php component('form/select', [
-                'name' => 'menu_id',
-                'label' => 'Menu',
-                'options' => array_column($menus, 'name', 'id'),
-                'value' => old('menu_id'),
-                'required' => true
-            ]); ?>
-
             <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">Order Details</h4>
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
-                $menuOptions = [];
+                <?php $menuOptions = [];
                 foreach ($menus as $m) {
                     $menuOptions[$m['id']] = $m['name'] . ' (Rp ' . number_format((float)$m['price'], 0, ',', '.') . ')';
                 }
