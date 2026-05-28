@@ -91,10 +91,10 @@ Parsial:     src/Views/partials/{name}.php (berdasarkan konvensi)
 
 ### Tata letak yang tersedia
 
-| Tata Letak | Berkas | Tujuan |
-|------------|--------|--------|
-| `main` | `src/Views/layouts/main.php` | Panel admin dengan sidebar + navbar |
-| `auth` | `src/Views/layouts/auth.php` | Kartu yang berada di tengah dengan latar belakang gradasi |
+| Tata Letak | Berkas                       | Tujuan                                                    |
+| ---------- | ---------------------------- | --------------------------------------------------------- |
+| `main`     | `src/Views/layouts/main.php` | Panel admin dengan sidebar + navbar                       |
+| `auth`     | `src/Views/layouts/auth.php` | Kartu yang berada di tengah dengan latar belakang gradasi |
 
 ### Tanpa tata letak
 
@@ -108,11 +108,11 @@ $this->render('raw-page', $data, '');
 
 Parsial adalah fragmen templat yang dapat digunakan kembali di `src/Views/partials/`:
 
-| Parsial | Tujuan |
-|---------|--------|
-| `sidebar.php` | Sidebar navigasi yang berisi tautan dan formulir logout |
-| `navbar.php` | Batang atas (top bar) dengan judul halaman dan info pengguna |
-| `flash.php` | Pesan peringatan (alert) berhasil/gagal |
+| Parsial       | Tujuan                                                       |
+| ------------- | ------------------------------------------------------------ |
+| `sidebar.php` | Sidebar navigasi yang berisi tautan dan formulir logout      |
+| `navbar.php`  | Batang atas (top bar) dengan judul halaman dan info pengguna |
+| `flash.php`   | Pesan peringatan (alert) berhasil/gagal                      |
 
 Cara menyertakan (include) dari tata letak:
 
@@ -140,7 +140,7 @@ Fungsi pembantu `e()` mendelegasikan tugasnya ke `View::e()`.
 ```
 src/Views/
 ├── auth/
-│   └── login.php          # Formulir login
+│   └── auth.php          # Formulir login
 ├── errors/
 │   ├── 404.php            # Halaman tidak ditemukan
 │   └── 500.php            # Halaman kesalahan server

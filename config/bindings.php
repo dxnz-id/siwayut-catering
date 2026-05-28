@@ -17,7 +17,7 @@ $container->bind(Event::class, fn(Container $c): object => new Event());
 
 // Services
 $container->bind(FileUploadService::class, fn(Container $c): object => new FileUploadService(BASE_PATH . '/storage/uploads'));
-$container->bind(AuthService::class, fn(Container $c): object => new AuthService($c->make(User::class)));
+$container->bind(AuthService::class, fn(Container $c): object => new AuthService($c->make(User::class), $c->make(Customer::class)));
 $container->bind(UserService::class, fn(Container $c): object => new UserService($c->make(User::class)));
 $container->bind(CategoryService::class, fn(Container $c): object => new CategoryService($c->make(Category::class)));
 $container->bind(MenuService::class, fn(Container $c): object => new MenuService($c->make(Menu::class), $c->make(FileUploadService::class)));

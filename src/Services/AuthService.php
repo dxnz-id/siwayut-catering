@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services;
 use App\Models\User;
+use App\Models\Customer;
 use App\Core\Encryptor;
 use App\Core\Session;
 
 class AuthService {
-    public function __construct(private User $userModel) {
+    public function __construct(
+        private User $userModel,
+        private Customer $customerModel
+    ) {
     }
 
     public function login(string $email, string $password): bool {
@@ -31,5 +35,24 @@ class AuthService {
 
     public function logout(): void {
         Session::destroy();
+    }
+
+    public function register(string $name, string $email, string $phone, string $password): int {
+        $cleanPhone = preg_replace('/[^0-9]/', '', $phone) ?? '';
+
+        $userId = $this->userModel->create([
+            'name' => $name,
+            'email' => $email,
+            'password' => password_hash(Encryptor::hmac($password), PASSWORD_DEFAULT),
+            'role' => 'user',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        if ($cleanPhone !== '') {
+            $this->customerModel->linkUserByPhone($cleanPhone, $userId);
+        }
+
+        return $userId;
     }
 }

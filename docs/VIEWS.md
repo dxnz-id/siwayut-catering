@@ -91,9 +91,9 @@ Partials:    src/Views/partials/{name}.php (by convention)
 
 ### Available layouts
 
-| Layout | File | Purpose |
-|--------|------|---------|
-| `main` | `src/Views/layouts/main.php` | Admin panel with sidebar + navbar |
+| Layout | File                         | Purpose                              |
+| ------ | ---------------------------- | ------------------------------------ |
+| `main` | `src/Views/layouts/main.php` | Admin panel with sidebar + navbar    |
 | `auth` | `src/Views/layouts/auth.php` | Centered card on gradient background |
 
 ### No layout
@@ -108,11 +108,11 @@ $this->render('raw-page', $data, '');
 
 Partials are reusable template fragments in `src/Views/partials/`:
 
-| Partial | Purpose |
-|---------|---------|
+| Partial       | Purpose                                       |
+| ------------- | --------------------------------------------- |
 | `sidebar.php` | Navigation sidebar with links and logout form |
-| `navbar.php` | Top bar with page title and user info |
-| `flash.php` | Success/error alert messages |
+| `navbar.php`  | Top bar with page title and user info         |
+| `flash.php`   | Success/error alert messages                  |
 
 Include from layouts:
 
@@ -140,7 +140,7 @@ The `e()` helper function delegates to `View::e()`.
 ```
 src/Views/
 ├── auth/
-│   └── login.php          # Login form
+│   └── auth.php          # Login form
 ├── errors/
 │   ├── 404.php            # Not found page
 │   └── 500.php            # Server error page

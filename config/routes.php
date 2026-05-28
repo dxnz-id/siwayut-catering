@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 // File: config/routes.php
 
@@ -8,7 +9,10 @@ use App\Controllers\{AuthController, UserController, WelcomeController, MenuCont
 return function (Router $router): void {
     $router->get('/', [WelcomeController::class, 'index']);
 
-    $router->get('/login',   [AuthController::class, 'index']);
+    $router->get('/auth',    [AuthController::class, 'index']);
+    $router->post('/auth/login',    [AuthController::class, 'login']);
+    $router->post('/auth/register', [AuthController::class, 'register']);
+    $router->get('/login',   [AuthController::class, 'loginPageRedirect']);
     $router->post('/login',  [AuthController::class, 'login']);
     $router->post('/logout', [AuthController::class, 'logout']);
 
@@ -55,7 +59,7 @@ return function (Router $router): void {
             $r->get('/menus/{id}/edit',                 [MenuController::class, 'edit']);
             $r->post('/menus/{id}',                     [MenuController::class, 'update']);
             $r->post('/menus/{id}/delete',              [MenuController::class, 'destroy']);
-            
+
             // Orders
             $r->get('/orders',              [OrderController::class, 'index']);
             $r->get('/orders/create',       [OrderController::class, 'create']);

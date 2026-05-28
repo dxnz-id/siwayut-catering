@@ -8,7 +8,7 @@ use App\Core\{Request, Session, Response};
 class AuthMiddleware implements MiddlewareInterface {
     public function handle(Request $request): bool {
         if (!Session::has('user')) {
-            Response::redirect('/login');
+            Response::redirect('/auth');
         }
         return true;
     }

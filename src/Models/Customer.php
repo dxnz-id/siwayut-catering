@@ -13,4 +13,9 @@ class Customer extends BaseModel {
     public function findByPhone(string $phone): ?array {
         return $this->findWhere(['phone' => $phone]);
     }
+
+    public function linkUserByPhone(string $phone, int $userId): bool {
+        $sql = "UPDATE `{$this->table}` SET `user_id` = ?, `updated_at` = CURRENT_TIMESTAMP WHERE `phone` = ?";
+        return $this->execute($sql, [$userId, $phone]);
+    }
 }
