@@ -10,255 +10,74 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
         rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #09090b;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --accent-gold: #e58e26;
-            --accent-gold-glow: rgba(229, 142, 38, 0.3);
-            --accent-red: #ea2027;
-            --text-light: #f4f4f5;
-            --text-muted: #a1a1aa;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: radial-gradient(circle at 15% 25%, rgba(229, 142, 38, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 85% 75%, rgba(234, 32, 39, 0.08) 0%, transparent 45%),
-                var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        h1,
-        h2,
-        h3,
-        .logo-text {
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .wrapper {
-            max-width: 540px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        header {
-            background: rgba(9, 9, 11, 0.6);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--card-border);
-            padding: 1rem 0;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            color: var(--text-light);
-        }
-
-        .logo-icon {
-            font-size: 1.5rem;
-            filter: drop-shadow(0 0 8px var(--accent-gold-glow));
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-outline {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-light);
-            padding: 0.5rem 1.25rem;
-            border-radius: 9999px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline:hover {
-            background: var(--accent-gold);
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 15px var(--accent-gold-glow);
-        }
-
-        .track-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(16px) saturate(120%);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            margin-top: 4rem;
-        }
-
-        .track-card h1 {
-            text-align: center;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .track-card p {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.4rem;
-            color: var(--text-muted);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px var(--accent-gold-glow);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-search {
-            width: 100%;
-            padding: 0.85rem;
-            background: var(--accent-gold);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px var(--accent-gold-glow);
-        }
-
-        .btn-search:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px var(--accent-gold-glow);
-        }
-
-        .alert {
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .alert-error {
-            background: rgba(234, 32, 39, 0.1);
-            border: 1px solid rgba(234, 32, 39, 0.2);
-            color: #f87171;
-        }
-
-        .footer-text {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-top: 2rem;
-            padding-bottom: 2rem;
-        }
-
-        .footer-text a {
-            color: var(--accent-gold);
-            text-decoration: none;
-        }
-
-        @media (max-width: 768px) {
-            .track-card {
-                padding: 1.5rem 1.25rem;
-            }
-
-            .track-card h1 {
-                font-size: 1.4rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/app.css?v=3">
+    <?php if (\App\Core\Turnstile::enabled()): ?>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <?php endif; ?>
 </head>
 
-<body>
-    <header>
-        <div class="wrapper nav-container">
-            <a href="/" class="logo">
-                <span class="logo-icon">🍲</span>
-                <span class="logo-text">Siwayut Catering</span>
+<body class="bg-bg text-text min-h-screen leading-relaxed font-body overflow-x-hidden bg-fixed bg-[radial-gradient(circle_at_15%_25%,rgba(229,142,38,0.12)_0%,transparent_45%),radial-gradient(circle_at_85%_75%,rgba(234,32,39,0.08)_0%,transparent_45%)]">
+
+    <header class="sticky top-0 z-[100] bg-bg/60 backdrop-blur-[12px] border-b border-border py-4">
+        <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 no-underline text-text">
+                <span class="text-[1.8rem] drop-shadow-[0_0_8px_var(--accent-gold-glow)]">🍲</span>
+                <span class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-gold bg-clip-text text-transparent">Siwayut Catering</span>
             </a>
-            <a href="/" class="btn-outline">&larr; Home</a>
+            <a href="/" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">&larr; Home</a>
         </div>
     </header>
-    <main class="wrapper">
-        <div class="track-card">
-            <h1>Track Order</h1>
-            <p>Enter your order number and phone number to check the latest status.</p>
+
+    <main class="max-w-[540px] mx-auto px-6">
+        <div class="bg-card-bg border border-border backdrop-blur-[16px] rounded-xl p-10 px-8 max-md:p-6 max-md:px-5 mt-16">
+            <h1 class="text-center text-[1.75rem] max-md:text-[1.4rem] font-bold mb-2 font-display">Track Order</h1>
+            <p class="text-center text-muted text-sm mb-8">Enter your order number and phone number to check the latest status.</p>
 
             <?php $flashError = \App\Core\Session::getFlash('error'); ?>
             <?php if ($flashError): ?>
-                <div class="alert alert-error"><?= \App\Core\View::e($flashError) ?></div>
+                <div class="px-4 py-3 rounded-xl text-sm mb-6 text-center bg-accent-red/10 border border-accent-red/20 text-[#f87171]"><?= \App\Core\View::e($flashError) ?></div>
             <?php endif; ?>
 
             <form action="/track-order" method="POST">
                 <?= \App\Core\Csrf::field() ?>
-                <div class="form-group">
-                    <label for="order_id">Order Number</label>
-                    <input type="text" id="order_id" name="order_id" class="form-input" placeholder="E.g. 1"
+                <div class="mb-5">
+                    <label for="order_id" class="block text-sm font-medium mb-1 text-muted">Order Number</label>
+                    <input type="text" id="order_id" name="order_id"
+                        class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20"
+                        placeholder="E.g. 1"
                         value="<?= \App\Core\View::e(old('order_id')) ?>" required>
                 </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number (when ordering)</label>
-                    <input type="tel" id="phone" name="phone" class="form-input" placeholder="E.g. 08123456789"
+                <div class="mb-5">
+                    <label for="phone" class="block text-sm font-medium mb-1 text-muted">Phone Number (when ordering)</label>
+                    <input type="tel" id="phone" name="phone"
+                        class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20"
+                        placeholder="E.g. 08123456789"
                         value="<?= \App\Core\View::e(old('phone')) ?>" required>
                 </div>
-                <button type="submit" class="btn-search">Search Order</button>
+                <?php if (\App\Core\Turnstile::enabled()): ?>
+                    <div class="mt-6 flex justify-center">
+                        <?= \App\Core\Turnstile::widget() ?>
+                    </div>
+                <?php endif; ?>
+
+                <button type="submit" id="submit-btn"
+                    data-turnstile-submit="1"
+                    <?= \App\Core\Turnstile::enabled() ? 'disabled' : '' ?>
+                    class="w-full py-[0.85rem] bg-gold border border-gold rounded-xl text-white text-base font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_15px_var(--color-gold-glow)] hover:bg-primary-hover hover:border-primary-hover hover:-translate-y-0.5 hover:shadow-[0_0_25px_var(--color-gold-glow)] font-body">
+                    Search Order
+                </button>
             </form>
         </div>
-        <div class="footer-text">
-            <a href="/">Siwayut Catering</a> — Exquisite Taste For Your Most Sacred Moments
+        <div class="text-center text-muted text-xs mt-8 pb-8">
+            <a href="/" class="text-gold no-underline hover:text-gold">Siwayut Catering</a> — Exquisite Taste For Your Most Sacred Moments
         </div>
     </main>
+    <script src="/assets/js/modules/turnstile.js"></script>
+    <script src="/assets/js/modules/file-upload.js"></script>
+    <script src="/assets/js/modules/progressive-image.js"></script>
+    <script src="/assets/js/modules/load-more-menu.js"></script>
+    <script src="/assets/js/modules/ai-description.js"></script>
+    <script src="/assets/js/app.js"></script>
 </body>
 
 </html>

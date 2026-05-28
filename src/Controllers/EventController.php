@@ -16,12 +16,22 @@ class EventController extends BaseController {
 
     public function index(Request $request): void {
         $page = (int) $request->input('page', 1);
-        $result = $this->eventService->paginate($page);
+        $search = $request->input('search', '');
+        $orderBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('dir', 'DESC');
+        $filters = [
+            'status' => $request->input('status', ''),
+        ];
+        $result = $this->eventService->paginate($page, 10, $search, $filters, $orderBy, $direction);
         
         $this->render('event/index', [
             'title' => 'Events',
             'events' => $result['data'],
             'pagination' => $result,
+            'search' => $search,
+            'filters' => $filters,
+            'sort_by' => $orderBy,
+            'dir' => $direction,
         ]);
     }
 

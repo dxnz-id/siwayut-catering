@@ -8,8 +8,18 @@ use App\Models\Category;
 class CategoryService {
     public function __construct(private Category $category) {}
 
-    public function all(): array {
-        return $this->category->all();
+    public function all(string $orderBy = 'created_at', string $direction = 'DESC'): array {
+        return $this->category->all([], $orderBy, $direction);
+    }
+
+    public function paginate(
+        int $page = 1,
+        int $perPage = 15,
+        string $search = '',
+        string $orderBy = 'created_at',
+        string $direction = 'DESC'
+    ): array {
+        return $this->category->paginate($page, $perPage, [], $search, $this->category->getSearchableColumns(), $orderBy, $direction);
     }
 
     public function find(int $id): ?array {

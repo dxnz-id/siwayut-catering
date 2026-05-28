@@ -13,7 +13,13 @@ class UserController extends BaseController {
 
     public function index(Request $request): void {
         $page = (int) ($request->input('page', 1));
-        $result = $this->userService->getAll($page);
+        $search = $request->input('search', '');
+        $orderBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('dir', 'DESC');
+        $filters = [
+            'role' => $request->input('role', ''),
+        ];
+        $result = $this->userService->getAll($page, 15, $search, $filters, $orderBy, $direction);
         $this->render('user/index', [
             'title' => 'Users',
             'users' => $result['data'],
@@ -21,6 +27,10 @@ class UserController extends BaseController {
             'success' => Session::getFlash('success'),
             'error' => Session::getFlash('error'),
             'currentUser' => $this->currentUser(),
+            'search' => $search,
+            'filters' => $filters,
+            'sort_by' => $orderBy,
+            'dir' => $direction,
         ]);
     }
 

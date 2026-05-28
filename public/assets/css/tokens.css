@@ -1,0 +1,83 @@
+@theme {
+  /* Core */
+  --color-white: #ffffff;
+
+  /* Primary / Gold */
+  --color-primary: #e58e26;
+  --color-primary-hover: #c97d20;
+  --color-primary-light: rgba(229, 142, 38, 0.12);
+  --color-gold: #e58e26;
+  --color-gold-glow: rgba(229, 142, 38, 0.3);
+
+  /* Backgrounds */
+  --color-bg: #09090b;
+  --color-bg-dark: #09090b;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-sidebar-bg: #111113;
+
+  /* Text */
+  --color-text: #f4f4f5;
+  --color-text-muted: #a1a1aa;
+  --color-muted: #a1a1aa;
+  --color-text-light: #f4f4f5;
+  --color-sidebar-text: #a1a1aa;
+  --color-sidebar-active: #ffffff;
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-card-border: rgba(255, 255, 255, 0.1);
+
+  /* Cards */
+  --color-card-bg: rgba(255, 255, 255, 0.04);
+
+  /* Status */
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-success: #10b981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-warning: #f59e0b;
+  --color-accent-red: #ea2027;
+  --color-error-bg: rgba(239, 68, 68, 0.12);
+  --color-error-border: rgba(239, 68, 68, 0.3);
+
+  /* Fonts */
+  --font-display: "Outfit", Inter, system-ui, -apple-system, sans-serif;
+  --font-body: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+
+  /* Sizing */
+  --spacing-sidebar: 260px;
+  --spacing-navbar: 64px;
+}
+
+/* Legacy CSS variables (backward compat for var() references) */
+:root {
+  --accent-gold: #e58e26;
+  --accent-gold-glow: rgba(229, 142, 38, 0.3);
+  --accent-red: #ea2027;
+  --bg-dark: #09090b;
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --text-light: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --sidebar-width: 260px;
+  --navbar-height: 64px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --transition: 150ms ease;
+}

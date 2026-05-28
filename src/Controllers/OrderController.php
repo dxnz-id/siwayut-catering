@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Request;
-use App\Core\Session;
-use App\Core\Validator;
-use App\Core\Database;
+use App\Core\{Request, Session, Validator, Database, Turnstile};
 use App\Exceptions\NotFoundException;
 use App\Services\OrderService;
 use App\Services\MenuService;
@@ -37,6 +34,12 @@ class OrderController extends BaseController {
 
     public function publicSubmit(Request $request): void {
         $data = $request->only(['name', 'menu', 'event_date', 'quantity', 'address', 'notes']);
+
+        if (!Turnstile::verify($request->input('cf-turnstile-response', ''))) {
+            $this->withOldInput($data);
+            Session::flash('error', 'Captcha verification failed.');
+            $this->redirect('/order-form');
+        }
 
         $validator = new Validator();
         $validator->validate($data, [
@@ -79,6 +82,12 @@ class OrderController extends BaseController {
     public function track(Request $request): void {
         $orderId = $request->input('order_id');
         $phone = $request->input('phone');
+
+        if (!Turnstile::verify($request->input('cf-turnstile-response', ''))) {
+            $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
+            Session::flash('error', 'Captcha verification failed.');
+            $this->redirect('/track-order');
+        }
 
         $validator = new Validator();
         $validator->validate(['order_id' => $orderId, 'phone' => $phone], [
@@ -143,7 +152,14 @@ class OrderController extends BaseController {
 
     public function index(Request $request): void {
         $page = (int) $request->input('page', 1);
-        $result = $this->orderService->paginate($page);
+        $search = $request->input('search', '');
+        $orderBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('dir', 'DESC');
+        $filters = [
+            'status' => $request->input('status', ''),
+            'payment_status' => $request->input('payment_status', ''),
+        ];
+        $result = $this->orderService->paginate($page, 10, $search, $filters, $orderBy, $direction);
 
         $menus = $this->menuService->paginate(1, 1000)['data'];
         $menuMap = [];
@@ -162,6 +178,10 @@ class OrderController extends BaseController {
             'pagination' => $result,
             'menuMap' => $menuMap,
             'customerMap' => $customerMap,
+            'search' => $search,
+            'filters' => $filters,
+            'sort_by' => $orderBy,
+            'dir' => $direction,
         ]);
     }
 

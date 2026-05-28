@@ -16,8 +16,10 @@ class EventService {
         return $this->event->getActive();
     }
 
-    public function paginate(int $page = 1, int $perPage = 10): array {
-        return $this->event->paginate($page, $perPage);
+    public function paginate(int $page = 1, int $perPage = 10, string $search = '', array $filters = [], string $orderBy = 'created_at', string $direction = 'DESC'): array {
+        $conditions = [];
+        if (!empty($filters['status'])) $conditions['status'] = $filters['status'];
+        return $this->event->paginate($page, $perPage, $conditions, $search, $this->event->getSearchableColumns(), $orderBy, $direction);
     }
 
     public function find(int $id): ?array {

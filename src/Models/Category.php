@@ -8,6 +8,13 @@ class Category extends BaseModel {
         parent::__construct();
         $this->table = 'categories';
         $this->sortableColumns = ['id', 'name', 'slug', 'created_at'];
+        $this->searchableColumns = [
+            'id',
+            'name',
+            'slug',
+            'created_at',
+            'updated_at',
+        ];
     }
 
     public function findBySlug(string $slug): ?array {

@@ -1,0 +1,31 @@
+{
+  "name": "siwayut-catering",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "css:build": "npx tailwindcss -i public/assets/css/input.css -o public/assets/css/app.css",
+    "css:watch": "npx tailwindcss -i public/assets/css/input.css -o public/assets/css/app.css --watch",
+    "serve": "php vanilla serve",
+    "dev": "npx concurrently \"npm run css:watch\" \"npm run serve\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dxnz-id/siwayut-catering.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dxnz-id/siwayut-catering/issues"
+  },
+  "homepage": "https://github.com/dxnz-id/siwayut-catering#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}

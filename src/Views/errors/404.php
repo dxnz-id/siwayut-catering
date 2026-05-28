@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found</title>
-    <style>
-        body { margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f8fafc; color: #334155; text-align: center; }
-        h1 { font-size: 4rem; margin: 0; color: #0f172a; }
-        p { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 2rem; }
-        a { color: #fff; background-color: #3b82f6; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 500; transition: background-color 0.2s; }
-        a:hover { background-color: #2563eb; }
-    </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/app.css?v=2">
 </head>
-<body>
-    <div>
-        <h1>404</h1>
-        <p><?= htmlspecialchars($message ?? 'The page you are looking for was not found.') ?></p>
-        <a href="/">Back to Home</a>
-    </div>
+
+<body
+    class="bg-[#09090b] text-[#f4f4f5] font-body flex flex-col justify-center items-center min-h-screen text-center m-0">
+    <h1 class="text-8xl font-extrabold font-display text-[#e58e26] m-0 leading-none">404</h1>
+    <p class="text-lg mt-4 mb-8 text-[#a1a1aa]">
+        <?= htmlspecialchars($message ?? 'The page you are looking for was not found.') ?>
+    </p>
 </body>
+
 </html>

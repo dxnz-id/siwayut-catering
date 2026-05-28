@@ -8,6 +8,15 @@ class Event extends BaseModel {
         parent::__construct();
         $this->table = 'events';
         $this->sortableColumns = ['id', 'name', 'start_date', 'end_date', 'status', 'created_at'];
+        $this->searchableColumns = [
+            'id',
+            'name',
+            'start_date',
+            'end_date',
+            'status',
+            'created_at',
+            'updated_at',
+        ];
     }
 
     public function getActive(): array {

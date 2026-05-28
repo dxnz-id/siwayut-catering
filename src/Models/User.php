@@ -9,6 +9,14 @@ class User extends BaseModel {
         parent::__construct();
         $this->table = 'users';
         $this->sortableColumns = ['id', 'name', 'email', 'role', 'created_at', 'updated_at'];
+        $this->searchableColumns = [
+            'id',
+            'name',
+            'email',
+            'role',
+            'created_at',
+            'updated_at',
+        ];
     }
 
     public function findByEmail(string $email): ?array {

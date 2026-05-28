@@ -1,15 +1,15 @@
-<div class="content-header">
-    <h1 class="content-title"><?= htmlspecialchars($title ?? 'Create Order') ?></h1>
-    <a href="/orders" class="btn btn-secondary">&larr; Back to Orders</a>
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold font-display text-text"><?= htmlspecialchars($title ?? 'Create Order') ?></h1>
+    <a href="/orders" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-white/6 text-text border-border hover:bg-white/10 hover:text-text">&larr; Back to Orders</a>
 </div>
 
-<div class="card" style="max-width: 800px;">
-    <div class="card-body">
+<div class="bg-[#18181b] border border-border rounded-xl overflow-hidden max-w-[800px]">
+    <div class="p-6">
         <form action="/orders" method="POST">
             <?= \App\Core\Csrf::field() ?>
             
-            <h4 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">Customer Details</h4>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <h4 class="mb-4 pb-2 border-b border-border font-display font-semibold text-text">Customer Details</h4>
+            <div class="grid grid-cols-2 gap-4">
                 <?php component('form/input', [
                     'name' => 'phone',
                     'label' => 'Phone Number (Member ID)',
@@ -40,8 +40,8 @@
                 'required' => true
             ]); ?>
 
-            <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">Order Details</h4>
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+            <h4 class="mt-6 mb-4 pb-2 border-b border-border font-display font-semibold text-text">Order Details</h4>
+            <div class="grid grid-cols-[2fr_1fr] gap-4">
                 <?php $menuOptions = [];
                 foreach ($menus as $m) {
                     $menuOptions[$m['id']] = $m['name'] . ' (Rp ' . number_format((float)$m['price'], 0, ',', '.') . ')';
@@ -65,7 +65,7 @@
                 ]); ?>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="grid grid-cols-2 gap-4">
                 <?php component('form/input', [
                     'name' => 'event_date',
                     'label' => 'Event Date & Time',
@@ -80,9 +80,9 @@
                 ]); ?>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Process Order</button>
-                <a href="/orders" class="btn btn-secondary">Cancel</a>
+            <div class="flex items-center gap-3 mt-6">
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-primary text-white border-primary hover:bg-primary-hover hover:border-primary-hover hover:shadow-[0_0_15px_var(--color-gold-glow)] hover:text-white">Process Order</button>
+                <a href="/orders" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-white/6 text-text border-border hover:bg-white/10 hover:text-text">Cancel</a>
             </div>
         </form>
     </div>

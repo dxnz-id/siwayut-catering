@@ -21,6 +21,7 @@
   "scripts": {
     "dev": [
       "Composer\\Config::disableProcessTimeout",
+      "npm run css:watch &",
       "php vanilla serve"
     ],
     "post-autoload-dump": [

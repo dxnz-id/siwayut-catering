@@ -1,0 +1,129 @@
+.file-upload-zone {
+  position: relative;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 150ms ease;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.file-upload-zone:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.file-upload-zone.drag-over {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.file-upload-zone.has-error {
+  border-color: var(--color-danger);
+  background: var(--color-error-bg);
+}
+
+.file-upload-zone.has-file {
+  border-style: solid;
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.file-upload-input { display: none; }
+
+.file-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-upload-placeholder svg {
+  width: 48px;
+  height: 48px;
+  color: var(--color-muted);
+  opacity: 0.5;
+  margin-bottom: 0.25rem;
+}
+
+.file-upload-placeholder p {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.file-upload-placeholder p span {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.file-upload-info {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+
+.file-upload-preview {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.file-upload-zone.has-file .file-upload-preview { display: flex; }
+.file-upload-zone.has-file .file-upload-placeholder { display: none; }
+
+.file-upload-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.file-upload-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.file-upload-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-upload-meta {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  display: flex;
+  gap: 0.75rem;
+}
+
+.file-upload-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.file-upload-remove { flex-shrink: 0; }
+
+.file-upload-error {
+  display: none;
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.file-upload-zone.has-error .file-upload-error { display: block; }

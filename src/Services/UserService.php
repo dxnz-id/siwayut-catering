@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services;
 use App\Models\User;
+use App\Core\Encryptor;
 use App\Exceptions\NotFoundException;
 
 class UserService {
     public function __construct(private User $userModel) {
     }
 
-    public function getAll(int $page = 1, int $perPage = 15): array {
-        return $this->userModel->paginate($page, $perPage);
+    public function getAll(int $page = 1, int $perPage = 15, string $search = '', array $filters = [], string $orderBy = 'created_at', string $direction = 'DESC'): array {
+        $conditions = [];
+        if (!empty($filters['role'])) $conditions['role'] = $filters['role'];
+        return $this->userModel->paginate($page, $perPage, $conditions, $search, $this->userModel->getSearchableColumns(), $orderBy, $direction);
     }
 
     public function getById(int $id): array {
@@ -23,7 +26,7 @@ class UserService {
     }
 
     public function create(array $data): int {
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $data['password'] = password_hash(Encryptor::hmac($data['password']), PASSWORD_DEFAULT);
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->userModel->create($data);
@@ -32,7 +35,7 @@ class UserService {
     public function update(int $id, array $data): bool {
         $this->getById($id); // ensure exists
         if (isset($data['password']) && $data['password'] !== '') {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            $data['password'] = password_hash(Encryptor::hmac($data['password']), PASSWORD_DEFAULT);
         } else {
             unset($data['password']);
         }

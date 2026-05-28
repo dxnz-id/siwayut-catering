@@ -25,7 +25,15 @@ class MenuController extends BaseController {
 
     public function index(Request $request): void {
         $page = (int) $request->input('page', 1);
-        $result = $this->menuService->paginate($page);
+        $search = $request->input('search', '');
+        $orderBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('dir', 'DESC');
+        $conditions = [];
+        $catId = $request->input('category_id', '');
+        $status = $request->input('status', '');
+        if ($catId !== '') $conditions['category_id'] = $catId;
+        if ($status !== '') $conditions['status'] = $status;
+        $result = $this->menuService->paginate($page, 15, $conditions, $search, ['name'], $orderBy, $direction);
 
         $categories = $this->categoryService->all();
         $katMap = [];
@@ -38,6 +46,11 @@ class MenuController extends BaseController {
             'menus' => $result['data'],
             'pagination' => $result,
             'katMap' => $katMap,
+            'search' => $search,
+            'filterCategory' => $catId,
+            'filterStatus' => $status,
+            'sort_by' => $orderBy,
+            'dir' => $direction,
         ]);
     }
 

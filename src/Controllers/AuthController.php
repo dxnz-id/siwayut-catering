@@ -3,7 +3,7 @@ declare(strict_types=1);
 // File: src/Controllers/AuthController.php
 
 namespace App\Controllers;
-use App\Core\{Request, Session, Validator, Database};
+use App\Core\{Request, Session, Validator, Database, Turnstile};
 use App\Services\AuthService;
 
 class AuthController extends BaseController {
@@ -24,6 +24,11 @@ class AuthController extends BaseController {
     public function login(Request $request): void {
         $email = (string) $request->input('email', '');
         $password = (string) $request->input('password', '');
+
+        if (!Turnstile::verify($request->input('cf-turnstile-response', ''))) {
+            $this->withOldInput(['email' => $email]);
+            $this->redirectWithFlash('/login', 'error', 'Captcha verification failed.');
+        }
 
         $validator = new Validator();
         $validator->validate(

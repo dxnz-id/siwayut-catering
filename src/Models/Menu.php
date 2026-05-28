@@ -8,5 +8,18 @@ class Menu extends BaseModel {
         parent::__construct();
         $this->table = 'menus';
         $this->sortableColumns = ['id', 'name', 'price', 'category_id', 'status', 'created_at'];
+        $this->searchableColumns = [
+            'id',
+            'name',
+            'description',
+            'price',
+            'category_id',
+            'event_id',
+            'minimum_portions',
+            'image',
+            'status',
+            'created_at',
+            'updated_at',
+        ];
     }
 }

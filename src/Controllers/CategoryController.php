@@ -15,9 +15,19 @@ class CategoryController extends BaseController {
     }
 
     public function index(Request $request): void {
+        $page = (int) $request->input('page', 1);
+        $search = $request->input('search', '');
+        $orderBy = $request->input('sort_by', 'created_at');
+        $direction = $request->input('dir', 'DESC');
+        $result = $this->categoryService->paginate($page, 15, $search, $orderBy, $direction);
+
         $this->render('category/index', [
             'title' => 'Menu Categories',
-            'categories' => $this->categoryService->all(),
+            'categories' => $result['data'],
+            'pagination' => $result,
+            'search' => $search,
+            'sort_by' => $orderBy,
+            'dir' => $direction,
         ]);
     }
 

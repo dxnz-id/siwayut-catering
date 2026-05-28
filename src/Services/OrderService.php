@@ -14,8 +14,8 @@ class OrderService {
         private Menu $menu
     ) {}
 
-    public function paginate(int $page = 1, int $perPage = 10): array {
-        return $this->order->paginate($page, $perPage);
+    public function paginate(int $page = 1, int $perPage = 10, string $search = '', array $filters = [], string $orderBy = 'created_at', string $direction = 'DESC'): array {
+        return $this->order->paginateForAdmin($page, $perPage, $filters, $search, $orderBy, $direction);
     }
 
     public function find(int $id): ?array {

@@ -11,6 +11,7 @@ abstract class BaseModel {
     protected string $table;
     protected string $primaryKey = 'id';
     protected array $sortableColumns = ['id', 'created_at', 'updated_at'];
+    protected array $searchableColumns = [];
 
     public function __construct() {
         // DB connection deferred — initialized lazily on first query
@@ -128,23 +129,43 @@ abstract class BaseModel {
         return $this->count($conditions) > 0;
     }
 
-    public function paginate(int $page = 1, int $perPage = 15, array $conditions = []): array {
+    public function paginate(int $page = 1, int $perPage = 15, array $conditions = [], string $search = '', array $searchColumns = [], string $orderBy = 'created_at', string $direction = 'DESC'): array {
         $page = max(1, $page);
-        $total = $this->count($conditions);
-        $lastPage = (int) ceil($total / $perPage);
-        $offset = ($page - 1) * $perPage;
-
-        $sql = "SELECT * FROM `{$this->table}`";
         $bindings = [];
-        if (!empty($conditions)) {
-            $clauses = [];
-            foreach ($conditions as $col => $val) {
+        $where = '';
+
+        $clauses = [];
+        foreach ($conditions as $col => $val) {
+            if ($val !== '' && $val !== null) {
                 $clauses[] = "`{$col}` = ?";
                 $bindings[] = $val;
             }
-            $sql .= ' WHERE ' . implode(' AND ', $clauses);
         }
-        $sql .= " ORDER BY `created_at` DESC LIMIT {$perPage} OFFSET {$offset}";
+
+        if ($search !== '' && !empty($searchColumns)) {
+            $likeClauses = [];
+            foreach ($searchColumns as $col) {
+                $likeClauses[] = "`{$col}` LIKE ?";
+                $bindings[] = "%{$search}%";
+            }
+            $clauses[] = '(' . implode(' OR ', $likeClauses) . ')';
+        }
+
+        if (!empty($clauses)) {
+            $where = ' WHERE ' . implode(' AND ', $clauses);
+        }
+
+        $countSql = "SELECT COUNT(*) FROM `{$this->table}`{$where}";
+        $stmt = $this->db()->prepare($countSql);
+        $stmt->execute($bindings);
+        $total = (int) $stmt->fetchColumn();
+
+        $lastPage = (int) ceil($total / $perPage);
+        $offset = ($page - 1) * $perPage;
+
+        $orderBy = $this->validateSortColumn($orderBy);
+        $direction = strtoupper($direction) === 'ASC' ? 'ASC' : 'DESC';
+        $sql = "SELECT * FROM `{$this->table}`{$where} ORDER BY `{$orderBy}` {$direction} LIMIT {$perPage} OFFSET {$offset}";
 
         return [
             'data' => $this->query($sql, $bindings),
@@ -166,10 +187,14 @@ abstract class BaseModel {
         return $stmt->execute($bindings);
     }
 
+    public function getSearchableColumns(): array {
+        return $this->searchableColumns;
+    }
+
     private function validateSortColumn(string $column): string {
         if (in_array($column, $this->sortableColumns, true)) {
             return $column;
         }
-        return $this->primaryKey;
+        return 'created_at';
     }
 }
