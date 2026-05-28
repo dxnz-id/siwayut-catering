@@ -15,8 +15,8 @@ class MenuService {
         return $this->menu->all();
     }
 
-    public function paginate(int $page = 1, int $perPage = 15): array {
-        return $this->menu->paginate($page, $perPage);
+    public function paginate(int $page = 1, int $perPage = 15, array $conditions = []): array {
+        return $this->menu->paginate($page, $perPage, $conditions);
     }
 
     public function find(int $id): ?array {

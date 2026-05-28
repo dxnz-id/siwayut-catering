@@ -19,6 +19,9 @@ return function (Router $router): void {
     $router->post('/track-order',            [OrderController::class, 'track']);
     $router->get('/track-order/{id}',        [OrderController::class, 'trackResult']);
 
+    // Public API
+    $router->get('/api/menus', [WelcomeController::class, 'apiMenus']);
+
     $router->group(['middleware' => ['auth'], 'prefix' => ''], function (Router $r): void {
         $r->group(['middleware' => ['role:admin']], function (Router $r): void {
             // Users

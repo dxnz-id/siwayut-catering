@@ -315,7 +315,7 @@
             outline: 1px solid var(--accent-gold);
         }
 
-        .food-gallery .row .progressive-wrap > .progressive-img {
+        .food-gallery .row .progressive-wrap>.progressive-img {
             height: 100%;
             width: 100%;
             object-fit: cover;
@@ -509,6 +509,7 @@
                 grid-template-columns: 1fr;
             }
         }
+
         .progressive-img {
             transition: filter 0.4s ease;
         }
@@ -616,44 +617,49 @@
                     <div class="section-header">
                         <h2>Featured Holiday Menu</h2>
                     </div>
-                    <div class="grid-menus">
-                        <?php if (empty($menus)): ?>
+                    <div class="grid-menus" id="menu-grid">
+                        <?php if (empty($initialMenus)): ?>
                             <div class="empty-state">
                                 <div class="empty-icon">🍽️</div>
                                 <p>No menu items available at the moment.</p>
                             </div>
                         <?php else: ?>
-                            <?php foreach ($menus as $menu): ?>
-                                <?php if (($menu['status'] ?? 'active') === 'active'): ?>
-                                    <div class="menu-card">
-                                        <div class="menu-img-container">
-                                            <?php if ($menu['image']): ?>
-                                                <?php component('progressive-image', ['src' => $menu['image'], 'alt' => $menu['name'], 'class' => 'menu-img']); ?>
-                                            <?php else: ?>
-                                                <span style="font-size: 3.5rem;">🍱</span>
-                                            <?php endif; ?>
+                            <?php foreach ($initialMenus as $menu): ?>
+                                <div class="menu-card">
+                                    <div class="menu-img-container">
+                                        <?php if ($menu['image']): ?>
+                                            <?php component('progressive-image', ['src' => $menu['image'], 'alt' => $menu['name'], 'class' => 'menu-img']); ?>
+                                        <?php else: ?>
+                                            <span style="font-size: 3.5rem;">🍱</span>
+                                        <?php endif; ?>
 
-                                            <!-- Event Tag -->
-                                            <?php if (isset($eventMap[$menu['event_id']])): ?>
-                                                <span class="menu-tag"><?= \App\Core\View::e($eventMap[$menu['event_id']]) ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="menu-body">
-                                            <h3 class="menu-title"><?= \App\Core\View::e($menu['name']) ?></h3>
-                                            <p class="menu-desc"><?= \App\Core\View::e($menu['description']) ?></p>
+                                        <?php if (isset($eventMap[$menu['event_id']])): ?>
+                                            <span class="menu-tag"><?= \App\Core\View::e($eventMap[$menu['event_id']]) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="menu-body">
+                                        <h3 class="menu-title"><?= \App\Core\View::e($menu['name']) ?></h3>
+                                        <p class="menu-desc"><?= \App\Core\View::e($menu['description']) ?></p>
 
-                                            <div class="menu-meta">
-                                                <span class="menu-price">Rp
-                                                    <?= number_format((float) $menu['price'], 0, ',', '.') ?></span>
-                                                <span class="menu-portions">Min. <?= (int) $menu['minimum_portions'] ?>
-                                                    Portions</span>
-                                            </div>
+                                        <div class="menu-meta">
+                                            <span class="menu-price">Rp
+                                                <?= number_format((float) $menu['price'], 0, ',', '.') ?></span>
+                                            <span class="menu-portions">Min. <?= (int) $menu['minimum_portions'] ?>
+                                                Portions</span>
                                         </div>
                                     </div>
-                                <?php endif; ?>
+                                </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
+                    <?php if ($lastPage > 1): ?>
+                        <div style="text-align:center;margin-top:2.5rem;">
+                            <a id="see-more-btn" href="javascript:void(0)"
+                                style="color:var(--text-muted);text-decoration:none;cursor:pointer;font-size:0.95rem;transition:color 0.2s;"
+                                onmouseover="this.style.color='var(--accent-gold)'"
+                                onmouseout="this.style.color='var(--text-muted)'">See More ↓</a>
+                        </div>
+                    <?php endif; ?>
                 </section>
             </div>
         </main>
@@ -667,6 +673,15 @@
         </footer>
 
     </div>
+
+    <script id="menu-data" type="application/json"><?= json_encode([
+        'perPage' => $perPage,
+        'currentPage' => $currentPage,
+        'lastPage' => $lastPage,
+        'eventMap' => $eventMap,
+    ], JSON_UNESCAPED_UNICODE) ?></script>
+
+    <script src="/assets/js/app.js?v=2"></script>
 
     <script>
         (function () {
@@ -682,20 +697,6 @@
             window.addEventListener('scroll', update, { passive: true });
             update();
         })();
-
-        document.querySelectorAll('.progressive-img[data-full]').forEach(function (img) {
-            var full = new Image();
-            full.onload = function () {
-                img.src = full.src;
-                img.classList.remove('blur-up');
-                img.classList.add('loaded');
-            };
-            full.onerror = function () {
-                img.classList.remove('blur-up');
-                img.classList.add('loaded');
-            };
-            full.src = img.getAttribute('data-full');
-        });
     </script>
 </body>
 
