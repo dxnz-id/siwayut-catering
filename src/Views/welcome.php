@@ -254,6 +254,11 @@
         'eventMap' => $eventMap,
     ], JSON_UNESCAPED_UNICODE) ?></script>
 
+    <script src="/assets/js/modules/turnstile.js"></script>
+    <script src="/assets/js/modules/file-upload.js"></script>
+    <script src="/assets/js/modules/progressive-image.js"></script>
+    <script src="/assets/js/modules/load-more-menu.js"></script>
+    <script src="/assets/js/modules/ai-description.js"></script>
     <script src="/assets/js/app.js?v=2"></script>
 
     <script>

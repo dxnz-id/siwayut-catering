@@ -1,0 +1,9 @@
+@layer utilities {
+  .transition-all {
+    transition: all 150ms ease;
+  }
+
+  .transition-transform {
+    transition: transform 150ms ease;
+  }
+}

@@ -1,4 +1,11 @@
 @import "tailwindcss";
+@import "./tokens.css";
+@import "./base.css";
+@import "./utilities.css";
+@import "./components/file-upload.css";
+@import "./components/progressive-image.css";
+@import "./pages/landing.css";
+@import "tailwindcss";
 
 @theme {
   /* Core */

@@ -21,6 +21,11 @@
     <div class="min-h-screen flex items-center justify-center p-4 relative z-1">
         <?= $content ?? '' ?>
     </div>
+    <script src="/assets/js/modules/turnstile.js"></script>
+    <script src="/assets/js/modules/file-upload.js"></script>
+    <script src="/assets/js/modules/progressive-image.js"></script>
+    <script src="/assets/js/modules/load-more-menu.js"></script>
+    <script src="/assets/js/modules/ai-description.js"></script>
     <script src="/assets/js/app.js"></script>
 </body>
 </html>
