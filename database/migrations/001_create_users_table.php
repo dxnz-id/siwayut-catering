@@ -1,0 +1,26 @@
+<?php
+declare(strict_types=1);
+
+namespace Database\Migrations;
+
+use App\Core\BaseMigration;
+
+class CreateUsersTable extends BaseMigration {
+    protected string $filename = '001_create_users_table';
+
+    public function up(): string {
+        return "CREATE TABLE IF NOT EXISTS `users` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `password` VARCHAR(255) NOT NULL,
+    `role` VARCHAR(50) NOT NULL DEFAULT 'user',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    }
+
+    public function down(): string {
+        return "DROP TABLE IF EXISTS `users`";
+    }
+}

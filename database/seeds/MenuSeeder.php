@@ -1,44 +1,23 @@
 <?php
 declare(strict_types=1);
-// File: database/seeds/MenuSeeder.php
 
 namespace Database\Seeds;
 
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', dirname(__DIR__, 2));
-}
-
-require BASE_PATH . '/vendor/autoload.php';
-
-if (file_exists(BASE_PATH . '/.env')) {
-    $env = parse_ini_file(BASE_PATH . '/.env');
-    if ($env !== false) {
-        foreach ($env as $key => $value) {
-            $_ENV[$key] = $value;
-        }
-    }
-}
-
-if (!defined('APP_NAME')) {
-    require BASE_PATH . '/config/app.php';
-}
-
-use App\Core\Database;
 use App\Services\FileUploadService;
 
 class MenuSeeder {
-    public static function run(): void {
-        $db = Database::getInstance();
+    public function __construct(
+        private \PDO $db,
+        private FileUploadService $fileUpload,
+    ) {}
 
-        // Clear existing records to prevent duplicates and integrity check errors
-        echo "Clearing existing menus, events, and categories...\n";
-        $db->exec("SET FOREIGN_KEY_CHECKS = 0");
-        $db->exec("TRUNCATE TABLE `menus`");
-        $db->exec("TRUNCATE TABLE `events`");
-        $db->exec("TRUNCATE TABLE `categories`");
-        $db->exec("SET FOREIGN_KEY_CHECKS = 1");
+    public function run(): void {
+        $this->db->exec("SET FOREIGN_KEY_CHECKS = 0");
+        $this->db->exec("TRUNCATE TABLE `menus`");
+        $this->db->exec("TRUNCATE TABLE `events`");
+        $this->db->exec("TRUNCATE TABLE `categories`");
+        $this->db->exec("SET FOREIGN_KEY_CHECKS = 1");
 
-        // 1. Seed Categories
         $categories = [
             ['name' => 'Paket Katering', 'slug' => 'paket-katering'],
             ['name' => 'Menu Ala Carte', 'slug' => 'menu-ala-carte'],
@@ -47,15 +26,14 @@ class MenuSeeder {
         ];
 
         echo "Seeding categories...\n";
-        $stmtCategory = $db->prepare("INSERT INTO `categories` (`name`, `slug`, `created_at`, `updated_at`) VALUES (?, ?, NOW(), NOW())");
+        $stmtCategory = $this->db->prepare("INSERT INTO `categories` (`name`, `slug`, `created_at`, `updated_at`) VALUES (?, ?, NOW(), NOW())");
         $catIds = [];
         foreach ($categories as $kat) {
             $stmtCategory->execute([$kat['name'], $kat['slug']]);
-            $catIds[$kat['slug']] = $db->lastInsertId();
+            $catIds[$kat['slug']] = $this->db->lastInsertId();
             echo "  Created Category: {$kat['name']}\n";
         }
 
-        // 2. Seed Events (Hari Raya)
         $events = [
             [
                 'name' => 'Idul Fitri 2026',
@@ -78,17 +56,15 @@ class MenuSeeder {
         ];
 
         echo "Seeding events...\n";
-        $stmtEvent = $db->prepare("INSERT INTO `events` (`name`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, NOW(), NOW())");
+        $stmtEvent = $this->db->prepare("INSERT INTO `events` (`name`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, NOW(), NOW())");
         $eventIds = [];
         foreach ($events as $ev) {
             $stmtEvent->execute([$ev['name'], $ev['start_date'], $ev['end_date'], $ev['status']]);
-            $eventIds[$ev['name']] = $db->lastInsertId();
+            $eventIds[$ev['name']] = $this->db->lastInsertId();
             echo "  Created Event: {$ev['name']}\n";
         }
 
-        // 3. Seed Menus
         $menus = [
-            // Idul Fitri
             [
                 'name' => 'Paket Ketupat Lebaran Komplit',
                 'description' => 'Ketupat janur empuk, Opor Ayam Kampung gurih, Sambal Goreng Kentang Ati Ampela, Sayur Labu Siam manis, Bubuk Koya, Kerupuk Udang, dan Sambal Bajak.',
@@ -129,8 +105,6 @@ class MenuSeeder {
                 'image' => 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
-
-            // Natal
             [
                 'name' => 'Roasted Rosemary Chicken Premium',
                 'description' => 'Ayam panggang utuh berbumbu rempah segar rosemary, bawang putih, olive oil, disajikan dengan saus gravy, kentang panggang, dan mix vegetables.',
@@ -161,8 +135,6 @@ class MenuSeeder {
                 'image' => 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
-
-            // Imlek
             [
                 'name' => 'Lontong Cap Go Meh Komplit',
                 'description' => 'Lontong empuk, Opor Ayam, Lodeh Labu Siam, Sambal Goreng Rebung, Telur Petis, Bubuk Kedelai Bubuk, dan Kerupuk.',
@@ -192,12 +164,7 @@ class MenuSeeder {
                 'minimum_portions' => 1,
                 'image' => 'https://images.unsplash.com/photo-1605807646983-377bc5a76493?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
-            ]
-        ];
-
-        // Additional menus to reach 20 items
-        $menus = array_merge($menus, [
-            // Idul Fitri
+            ],
             [
                 'name' => 'Rendang Daging Sapi Padang',
                 'description' => 'Daging sapi pilihan dimasak perlahan dengan santan kental dan 15 rempah pilihan hingga hitam pekat, gurih, dan empuk. Cocok disantap dengan ketupat.',
@@ -228,8 +195,6 @@ class MenuSeeder {
                 'image' => 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
-
-            // Natal
             [
                 'name' => 'Ikan Kakap Asam Manis',
                 'description' => 'Ikan kakap merah segar digoreng garing krispi, disiram saus asam manis kental dengan potongan nanas, paprika, dan bawang bombay.',
@@ -260,8 +225,6 @@ class MenuSeeder {
                 'image' => 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
-
-            // Imlek
             [
                 'name' => 'Yee Sang (Salad Ikan)',
                 'description' => 'Salad ikan salmon asap dengan irisan sayuran segar berwarna-warni, saus plum asam manis, dan taburan biji wijen. Disajikan dingin.',
@@ -302,11 +265,10 @@ class MenuSeeder {
                 'image' => 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=500&q=80',
                 'status' => 'active'
             ],
-        ]);
+        ];
 
         echo "Seeding menus...\n";
-        $fileUpload = new FileUploadService(BASE_PATH . '/storage/uploads');
-        $stmtMenu = $db->prepare(
+        $stmtMenu = $this->db->prepare(
             "INSERT INTO `menus` (`name`, `description`, `price`, `category_id`, `event_id`, `minimum_portions`, `image`, `status`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())"
         );
 
@@ -322,7 +284,7 @@ class MenuSeeder {
             $image = $m['image'];
             if (str_starts_with($image, 'http')) {
                 try {
-                    $image = $fileUpload->uploadFromUrl($image, 'menus');
+                    $image = $this->fileUpload->uploadFromUrl($image, 'menus');
                     echo "  Downloaded image for: {$m['name']}\n";
                 } catch (\RuntimeException $e) {
                     echo "  Warning: Failed to download image for {$m['name']}: {$e->getMessage()}\n";
@@ -344,5 +306,3 @@ class MenuSeeder {
         }
     }
 }
-
-MenuSeeder::run();
