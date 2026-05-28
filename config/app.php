@@ -8,8 +8,8 @@ define('APP_DEBUG',    filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_B
 define('APP_URL',      $_ENV['APP_URL']       ?? 'http://localhost');
 define('APP_KEY',      $_ENV['APP_KEY']       ?? '');
 define('TURNSTILE_ENABLED',    filter_var($_ENV['TURNSTILE_ENABLED'] ?? false, FILTER_VALIDATE_BOOLEAN));
-define('TURNSTILE_SITE_KEY',   $_ENV['TURNSTILE_SITE_KEY']   ?? '');
-define('TURNSTILE_SECRET_KEY', $_ENV['TURNSTILE_SECRET_KEY'] ?? '');
+define('TURNSTILE_SITE_KEY',   $_ENV['TURNSTILE_SITE_KEY_MANAGED']   ?? '');
+define('TURNSTILE_SECRET_KEY', $_ENV['TURNSTILE_SECRET_KEY_MANAGED'] ?? '');
 
 date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Asia/Jakarta');
 

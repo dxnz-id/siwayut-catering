@@ -31,6 +31,6 @@ class Turnstile {
 
     public static function widget(): string {
         if (!self::enabled()) return '';
-        return '<div class="cf-turnstile" data-sitekey="' . TURNSTILE_SITE_KEY . '" data-theme="dark" data-callback="onTurnstileSuccess"></div>';
+        return '<div class="cf-turnstile" data-sitekey="' . TURNSTILE_SITE_KEY . '" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div>';
     }
 }

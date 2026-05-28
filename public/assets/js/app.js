@@ -18,6 +18,28 @@ function getFileTypeLabel(mime) {
     return map[mime] || mime;
 }
 
+function setTurnstileSubmitState(enabled) {
+    document.querySelectorAll('[data-turnstile-submit]').forEach(function (btn) {
+        btn.disabled = !enabled;
+    });
+}
+
+function onTurnstileSuccess(token) {
+    setTurnstileSubmitState(true);
+}
+
+function onTurnstileError() {
+    setTurnstileSubmitState(false);
+}
+
+function onTurnstileExpired() {
+    setTurnstileSubmitState(false);
+}
+
+window.onTurnstileSuccess = onTurnstileSuccess;
+window.onTurnstileError = onTurnstileError;
+window.onTurnstileExpired = onTurnstileExpired;
+
 function initFileUploadZone(zone) {
     var input = zone.querySelector('.file-upload-input');
     var placeholder = zone.querySelector('.file-upload-placeholder');

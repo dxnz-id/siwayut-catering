@@ -94,9 +94,14 @@
                         placeholder="E.g. additional requests, delivery time, etc."><?= \App\Core\View::e(old('notes')) ?></textarea>
                 </div>
 
-                <?= \App\Core\Turnstile::widget() ?>
+                <?php if (\App\Core\Turnstile::enabled()): ?>
+                    <div class="mt-6 flex justify-center">
+                        <?= \App\Core\Turnstile::widget() ?>
+                    </div>
+                <?php endif; ?>
 
                 <button type="submit" id="submit-btn"
+                    data-turnstile-submit="1"
                     <?= \App\Core\Turnstile::enabled() ? 'disabled' : '' ?>
                     class="w-full py-[0.85rem] bg-gold border border-gold rounded-xl text-white text-base font-semibold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_15px_var(--color-gold-glow)] hover:bg-primary-hover hover:border-primary-hover hover:-translate-y-0.5 hover:shadow-[0_0_25px_var(--color-gold-glow)] font-body">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
@@ -111,13 +116,6 @@
         <div class="text-center text-muted text-xs mt-8 pb-8">
             <a href="/" class="text-gold no-underline hover:text-gold">Siwayut Catering</a> — Exquisite Taste For Your Most Sacred Moments
         </div>
-    <?php if (\App\Core\Turnstile::enabled()): ?>
-    <script>
-    function onTurnstileSuccess(token) {
-        document.getElementById('submit-btn').disabled = false;
-    }
-    </script>
-    <?php endif; ?>
     </main>
 </body>
 
