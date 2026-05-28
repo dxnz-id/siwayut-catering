@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Database\Seeds;
 
+use App\Core\Encryptor;
+
 class AdminSeeder {
     public function __construct(private \PDO $db) {}
 
@@ -20,7 +22,7 @@ class AdminSeeder {
         $stmt->execute([
             'Administrator',
             'admin@admin.com',
-            password_hash('password', PASSWORD_DEFAULT),
+            password_hash(Encryptor::hmac('password'), PASSWORD_DEFAULT),
             'admin',
             date('Y-m-d H:i:s'),
             date('Y-m-d H:i:s'),

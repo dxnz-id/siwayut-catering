@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 use App\Models\User;
+use App\Core\Encryptor;
 use App\Exceptions\NotFoundException;
 
 class UserService {
@@ -25,7 +26,7 @@ class UserService {
     }
 
     public function create(array $data): int {
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $data['password'] = password_hash(Encryptor::hmac($data['password']), PASSWORD_DEFAULT);
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->userModel->create($data);
@@ -34,7 +35,7 @@ class UserService {
     public function update(int $id, array $data): bool {
         $this->getById($id); // ensure exists
         if (isset($data['password']) && $data['password'] !== '') {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            $data['password'] = password_hash(Encryptor::hmac($data['password']), PASSWORD_DEFAULT);
         } else {
             unset($data['password']);
         }
