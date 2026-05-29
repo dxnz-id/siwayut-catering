@@ -23,7 +23,7 @@ set_exception_handler(function (Throwable $e) {
         echo "<p><strong>File:</strong> " . $e->getFile() . " on line " . $e->getLine() . "</p>";
         echo "<pre>" . \App\Core\View::e($e->getTraceAsString()) . "</pre>";
     } else {
-        $message = $isHttpException ? $e->getMessage() : 'An error occurred on our server.';
+        $message = $isHttpException ? $e->getMessage() : 'Terjadi kesalahan pada server kami.';
         if ($statusCode === 404 && file_exists(BASE_PATH . '/src/Views/errors/404.php')) {
             require BASE_PATH . '/src/Views/errors/404.php';
         } elseif (file_exists(BASE_PATH . '/src/Views/errors/500.php')) {

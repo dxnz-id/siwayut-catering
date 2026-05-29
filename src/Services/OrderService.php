@@ -22,6 +22,10 @@ class OrderService {
         return $this->order->find($id);
     }
 
+    public function findByOrderNumber(string $orderNumber): ?array {
+        return $this->order->findByOrderNumber($orderNumber);
+    }
+
     public function getItems(int $orderId): array {
         return $this->order->getItemsByOrderId($orderId);
     }
@@ -96,6 +100,10 @@ class OrderService {
         foreach ($orderItems as $item) {
             $this->order->rawInsertOrderItem($orderId, $item);
         }
+
+        // Generate and update order_number
+        $orderNumber = 'ORD-' . date('Ymd') . '-' . str_pad((string)$orderId, 4, '0', STR_PAD_LEFT);
+        $this->order->update($orderId, ['order_number' => $orderNumber]);
 
         return $orderId;
     }

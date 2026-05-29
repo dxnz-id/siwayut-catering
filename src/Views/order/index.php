@@ -67,7 +67,7 @@ $sortIcon = function($col) use ($s, $d) {
     return '<span class="text-gold"><svg class="inline align-middle" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="' . $arrow . '"/></svg></span>';
 };
 ?>
-                    <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('id') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">ID<?= $sortIcon('id') ?></a></th>
+                    <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('order_number') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Order No<?= $sortIcon('order_number') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('customer_name') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Customer<?= $sortIcon('customer_name') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('items_count') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Items<?= $sortIcon('items_count') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('event_date') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Event Date<?= $sortIcon('event_date') ?></a></th>
@@ -79,7 +79,7 @@ $sortIcon = function($col) use ($s, $d) {
             <tbody>
                 <?php foreach ($orders as $order): ?>
                 <tr class="cursor-pointer hover:bg-white/[0.03]" onclick="location.href='/orders/<?= (int)$order['id'] ?>'">
-                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= $order['id'] ?></td>
+                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text font-medium"><?= htmlspecialchars($order['order_number']) ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
                         <div class="font-medium"><?= e($order['customer_name'] ?? 'Unknown') ?></div>
                         <div class="text-[0.8125rem] text-muted"><?= e($order['customer_phone'] ?? '-') ?></div>

@@ -48,30 +48,45 @@ $router->group(['prefix' => '/api', 'middleware' => ['auth']], function ($router
 });
 ```
 
-### Tabel rute (`config/routes.php`)
+### Tabel Rute dari `config/routes.php`
 
-CRUD admin memakai **modal di halaman index** — tidak ada rute GET `/create` atau `/edit`.
-
-| Metode | URI | Handler | Middleware |
-|--------|-----|---------|------------|
+| Metode | URI | Penangan (Handler) | Middleware |
+|--------|-----|--------------------|------------|
 | GET | `/` | `WelcomeController@index` | — |
-| GET | `/auth` | `AuthController@index` | — |
-| POST | `/auth/login` | `AuthController@login` | — |
-| POST | `/auth/register` | `AuthController@register` | — |
-| GET | `/login` | `AuthController@loginPageRedirect` | — |
+| GET | `/login` | `AuthController@index` | — |
 | POST | `/login` | `AuthController@login` | — |
 | POST | `/logout` | `AuthController@logout` | — |
-| GET/POST | `/order-form` | `OrderController@publicForm` / `publicSubmit` | — |
-| GET/POST | `/track-order`, GET `/track-order/{id}` | Pelacakan pesanan | — |
-| GET | `/api/menus` | `WelcomeController@apiMenus` | — |
-| GET/POST/DELETE* | `/users`, `/events`, `/categories` | CRUD + `GET /api/{resource}/{id}` | auth, role:admin |
-| GET | `/menus`, `/menus/{id}` | Daftar + detail menu | auth, role:admin |
-| POST | `/menus/generate-description` | Deskripsi AI | auth, role:admin |
-| GET/POST | `/orders`, `/orders/{id}` | Daftar, buat, detail, update | auth, role:admin |
+| GET | `/users` | `UserController@index` | auth, role:admin |
+| GET | `/users/create` | `UserController@create` | auth, role:admin |
+| POST | `/users` | `UserController@store` | auth, role:admin |
+| GET | `/users/{id}/edit` | `UserController@edit` | auth, role:admin |
+| POST | `/users/{id}` | `UserController@update` | auth, role:admin |
+| POST | `/users/{id}/delete` | `UserController@destroy` | auth, role:admin |
+| GET | `/events` | `EventController@index` | auth, role:admin |
+| GET | `/events/create` | `EventController@create` | auth, role:admin |
+| POST | `/events` | `EventController@store` | auth, role:admin |
+| GET | `/events/{id}/edit` | `EventController@edit` | auth, role:admin |
+| POST | `/events/{id}` | `EventController@update` | auth, role:admin |
+| POST | `/events/{id}/delete` | `EventController@destroy` | auth, role:admin |
+| GET | `/categories` | `CategoryController@index` | auth, role:admin |
+| GET | `/categories/create` | `CategoryController@create` | auth, role:admin |
+| POST | `/categories` | `CategoryController@store` | auth, role:admin |
+| GET | `/categories/{id}/edit` | `CategoryController@edit` | auth, role:admin |
+| POST | `/categories/{id}` | `CategoryController@update` | auth, role:admin |
+| POST | `/categories/{id}/delete` | `CategoryController@destroy` | auth, role:admin |
+| GET | `/menus` | `MenuController@index` | auth, role:admin |
+| GET | `/menus/create` | `MenuController@create` | auth, role:admin |
+| POST | `/menus` | `MenuController@store` | auth, role:admin |
+| GET | `/menus/{id}/edit` | `MenuController@edit` | auth, role:admin |
+| POST | `/menus/{id}` | `MenuController@update` | auth, role:admin |
+| POST | `/menus/{id}/delete` | `MenuController@destroy` | auth, role:admin |
+| GET | `/orders` | `OrderController@index` | auth, role:admin |
+| GET | `/orders/create` | `OrderController@create` | auth, role:admin |
+| POST | `/orders` | `OrderController@store` | auth, role:admin |
+| GET | `/orders/{id}/edit` | `OrderController@edit` | auth, role:admin |
+| POST | `/orders/{id}` | `OrderController@update` | auth, role:admin |
 
-\* Hapus via `POST /{resource}/{id}/delete`.
-
-Lihat lengkap: `php vanilla routes` (39 rute)
+Melihat tabel rute secara langsung: `php vanilla routes`
 
 ## Parameter Rute (Route Parameters)
 

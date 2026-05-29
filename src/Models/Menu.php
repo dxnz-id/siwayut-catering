@@ -7,9 +7,10 @@ class Menu extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'menus';
-        $this->sortableColumns = ['id', 'name', 'price', 'category_id', 'status', 'created_at', 'order_count'];
+        $this->sortableColumns = ['id', 'menu_code', 'name', 'price', 'category_id', 'status', 'created_at', 'order_count'];
         $this->searchableColumns = [
             'id',
+            'menu_code',
             'name',
             'description',
             'price',
@@ -21,6 +22,15 @@ class Menu extends BaseModel {
             'created_at',
             'updated_at',
         ];
+    }
+
+    public function create(array $data): int {
+        $id = parent::create($data);
+        if ($id > 0) {
+            $code = 'MNU-' . str_pad((string)$id, 4, '0', STR_PAD_LEFT);
+            $this->update($id, ['menu_code' => $code]);
+        }
+        return $id;
     }
 
     public function countByCategoryIds(array $ids): array {

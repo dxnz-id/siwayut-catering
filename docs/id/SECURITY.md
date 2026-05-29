@@ -8,8 +8,7 @@
 | **XSS** | Output escaping | `View::e()` → `htmlspecialchars(ENT_QUOTES, UTF-8)` |
 | **CSRF** | Verifikasi token | `Csrf::token()` + `Csrf::verify()` via `CsrfMiddleware` |
 | **Session Hijacking** | Regenerasi sesi | `Session::regenerate()` saat login |
-| **Password Cracking** | HMAC + Bcrypt | `password_hash(Encryptor::hmac($plain), PASSWORD_DEFAULT)` |
-| **Bot (form publik)** | Cloudflare Turnstile (opsional) | `Turnstile::verify()` |
+| **Password Cracking** | Hashing Bcrypt | `password_hash(PASSWORD_DEFAULT)` / `password_verify()` |
 
 ## Perlindungan CSRF
 
@@ -102,20 +101,14 @@ Semua output yang dikirimkan ke peramban (browser) harus di-escape:
 
 Kontrak: `htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8')`.
 
-## APP_KEY dan kata sandi
+## Penanganan Kata Sandi
 
-Kata sandi di-HMAC dengan `APP_KEY` sebelum bcrypt:
+| Operasi | Fungsi | Digunakan Di |
+|---------|--------|--------------|
+| Hash saat buat/edit | `password_hash($password, PASSWORD_DEFAULT)` | `UserService::create()`, `UserService::update()` |
+| Verifikasi saat login | `password_verify($input, $hash)` | `AuthService::login()` |
 
-```php
-password_hash(Encryptor::hmac($plain), PASSWORD_DEFAULT);
-password_verify(Encryptor::hmac($input), $hash);
-```
-
-`APP_KEY` wajib diisi di `.env` sebelum login, registrasi, atau seed.
-
-## Cloudflare Turnstile (opsional)
-
-Jika `TURNSTILE_ENABLED=true`, endpoint POST publik memverifikasi `cf-turnstile-response` (`AuthController`, `OrderController`). Env: `TURNSTILE_SITE_KEY_MANAGED`, `TURNSTILE_SECRET_KEY_MANAGED`.
+Faktor biaya Bcrypt: default PHP (saat ini bernilai 10).
 
 ## Keamanan Sesi (Session Security)
 
@@ -128,12 +121,12 @@ Jika `TURNSTILE_ENABLED=true`, endpoint POST publik memverifikasi `cf-turnstile-
 ## Alur Autentikasi (Auth Flow)
 
 ```
-Halaman auth (GET /auth)
+Formulir Login (GET /login)
      │
      ▼
-POST /auth/login (email + password + Turnstile opsional)
+POST /login (email + password + _csrf_token)
      │
-     ├── Turnstile::verify() (jika diaktifkan)
+     ├── CsrfMiddleware::handle() → verifikasi token
      │
      ├── AuthController::login()
      │     ├── Validasi input (email wajib, kata sandi wajib)

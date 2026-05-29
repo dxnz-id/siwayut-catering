@@ -8,8 +8,7 @@
 | **XSS** | Output escaping | `View::e()` → `htmlspecialchars(ENT_QUOTES, UTF-8)` |
 | **CSRF** | Token verification | `Csrf::token()` + `Csrf::verify()` via `CsrfMiddleware` |
 | **Session Hijacking** | Session regeneration | `Session::regenerate()` on login |
-| **Password Cracking** | HMAC + Bcrypt | `password_hash(Encryptor::hmac($plain), PASSWORD_DEFAULT)` |
-| **Bot abuse (public forms)** | Cloudflare Turnstile (optional) | `Turnstile::verify()` on login, register, order, track |
+| **Password Cracking** | Bcrypt hashing | `password_hash(PASSWORD_DEFAULT)` / `password_verify()` |
 
 ## CSRF Protection
 
@@ -102,37 +101,14 @@ All user-facing output must be escaped:
 
 Contract: `htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8')`.
 
-## APP_KEY and password handling
+## Password Handling
 
-Passwords are **never** hashed directly. The app derives an HMAC with `APP_KEY` first, then bcrypts the result:
+| Operation | Function | Used In |
+|-----------|----------|---------|
+| Hash on create/update | `password_hash($password, PASSWORD_DEFAULT)` | `UserService::create()`, `UserService::update()` |
+| Verify on login | `password_verify($input, $hash)` | `AuthService::login()` |
 
-```php
-password_hash(Encryptor::hmac($plainPassword), PASSWORD_DEFAULT);
-password_verify(Encryptor::hmac($input), $storedHash);
-```
-
-| Requirement | Detail |
-|-------------|--------|
-| `APP_KEY` in `.env` | Required before login, registration, or seeding users |
-| Format | Plain string or `base64:` + 32 bytes (see `Encryptor::key()`) |
-| Used in | `AuthService`, `UserService`, `AdminSeeder` |
-
-Bcrypt uses PHP's default cost (currently 10).
-
-## Cloudflare Turnstile (optional)
-
-When `TURNSTILE_ENABLED=true`, public POST endpoints verify `cf-turnstile-response`:
-
-| Endpoint | Controller |
-|----------|------------|
-| `POST /auth/login`, `POST /login` | `AuthController::login` |
-| `POST /auth/register` | `AuthController::register` |
-| `POST /order-form` | `OrderController::publicSubmit` |
-| `POST /track-order` | `OrderController::track` |
-
-Env keys: `TURNSTILE_SITE_KEY_MANAGED`, `TURNSTILE_SECRET_KEY_MANAGED` (mapped to `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` constants in `config/app.php`).
-
-Widget markup: `Turnstile::widget()` in auth and order views. JS: `public/assets/js/modules/turnstile.js`.
+Bcrypt cost factor: PHP default (currently 10).
 
 ## Session Security
 
@@ -145,12 +121,12 @@ Widget markup: `Turnstile::widget()` in auth and order views. JS: `public/assets
 ## Auth Flow
 
 ```
-Auth page (GET /auth) — login + register tabs
+Login Form (GET /login)
      │
      ▼
-POST /auth/login or POST /login (email + password + optional Turnstile)
+POST /login (email + password + _csrf_token)
      │
-     ├── Turnstile::verify() (if enabled)
+     ├── CsrfMiddleware::handle() → verify token
      │
      ├── AuthController::login()
      │     ├── Validate input (required email, required password)

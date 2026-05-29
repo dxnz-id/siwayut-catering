@@ -7,7 +7,7 @@ class Order extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'orders';
-        $this->sortableColumns = ['id', 'customer_id', 'event_id', 'event_date', 'total_price', 'status', 'payment_status', 'created_at', 'customer_name', 'items_count'];
+        $this->sortableColumns = ['id', 'order_number', 'customer_id', 'event_id', 'event_date', 'total_price', 'status', 'payment_status', 'created_at', 'customer_name', 'items_count'];
     }
 
     public function find(int $id): ?array {
@@ -16,6 +16,15 @@ FROM `{$this->table}` o
 INNER JOIN `customers` c ON c.`id` = o.`customer_id`
 WHERE o.`id` = ? LIMIT 1";
         $results = $this->query($sql, [$id]);
+        return $results[0] ?? null;
+    }
+
+    public function findByOrderNumber(string $orderNumber): ?array {
+        $sql = "SELECT o.*, c.`name` AS customer_name, c.`phone` AS customer_phone
+FROM `{$this->table}` o
+INNER JOIN `customers` c ON c.`id` = o.`customer_id`
+WHERE o.`order_number` = ? LIMIT 1";
+        $results = $this->query($sql, [$orderNumber]);
         return $results[0] ?? null;
     }
 
@@ -85,6 +94,7 @@ LIMIT ?";
             $searchLike = '%' . $search . '%';
             $clauses[] = '(' . implode(' OR ', [
                 'CAST(o.`id` AS CHAR) LIKE ?',
+                'o.`order_number` LIKE ?',
                 'CAST(o.`customer_id` AS CHAR) LIKE ?',
                 'CAST(o.`event_id` AS CHAR) LIKE ?',
                 'o.`event_date` LIKE ?',
@@ -102,7 +112,7 @@ LIMIT ?";
                 'c.`notes` LIKE ?',
                 'EXISTS (SELECT 1 FROM `order_items` oi2 INNER JOIN `menus` m2 ON m2.`id` = oi2.`menu_id` WHERE oi2.`order_id` = o.`id` AND m2.`name` LIKE ?)',
             ]) . ')';
-            for ($i = 0; $i < 16; $i++) {
+            for ($i = 0; $i < 17; $i++) {
                 $bindings[] = $searchLike;
             }
             $bindings[] = $searchLike;

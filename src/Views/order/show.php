@@ -23,7 +23,7 @@
             </div>
             <div class="text-center relative z-[1]">
                 <div class="text-xs text-muted/50 uppercase tracking-widest font-medium mb-1">Order</div>
-                <div class="font-display text-5xl md:text-6xl font-bold text-white/10 tracking-tight select-none">#<?= (int)$order['id'] ?></div>
+                <div class="font-display text-4xl md:text-5xl font-bold text-white/10 tracking-tight select-none"><?= htmlspecialchars($order['order_number']) ?></div>
             </div>
         </div>
 
@@ -57,7 +57,7 @@
                             </span>
                             <span class="text-[0.7rem] text-muted uppercase tracking-widest">Order</span>
                         </div>
-                        <h1 class="text-2xl md:text-3xl font-bold font-display text-text leading-tight">Order <span class="text-gold">#<?= (int)$order['id'] ?></span></h1>
+                        <h1 class="text-2xl md:text-3xl font-bold font-display text-text leading-tight">Order <span class="text-gold"><?= htmlspecialchars($order['order_number']) ?></span></h1>
                     </div>
                 </div>
                 <div class="text-right shrink-0">

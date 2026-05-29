@@ -21,10 +21,10 @@ class OrderSeeder {
         $this->db->query("SET FOREIGN_KEY_CHECKS = 1");
 
         $customers = [
-            ['name' => 'Budi Santoso', 'phone' => '081234567890', 'email' => 'budi.santoso@example.com', 'address' => '10 Merdeka St, Jakarta', 'notes' => 'VIP customer'],
-            ['name' => 'Siti Aminah', 'phone' => '089876543210', 'email' => 'siti.aminah@example.com', 'address' => '25 Sudirman St, Bandung', 'notes' => ''],
-            ['name' => 'Agus Pratama', 'phone' => '085612349876', 'email' => 'agus.p@example.com', 'address' => 'Indah Housing Block C2, Surabaya', 'notes' => 'Please call before delivery'],
-            ['name' => 'Rina Melati', 'phone' => '087711223344', 'email' => 'rina.melati@example.com', 'address' => '5 Mawar St, Yogyakarta', 'notes' => ''],
+            ['name' => 'Budi Santoso', 'phone' => '081234567890', 'email' => 'budi.santoso@example.com', 'address' => 'Jl. Merdeka No. 10, Jakarta', 'notes' => 'Customer VIP'],
+            ['name' => 'Siti Aminah', 'phone' => '089876543210', 'email' => 'siti.aminah@example.com', 'address' => 'Jl. Sudirman No. 25, Bandung', 'notes' => ''],
+            ['name' => 'Agus Pratama', 'phone' => '085612349876', 'email' => 'agus.p@example.com', 'address' => 'Perumahan Indah Blok C2, Surabaya', 'notes' => 'Tolong hubungi sebelum pengiriman'],
+            ['name' => 'Rina Melati', 'phone' => '087711223344', 'email' => 'rina.melati@example.com', 'address' => 'Jl. Mawar 5, Yogyakarta', 'notes' => ''],
         ];
 
         $customerIds = [];
@@ -55,12 +55,12 @@ class OrderSeeder {
             $status = $statuses[array_rand($statuses)];
 
             $notesOptions = [
-                'Please deliver on time',
-                'Not too spicy, please',
-                'Neat packaging appreciated',
+                'Tolong dikirim tepat waktu ya',
+                'Makanan jangan terlalu pedas',
+                'Tolong packing yang rapi',
                 '',
                 '',
-                'Coordinate with front security on delivery'
+                'Koordinasi dengan satpam depan saat pengiriman'
             ];
             $notes = $notesOptions[array_rand($notesOptions)];
 
@@ -69,7 +69,7 @@ class OrderSeeder {
             $deliveryAddress = $stmtAddr->fetchColumn();
 
             if (rand(1, 10) > 8) {
-                $deliveryAddress = "Multipurpose Hall, " . $deliveryAddress;
+                $deliveryAddress = "Gedung Serbaguna, " . $deliveryAddress;
             }
 
             $now = date('Y-m-d H:i:s', strtotime("-" . rand(0, 10) . " days"));

@@ -36,11 +36,11 @@
             <form action="/track-order" method="POST">
                 <?= \App\Core\Csrf::field() ?>
                 <div class="mb-5">
-                    <label for="order_id" class="block text-sm font-medium mb-1 text-muted">Order Number</label>
-                    <input type="text" id="order_id" name="order_id"
+                    <label for="order_number" class="block text-sm font-medium mb-1 text-muted">Order Number</label>
+                    <input type="text" id="order_number" name="order_number"
                         class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl font-body leading-relaxed text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20"
-                        placeholder="E.g. 1"
-                        value="<?= \App\Core\View::e(old('order_id')) ?>" required>
+                        placeholder="E.g. ORD-20231124-0001"
+                        value="<?= \App\Core\View::e(old('order_number')) ?>" required>
                 </div>
                 <div class="mb-5">
                     <label for="phone" class="block text-sm font-medium mb-1 text-muted">Phone Number (when ordering)</label>

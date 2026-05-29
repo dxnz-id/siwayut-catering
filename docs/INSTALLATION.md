@@ -6,9 +6,8 @@
 |-------------|---------|
 | PHP | ^8.2 |
 | Composer | ^2.0 |
-| Node.js | ^18 (for Tailwind CSS build) |
 | MySQL / MariaDB | ^8.0 / ^10.6 |
-| PHP Extensions | `pdo`, `pdo_mysql`, `mbstring`, `curl`, `gd` |
+| PHP Extensions | `pdo`, `pdo_mysql`, `mbstring` |
 
 Verify prerequisites:
 
@@ -25,8 +24,6 @@ mysql --version                 # Must show 8.0+ or MariaDB 10.6+
 git clone <repository-url> siwayut-catering
 cd siwayut-catering
 composer install
-npm install
-npm run css:build
 ```
 
 ## Environment Configuration
@@ -39,30 +36,20 @@ Edit `.env` with your settings:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `APP_NAME` | Application display name | `Siwayut` |
-| `APP_KEY` | Secret for password HMAC (**required** for login/seed) | *(empty)* |
+| `APP_NAME` | Application display name | `My App` |
 | `APP_ENV` | Environment (`local`, `production`) | `local` |
 | `APP_DEBUG` | Show detailed errors (`true`/`false`) | `true` |
 | `APP_TIMEZONE` | PHP timezone | `Asia/Jakarta` |
-| `APP_URL` | Base URL for `asset()` / `url()` helpers | `http://localhost` |
+| `APP_URL` | Base URL for asset/url helpers | `http://localhost` |
 | `DB_DRIVER` | PDO driver | `mysql` |
 | `DB_HOST` | Database host | `127.0.0.1` |
 | `DB_PORT` | Database port | `3306` |
-| `DB_DATABASE` | Database name | `siwayut_catering` |
+| `DB_DATABASE` | Database name | `myapp` |
 | `DB_USERNAME` | Database username | `root` |
 | `DB_PASSWORD` | Database password | *(empty)* |
-| `AI_API_URL` | OpenAI-compatible API base URL | *(see `.env.example`)* |
+| `AI_API_URL` | OpenAI-compatible API base URL (e.g. `https://generativelanguage.googleapis.com/v1beta/openai/`) | *(empty)* |
 | `AI_API_KEY` | API key for the AI provider | *(empty)* |
-| `AI_MODEL` | Model name (e.g. `gemini-3.1-flash-lite`) | *(empty)* |
-| `TURNSTILE_ENABLED` | Enable Cloudflare Turnstile (`true`/`false`) | `false` |
-| `TURNSTILE_SITE_KEY_MANAGED` | Turnstile site key | *(empty)* |
-| `TURNSTILE_SECRET_KEY_MANAGED` | Turnstile secret key | *(empty)* |
-
-Generate `APP_KEY` (any long random string, or `base64:` + 32 random bytes):
-
-```bash
-php -r "echo 'APP_KEY=base64:' . base64_encode(random_bytes(32)) . PHP_EOL;"
-```
+| `AI_MODEL` | Model name (e.g. `gemini-2.0-flash`, `gpt-4o-mini`) | *(empty)* |
 
 > **Important**: Set `APP_DEBUG=false` in production to prevent exposing stack traces.
 
@@ -79,11 +66,9 @@ php vanilla db:seed --class=AdminSeeder
 Expected output:
 
 ```
-  DONE    Database 'siwayut_catering' created successfully.
-  Migrating: 001_create_users_table
-  DONE    Migrated:  001_create_users_table
-  ...
-  DONE    Ran 10 migration(s).
+  DONE    Database 'myapp' created successfully.
+  DONE    Migrated:  001_create_users_table.sql
+  DONE    Ran 1 migration(s).
   DONE    Database seeding completed.
 ```
 
@@ -103,21 +88,7 @@ Or use Composer:
 composer run dev
 ```
 
-Both start PHP's built-in server at `http://localhost:8000`. `npm run dev` also watches Tailwind source files.
-
-### Uploads symlink
-
-Uploaded images are stored under `storage/uploads/` and exposed at `/uploads/` via:
-
-```
-public/uploads → ../storage/uploads
-```
-
-This symlink is committed in the repository. If missing, recreate it:
-
-```bash
-ln -sfn ../storage/uploads public/uploads
-```
+Both start PHP's built-in server at `http://localhost:8000`.
 
 Expected output:
 
@@ -128,18 +99,16 @@ Expected output:
 
 ## Verify Installation
 
-1. Open `http://localhost:8000` — landing page with menu gallery
-2. Open `http://localhost:8000/auth` — login / register form
-3. Login with `admin@admin.com` / `password` — redirected to `/users` (admin)
+1. Open `http://localhost:8000` — you should see the welcome page
+2. Open `http://localhost:8000/login` — you should see the login form
+3. Login with `admin@admin.com` / `password` — you should be redirected to the users page
 
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
-| `Unknown database` | Run `php vanilla db:create`; check `DB_DATABASE` in `.env` |
-| `Table 'users' doesn't exist` | Run `php vanilla migrate` |
-| `APP_KEY is not set` on login | Set `APP_KEY` in `.env` |
-| Styles missing / unstyled admin | Run `npm run css:build` |
+| `Unknown database 'myapp'` | Run `php vanilla db:create` |
+| `Table 'myapp.users' doesn't exist` | Run `php vanilla migrate` |
 | `Class not found` | Run `composer dump-autoload` |
 | `pdo_mysql not found` | Install: `sudo apt install php-mysql` |
 | Port 8000 in use | Use `php vanilla serve --port=8080` |

@@ -3,54 +3,59 @@
 ## Prasyarat
 
 | Kebutuhan | Versi |
-|-----------|-------|
+|-------------|---------|
 | PHP | ^8.2 |
 | Composer | ^2.0 |
-| Node.js | ^18 (build Tailwind CSS) |
 | MySQL / MariaDB | ^8.0 / ^10.6 |
-| Ekstensi PHP | `pdo`, `pdo_mysql`, `mbstring`, `curl`, `gd` |
+| Ekstensi PHP | `pdo`, `pdo_mysql`, `mbstring` |
+
+Verifikasi prasyarat:
 
 ```bash
-php -v
-composer -V
-php -m | grep -E 'pdo|mbstring|curl|gd'
-mysql --version
+php -v                          # Harus menunjukkan versi 8.2+
+composer -V                     # Harus menunjukkan versi 2.x
+php -m | grep -E 'pdo|mbstring' # Harus mencantumkan pdo, pdo_mysql, mbstring
+mysql --version                 # Harus menunjukkan versi 8.0+ atau MariaDB 10.6+
 ```
 
-## Klon & install
+## Klon (Clone) & Install
 
 ```bash
 git clone <repository-url> siwayut-catering
 cd siwayut-catering
 composer install
-npm install
-npm run css:build
 ```
 
-## Konfigurasi `.env`
+## Konfigurasi Lingkungan (Environment)
 
 ```bash
 cp .env.example .env
 ```
 
-| Variabel | Deskripsi | Default |
-|----------|-----------|---------|
-| `APP_NAME` | Nama aplikasi | `Siwayut` |
-| `APP_KEY` | Rahasia HMAC password (**wajib**) | kosong |
-| `APP_DEBUG` | Tampilkan error detail | `true` |
-| `DB_DATABASE` | Nama database | `siwayut_catering` |
-| `AI_*` | API deskripsi menu (opsional) | lihat `.env.example` |
-| `TURNSTILE_*` | Cloudflare Turnstile (opsional) | `TURNSTILE_ENABLED=false` |
+Edit `.env` sesuai dengan pengaturan Anda:
 
-Generate `APP_KEY`:
+| Variabel | Deskripsi | Bawaan (Default) |
+|----------|-------------|---------|
+| `APP_NAME` | Nama tampilan aplikasi | `My App` |
+| `APP_ENV` | Lingkungan (`local`, `production`) | `local` |
+| `APP_DEBUG` | Tampilkan detail error (`true`/`false`) | `true` |
+| `APP_TIMEZONE` | Zona waktu PHP | `Asia/Jakarta` |
+| `APP_URL` | URL dasar untuk helper aset/url | `http://localhost` |
+| `DB_DRIVER` | Driver PDO | `mysql` |
+| `DB_HOST` | Host database | `127.0.0.1` |
+| `DB_PORT` | Port database | `3306` |
+| `DB_DATABASE` | Nama database | `myapp` |
+| `DB_USERNAME` | Nama pengguna database | `root` |
+| `DB_PASSWORD` | Kata sandi database | *(kosong)* |
+| `AI_API_URL` | URL dasar API AI yang kompatibel dengan OpenAI (contoh: `https://generativelanguage.googleapis.com/v1beta/openai/`) | *(kosong)* |
+| `AI_API_KEY` | Kunci API untuk penyedia AI | *(kosong)* |
+| `AI_MODEL` | Nama model (contoh: `gemini-2.0-flash`, `gpt-4o-mini`) | *(kosong)* |
 
-```bash
-php -r "echo 'APP_KEY=base64:' . base64_encode(random_bytes(32)) . PHP_EOL;"
-```
+> **Penting**: Setel `APP_DEBUG=false` pada lingkungan produksi (production) agar tidak mengekspos rincian sistem (stack traces).
 
-> Produksi: set `APP_DEBUG=false`.
+## Penyiapan Database
 
-## Database
+Gunakan CLI `vanilla` untuk membuat database, menjalankan migrasi, dan seed (mengisi data):
 
 ```bash
 php vanilla db:create
@@ -58,39 +63,55 @@ php vanilla migrate
 php vanilla db:seed --class=AdminSeeder
 ```
 
-Akun admin bawaan: `admin@admin.com` / `password`
+Output yang diharapkan:
 
-## Server pengembangan
+```
+  DONE    Database 'myapp' created successfully.
+  DONE    Migrated:  001_create_users_table.sql
+  DONE    Ran 1 migration(s).
+  DONE    Database seeding completed.
+```
+
+Seeder akan membuat akun admin bawaan:
+- **Email**: `admin@admin.com`
+- **Kata Sandi**: `password`
+
+## Menjalankan Server Pengembangan
 
 ```bash
-php vanilla serve          # hanya PHP
-npm run dev                # PHP + watch Tailwind
-composer run dev           # sama seperti npm run dev
+php vanilla serve
 ```
 
-### Symlink upload
+Atau gunakan Composer:
+
+```bash
+composer run dev
+```
+
+Keduanya akan menjalankan server bawaan PHP pada `http://localhost:8000`.
+
+Output yang diharapkan:
 
 ```
-public/uploads → ../storage/uploads
+  Vanilla Framework v1.0.0 (PHP 8.x.x)
+  INFO    Starting development server on http://localhost:8000
 ```
 
-Jika hilang: `ln -sfn ../storage/uploads public/uploads`
+## Verifikasi Instalasi
 
-## Verifikasi
+1. Buka `http://localhost:8000` — Anda seharusnya melihat halaman beranda.
+2. Buka `http://localhost:8000/login` — Anda seharusnya melihat formulir login.
+3. Login dengan `admin@admin.com` / `password` — Anda seharusnya dialihkan ke halaman pengguna (users).
 
-1. `http://localhost:8000` — landing page
-2. `http://localhost:8000/auth` — login
-3. Login admin → `/users`
-
-## Troubleshooting
+## Pemecahan Masalah (Troubleshooting)
 
 | Masalah | Solusi |
-|---------|--------|
-| Database tidak ada | `php vanilla db:create` |
-| Tabel tidak ada | `php vanilla migrate` |
-| `APP_KEY is not set` | Isi `APP_KEY` di `.env` |
-| Tampilan tanpa CSS | `npm run css:build` |
-| Port 8000 dipakai | `php vanilla serve --port=8080` |
+|---------|----------|
+| `Unknown database 'myapp'` | Jalankan `php vanilla db:create` |
+| `Table 'myapp.users' doesn't exist` | Jalankan `php vanilla migrate` |
+| `Class not found` | Jalankan `composer dump-autoload` |
+| `pdo_mysql not found` | Instal: `sudo apt install php-mysql` |
+| Port 8000 in use | Gunakan `php vanilla serve --port=8080` |
 
 ---
 

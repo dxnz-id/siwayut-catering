@@ -231,7 +231,7 @@
                                     <circle cx="12" cy="12" r="10" />
                                     <polyline points="12 6 12 12 16 14" />
                                 </svg>
-                                <span>Saturday – Thursday: 08:00 – 17:00</span>
+                                <span>Sabtu - Kamis: 08:00 - 17:00</span>
                             </div>
                         </div>
                     </div>

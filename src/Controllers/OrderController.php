@@ -93,31 +93,31 @@ class OrderController extends BaseController {
     }
 
     public function track(Request $request): void {
-        $orderId = $request->input('order_id');
+        $orderNumber = $request->input('order_number');
         $phone = $request->input('phone');
 
         if (!Turnstile::verify($request->input('cf-turnstile-response', ''))) {
-            $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
+            $this->withOldInput(['order_number' => $orderNumber, 'phone' => $phone]);
             Session::flash('error', 'Captcha verification failed.');
             $this->redirect('/track-order');
         }
 
         $validator = new Validator();
-        $validator->validate(['order_id' => $orderId, 'phone' => $phone], [
-            'order_id' => 'required|numeric',
+        $validator->validate(['order_number' => $orderNumber, 'phone' => $phone], [
+            'order_number' => 'required',
             'phone' => 'required|min:10|max:20',
         ]);
 
         if ($validator->fails()) {
-            $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
+            $this->withOldInput(['order_number' => $orderNumber, 'phone' => $phone]);
             $firstError = reset($validator->errors());
             Session::flash('error', $firstError);
             $this->redirect('/track-order');
         }
 
-        $order = $this->orderService->find((int)$orderId);
+        $order = $this->orderService->findByOrderNumber($orderNumber);
         if (!$order) {
-            $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
+            $this->withOldInput(['order_number' => $orderNumber, 'phone' => $phone]);
             Session::flash('error', 'Order not found. Please check your order number.');
             $this->redirect('/track-order');
         }
@@ -127,19 +127,19 @@ class OrderController extends BaseController {
         $cleanCustomerPhone = preg_replace('/[^0-9]/', '', $customer['phone'] ?? '');
 
         if ($cleanCustomerPhone !== $cleanPhone) {
-            $this->withOldInput(['order_id' => $orderId, 'phone' => $phone]);
+            $this->withOldInput(['order_number' => $orderNumber, 'phone' => $phone]);
             Session::flash('error', 'Phone number does not match the order.');
             $this->redirect('/track-order');
         }
 
-        $this->redirect('/track-order/' . $orderId . '?phone=' . urlencode($phone));
+        $this->redirect('/track-order/' . urlencode($orderNumber) . '?phone=' . urlencode($phone));
     }
 
     public function trackResult(Request $request): void {
-        $orderId = (int) $request->param('id');
+        $orderNumber = $request->param('id');
         $phone = $request->input('phone');
 
-        $order = $this->orderService->find($orderId);
+        $order = $this->orderService->findByOrderNumber($orderNumber);
         if (!$order) {
             $this->redirect('/track-order');
         }
@@ -151,11 +151,11 @@ class OrderController extends BaseController {
             $this->redirect('/track-order');
         }
 
-        $items = $this->orderService->getItems($orderId);
+        $items = $this->orderService->getItems((int)$order['id']);
         $event = $this->eventService->find((int)$order['event_id']);
 
         $this->render('order/track-result', [
-            'title' => 'Order Detail #' . $orderId . ' — Siwayut Catering',
+            'title' => 'Order Detail ' . htmlspecialchars($orderNumber) . ' — Siwayut Catering',
             'order' => $order,
             'customer' => $customer,
             'items' => $items,

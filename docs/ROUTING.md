@@ -48,53 +48,45 @@ $router->group(['prefix' => '/api', 'middleware' => ['auth']], function ($router
 });
 ```
 
-### Route table (`config/routes.php`)
-
-Admin CRUD uses **modals on index pages** — there are no `/create` or `/edit` GET routes.
+### Actual route table from `config/routes.php`
 
 | Method | URI | Handler | Middleware |
 |--------|-----|---------|------------|
 | GET | `/` | `WelcomeController@index` | — |
-| GET | `/auth` | `AuthController@index` | — |
-| POST | `/auth/login` | `AuthController@login` | — |
-| POST | `/auth/register` | `AuthController@register` | — |
-| GET | `/login` | `AuthController@loginPageRedirect` | — |
+| GET | `/login` | `AuthController@index` | — |
 | POST | `/login` | `AuthController@login` | — |
 | POST | `/logout` | `AuthController@logout` | — |
-| GET | `/order-form` | `OrderController@publicForm` | — |
-| POST | `/order-form` | `OrderController@publicSubmit` | — |
-| GET | `/track-order` | `OrderController@trackForm` | — |
-| POST | `/track-order` | `OrderController@track` | — |
-| GET | `/track-order/{id}` | `OrderController@trackResult` | — |
-| GET | `/api/menus` | `WelcomeController@apiMenus` | — |
 | GET | `/users` | `UserController@index` | auth, role:admin |
+| GET | `/users/create` | `UserController@create` | auth, role:admin |
 | POST | `/users` | `UserController@store` | auth, role:admin |
+| GET | `/users/{id}/edit` | `UserController@edit` | auth, role:admin |
 | POST | `/users/{id}` | `UserController@update` | auth, role:admin |
 | POST | `/users/{id}/delete` | `UserController@destroy` | auth, role:admin |
-| GET | `/api/users/{id}` | `UserController@apiShow` | auth, role:admin |
 | GET | `/events` | `EventController@index` | auth, role:admin |
+| GET | `/events/create` | `EventController@create` | auth, role:admin |
 | POST | `/events` | `EventController@store` | auth, role:admin |
+| GET | `/events/{id}/edit` | `EventController@edit` | auth, role:admin |
 | POST | `/events/{id}` | `EventController@update` | auth, role:admin |
 | POST | `/events/{id}/delete` | `EventController@destroy` | auth, role:admin |
-| GET | `/api/events/{id}` | `EventController@apiShow` | auth, role:admin |
 | GET | `/categories` | `CategoryController@index` | auth, role:admin |
+| GET | `/categories/create` | `CategoryController@create` | auth, role:admin |
 | POST | `/categories` | `CategoryController@store` | auth, role:admin |
+| GET | `/categories/{id}/edit` | `CategoryController@edit` | auth, role:admin |
 | POST | `/categories/{id}` | `CategoryController@update` | auth, role:admin |
 | POST | `/categories/{id}/delete` | `CategoryController@destroy` | auth, role:admin |
-| GET | `/api/categories/{id}` | `CategoryController@apiShow` | auth, role:admin |
 | GET | `/menus` | `MenuController@index` | auth, role:admin |
-| GET | `/menus/{id}` | `MenuController@show` | auth, role:admin |
+| GET | `/menus/create` | `MenuController@create` | auth, role:admin |
 | POST | `/menus` | `MenuController@store` | auth, role:admin |
-| POST | `/menus/generate-description` | `MenuController@generateDescription` | auth, role:admin |
+| GET | `/menus/{id}/edit` | `MenuController@edit` | auth, role:admin |
 | POST | `/menus/{id}` | `MenuController@update` | auth, role:admin |
 | POST | `/menus/{id}/delete` | `MenuController@destroy` | auth, role:admin |
-| GET | `/api/menus/{id}` | `MenuController@apiShow` | auth, role:admin |
 | GET | `/orders` | `OrderController@index` | auth, role:admin |
+| GET | `/orders/create` | `OrderController@create` | auth, role:admin |
 | POST | `/orders` | `OrderController@store` | auth, role:admin |
-| GET | `/orders/{id}` | `OrderController@show` | auth, role:admin |
+| GET | `/orders/{id}/edit` | `OrderController@edit` | auth, role:admin |
 | POST | `/orders/{id}` | `OrderController@update` | auth, role:admin |
 
-View live: `php vanilla routes` (39 routes)
+View live: `php vanilla routes`
 
 ## Route Parameters
 

@@ -168,71 +168,20 @@ $result = $userModel->paginate(page: 2, perPage: 10);
 $model->all(orderBy: 'malicious_column'); // falls back to 'id'
 ```
 
-## Migration format
+## Migration Format
 
-Migrations are **PHP classes** in `database/migrations/`, extending `App\Core\BaseMigration`:
+Migration files live in `database/migrations/` as plain SQL:
 
 ```
 database/migrations/
-└── 001_create_users_table.php   → Database\Migrations\CreateUsersTable
+└── 001_create_users_table.sql
 ```
 
-| Convention | Example |
-|------------|---------|
-| Filename | `{NNN}_{snake_case_description}.php` |
-| Class name | PascalCase derived from description (`create_users_table` → `CreateUsersTable`) |
-| Namespace | `Database\Migrations` |
-| `up()` / `down()` | Return a SQL `string`, or `string[]` for multiple statements |
+Naming: `{NNN}_{description}.sql` — sequence number + snake_case description.
 
-```php
-<?php
-declare(strict_types=1);
+Create a migration: `php vanilla make:migration create_products_table`
 
-namespace Database\Migrations;
-
-use App\Core\BaseMigration;
-
-class CreateProductsTable extends BaseMigration {
-    protected string $filename = '011_create_products_table';
-
-    public function up(): string {
-        return "CREATE TABLE IF NOT EXISTS `products` ( ... )";
-    }
-
-    public function down(): string {
-        return "DROP TABLE IF EXISTS `products`";
-    }
-}
-```
-
-Commands:
-
-```bash
-php vanilla make:migration create_products_table
-php vanilla migrate
-php vanilla migrate:fresh   # drop all tables, re-run
-```
-
-Executed migrations are recorded in the `migrations` table.
-
-## Catering schema (current)
-
-| Table | Purpose |
-|-------|---------|
-| `users` | Admin and customer accounts (`role`: `admin` / `user`) |
-| `categories` | Menu groupings |
-| `events` | Occasions (e.g. wedding, corporate) — menus are scoped to an event |
-| `menus` | Items: price, `minimum_portions`, image, `status` (`active`/`inactive`), FK to category + event |
-| `customers` | Contact info; optional `user_id` → `users` for registered customers |
-| `orders` | Header: customer, event, `event_date`, `total_price`, address, `status`, `payment_status` |
-| `order_items` | Line items: `menu_id`, `quantity`, `price_at_time`, `subtotal` per order |
-
-Order flow: public and admin orders insert one `orders` row plus multiple `order_items`. Migration `010` removed legacy single-menu columns (`menu_id`, `quantity`) from `orders`.
-
-### Order status values
-
-- `status`: `pending`, `processing`, `delivering`, `completed`, `cancelled`
-- `payment_status`: `unpaid`, `paid`, `refunded`
+Run migrations: `php vanilla migrate`
 
 ---
 

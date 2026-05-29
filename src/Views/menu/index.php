@@ -31,7 +31,7 @@ $filters = [
         <table class="w-full border-collapse">
             <thead>
                 <tr>
-                    <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('id') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">ID<?= $sortIcon('id') ?></a></th>
+                    <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('menu_code') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Menu Code<?= $sortIcon('menu_code') ?></a></th>
                     <th class="bg-black/30 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border">Image</th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('name') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Menu Name<?= $sortIcon('name') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('category_id') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline">Category<?= $sortIcon('category_id') ?></a></th>
@@ -45,7 +45,7 @@ $filters = [
             <tbody>
                 <?php foreach ($menus as $menu): ?>
                 <tr class="cursor-pointer hover:bg-white/[0.03]" onclick="if(!event.target.closest('a,button,form')){location.href='/menus/<?= (int)$menu['id'] ?>'}">
-                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= e($menu['id']) ?></td>
+                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text font-medium"><?= e($menu['menu_code']) ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
                         <?php if ($menu['image']): ?>
                             <?php component('progressive-image', ['src' => $menu['image'], 'alt' => $menu['name'], 'style' => 'width:40px;height:40px;object-fit:cover;border-radius:4px']); ?>
@@ -70,7 +70,7 @@ $filters = [
                             <a href="#" data-edit="menus" data-id="<?= e($menu['id']) ?>" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 px-3 py-1.5 text-[0.8125rem] bg-white/6 text-text border-border hover:bg-white/10 hover:text-text">Edit</a>
                             <form action="/menus/<?= e($menu['id']) ?>/delete" method="POST" class="inline">
                                 <?= \App\Core\Csrf::field() ?>
-                                <button type="submit" data-modal-confirm="Are you sure you want to delete this menu?" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 px-3 py-1.5 text-[0.8125rem] bg-danger text-white border-danger hover:bg-danger-hover hover:border-danger-hover hover:text-white">Delete</button>
+                                <button type="submit" data-modal-confirm="Yakin ingin menghapus menu ini?" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 px-3 py-1.5 text-[0.8125rem] bg-danger text-white border-danger hover:bg-danger-hover hover:border-danger-hover hover:text-white">Delete</button>
                             </form>
                         </div>
                     </td>

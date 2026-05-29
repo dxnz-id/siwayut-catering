@@ -11,7 +11,7 @@
 | Middleware | PascalCase + akhiran `Middleware` | `AuthMiddleware.php` |
 | Exception | PascalCase + akhiran `Exception` | `ValidationException.php` |
 | View | direktori snake_case + berkas | `user/index.php` |
-| Migrasi | `NNN_snake_case.php` → `Database\Migrations\{Class}` | `001_create_users_table.php` |
+| Migrasi | `NNN_snake_case.sql` | `001_create_users_table.sql` |
 | Seeder | PascalCase + akhiran `Seeder` | `AdminSeeder.php` |
 | Berkas Konfigurasi | snake_case | `app.php`, `database.php` |
 | Aset CSS/JS | snake_case | `app.css`, `app.js` |
