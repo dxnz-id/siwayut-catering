@@ -88,14 +88,21 @@ class UserController extends BaseController {
 
     public function update(Request $request): void {
         $id = (int) $request->param('id');
-        $data = $request->only(['name', 'email', 'password', 'role']);
+        $data = $request->only(['name', 'email', 'password', 'role', 'password_confirmation']);
 
         $validator = new Validator(Database::getInstance());
-        $validator->validate($data, [
+        $rules = [
             'name' => 'required|min:2|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'role' => 'required|in:admin,user',
-        ]);
+        ];
+
+        $password = $data['password'] ?? '';
+        if ($password !== '') {
+            $rules['password'] = 'min:6|confirmed';
+        }
+
+        $validator->validate($data, $rules);
 
         if ($validator->fails()) {
             if ($request->isAjax()) Response::jsonError('Validation failed.', $validator->errors());

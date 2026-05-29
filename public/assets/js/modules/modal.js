@@ -88,8 +88,6 @@
                 Modal.confirm({
                     title: 'Confirm',
                     message: msg,
-                    type: 'danger',
-                    confirmText: 'Delete',
                     onConfirm: function () {
                         if (form) form.submit();
                     }

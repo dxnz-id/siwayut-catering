@@ -50,7 +50,7 @@
                         <div class="menu-item-row flex items-start gap-2" data-index="0">
                             <div class="flex-1">
                                 <select name="items[0][menu_id]" required
-                                    class="w-full px-4 py-3 bg-[#1a1a1e] text-[#f4f4f5] border border-border rounded-xl text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20">
+                                    class="w-full px-4 py-3 bg-white/5 text-text border border-border rounded-xl font-body leading-relaxed text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20">
                                     <option value="">-- Select Menu --</option>
                                     <?php foreach ($menus as $m): ?>
                                         <option value="<?= (int) $m['id'] ?>">
@@ -145,7 +145,7 @@
         var menuList = <?= $menuJson ?>;
 
         function buildSelect(index) {
-            var html = '<select name="items[' + index + '][menu_id]" required class="w-full px-4 py-3 bg-[#1a1a1e] text-[#f4f4f5] border border-border rounded-xl text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20">';
+            var html = '<select name="items[' + index + '][menu_id]" required class="w-full px-4 py-3 bg-white/5 text-text border border-border rounded-xl font-body leading-relaxed text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20">';
             html += '<option value="">-- Select Menu --</option>';
             for (var i = 0; i < menuList.length; i++) {
                 var m = menuList[i];
@@ -183,7 +183,7 @@
                 buildSelect(newIndex) +
                 '</div>' +
                 '<div class="w-28 shrink-0">' +
-                '<input type="number" name="items[' + newIndex + '][quantity]" value="1" min="1" required class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20" placeholder="Qty">' +
+                '<input type="number" name="items[' + newIndex + '][quantity]" value="1" min="1" required class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl font-body leading-relaxed text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20" placeholder="Qty">' +
                 '</div>' +
                 '<button type="button" class="remove-menu-item mt-1 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0" data-index="' + newIndex + '" title="Remove">' +
                 '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>';

@@ -39,6 +39,7 @@ class UserService {
         } else {
             unset($data['password']);
         }
+        unset($data['password_confirmation']);
         $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->userModel->update($id, $data);
     }
