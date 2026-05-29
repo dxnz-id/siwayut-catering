@@ -13,7 +13,7 @@ class RoleMiddleware implements MiddlewareInterface {
     public function handle(Request $request): bool {
         $user = Session::get('user');
         if (!$user || ($user['role'] ?? '') !== $this->requiredRole) {
-            throw new HttpException(403, 'Forbidden — Insufficient permissions.');
+            throw new HttpException(403, 'Forbidden - Insufficient permissions.');
         }
         return true;
     }

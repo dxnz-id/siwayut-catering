@@ -33,11 +33,6 @@
             <h1 class="text-center text-[1.75rem] max-md:text-[1.4rem] font-bold mb-2 font-display">Order Catering</h1>
             <p class="text-center text-muted text-sm mb-8">Fill out the form below, then your order will be sent to us via WhatsApp.</p>
 
-            <?php $flashError = \App\Core\Session::getFlash('error'); ?>
-            <?php if ($flashError): ?>
-                <div class="px-4 py-3 rounded-xl text-sm mb-6 text-center bg-accent-red/10 border border-accent-red/20 text-[#f87171]"><?= \App\Core\View::e($flashError) ?></div>
-            <?php endif; ?>
-
             <form action="/order-form" method="POST">
                 <?= \App\Core\Csrf::field() ?>
 
@@ -117,11 +112,18 @@
             <a href="/" class="text-gold no-underline hover:text-gold">Siwayut Catering</a> — Exquisite Taste For Your Most Sacred Moments
         </div>
     </main>
+    <?php
+    $flashError = \App\Core\Session::getFlash('error');
+    $pageFlashes = [];
+    if ($flashError) $pageFlashes[] = ['type' => 'error', 'message' => $flashError];
+    ?>
     <script src="/assets/js/modules/turnstile.js"></script>
+    <script src="/assets/js/modules/toast.js"></script>
     <script src="/assets/js/modules/file-upload.js"></script>
     <script src="/assets/js/modules/progressive-image.js"></script>
     <script src="/assets/js/modules/load-more-menu.js"></script>
     <script src="/assets/js/modules/ai-description.js"></script>
+    <?php component('toast', ['flashes' => $pageFlashes]) ?>
     <script src="/assets/js/app.js"></script>
 </body>
 

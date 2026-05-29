@@ -78,6 +78,10 @@ class OrderService {
         ]);
     }
 
+    public function countByMenuIds(array $menuIds): array {
+        return $this->order->countByMenuIds($menuIds);
+    }
+
     public function updateStatus(int $id, string $status, string $paymentStatus): bool {
         return $this->order->update($id, [
             'status' => $status,

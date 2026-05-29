@@ -13,7 +13,7 @@ class CsrfMiddleware implements MiddlewareInterface {
         }
         $token = $request->input('_csrf_token', '');
         if (!Csrf::verify((string) $token)) {
-            throw new HttpException(419, 'Page Expired — CSRF token mismatch.');
+            throw new HttpException(419, 'Page Expired - CSRF token mismatch.');
         }
         return true;
     }

@@ -12,13 +12,15 @@ use App\Services\MenuService;
 use App\Services\CategoryService;
 use App\Services\EventService;
 use App\Services\AiService;
+use App\Services\OrderService;
 
 class MenuController extends BaseController {
     public function __construct(
         private MenuService $menuService,
         private CategoryService $categoryService,
         private EventService $eventService,
-        private AiService $aiService
+        private AiService $aiService,
+        private OrderService $orderService
     ) {
         parent::__construct();
     }
@@ -35,6 +37,10 @@ class MenuController extends BaseController {
         if ($status !== '') $conditions['status'] = $status;
         $result = $this->menuService->paginate($page, 15, $conditions, $search, ['name'], $orderBy, $direction);
 
+        $menuIds = array_column($result['data'], 'id');
+        $orderCounts = $this->orderService->countByMenuIds($menuIds);
+        $menus = array_map(fn($m) => [...$m, 'order_count' => $orderCounts[$m['id']] ?? 0], $result['data']);
+
         $categories = $this->categoryService->all();
         $katMap = [];
         foreach ($categories as $k) {
@@ -43,7 +49,7 @@ class MenuController extends BaseController {
 
         $this->render('menu/index', [
             'title' => 'Catering Menu List',
-            'menus' => $result['data'],
+            'menus' => $menus,
             'pagination' => $result,
             'katMap' => $katMap,
             'search' => $search,
@@ -193,10 +199,14 @@ class MenuController extends BaseController {
     public function destroy(Request $request): void {
         $id = (int) $request->param('id');
         
-        if ($this->menuService->delete($id)) {
+        try {
+            $this->menuService->delete($id);
             $this->redirectWithFlash('/menus', 'success', 'Menu successfully deleted.');
+        } catch (\PDOException $e) {
+            if ($e->getCode() == 23000) {
+                $this->redirectWithFlash('/menus', 'error', 'Cannot delete menu because it is still used by orders.');
+            }
+            throw $e;
         }
-        
-        $this->redirectWithFlash('/menus', 'error', 'Failed to delete menu.');
     }
 }

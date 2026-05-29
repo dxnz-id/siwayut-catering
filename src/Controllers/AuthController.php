@@ -1,17 +1,22 @@
 <?php
+
 declare(strict_types=1);
 // File: src/Controllers/AuthController.php
 
 namespace App\Controllers;
+
 use App\Core\{Request, Session, Validator, Database, Turnstile};
 use App\Services\AuthService;
 
-class AuthController extends BaseController {
-    public function __construct(private AuthService $authService) {
+class AuthController extends BaseController
+{
+    public function __construct(private AuthService $authService)
+    {
         parent::__construct();
     }
 
-    public function index(Request $request): void {
+    public function index(Request $request): void
+    {
         if ($this->currentUser()) {
             $user = $this->currentUser();
             $this->redirect(($user['role'] ?? '') === 'admin' ? '/users' : '/');
@@ -24,11 +29,13 @@ class AuthController extends BaseController {
         ], 'auth');
     }
 
-    public function loginPageRedirect(Request $request): void {
+    public function loginPageRedirect(Request $request): void
+    {
         $this->redirect('/auth');
     }
 
-    public function login(Request $request): void {
+    public function login(Request $request): void
+    {
         $email = (string) $request->input('email', '');
         $password = (string) $request->input('password', '');
 
@@ -60,7 +67,8 @@ class AuthController extends BaseController {
         $this->redirectWithFlash('/auth', 'error', 'Invalid email or password.');
     }
 
-    public function register(Request $request): void {
+    public function register(Request $request): void
+    {
         $data = $request->only(['name', 'email', 'phone', 'password', 'password_confirmation']);
 
         if (!Turnstile::verify($request->input('cf-turnstile-response', ''))) {
@@ -103,7 +111,8 @@ class AuthController extends BaseController {
         $this->redirectWithFlash('/auth', 'success', 'Registration successful. Please sign in.');
     }
 
-    public function logout(Request $request): void {
+    public function logout(Request $request): void
+    {
         $this->authService->logout();
         $this->redirect('/auth');
     }

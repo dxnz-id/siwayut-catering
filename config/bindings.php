@@ -38,6 +38,7 @@ $container->bind(MenuController::class, fn(Container $c): object => new MenuCont
     $c->make(MenuService::class),
     $c->make(CategoryService::class),
     $c->make(EventService::class),
-    $c->make(AiService::class)
+    $c->make(AiService::class),
+    $c->make(OrderService::class)
 ));
 $container->bind(OrderController::class, fn(Container $c): object => new OrderController($c->make(OrderService::class), $c->make(MenuService::class), $c->make(EventService::class), $c->make(Customer::class)));

@@ -10,6 +10,19 @@ class Order extends BaseModel {
         $this->sortableColumns = ['id', 'customer_id', 'menu_id', 'event_date', 'quantity', 'total_price', 'status', 'payment_status', 'created_at'];
     }
 
+    public function countByMenuIds(array $menuIds): array {
+        if (empty($menuIds)) return [];
+        $placeholders = implode(',', array_fill(0, count($menuIds), '?'));
+        $sql = "SELECT menu_id, COUNT(*) as cnt FROM `orders` WHERE menu_id IN ($placeholders) GROUP BY menu_id";
+        $stmt = $this->db()->prepare($sql);
+        $stmt->execute(array_map('intval', $menuIds));
+        $result = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $result[(int)$row['menu_id']] = (int)$row['cnt'];
+        }
+        return $result;
+    }
+
     public function paginateForAdmin(
         int $page = 1,
         int $perPage = 10,

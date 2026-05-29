@@ -70,6 +70,7 @@ $sortIcon = function($col) use ($s, $d) {
                     <th class="bg-black/30 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('price') ?>" class="text-muted hover:text-gold transition-colors no-underline">Price<?= $sortIcon('price') ?></a></th>
                     <th class="bg-black/30 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('minimum_portions') ?>" class="text-muted hover:text-gold transition-colors no-underline">Min Portions<?= $sortIcon('minimum_portions') ?></a></th>
                     <th class="bg-black/30 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('status') ?>" class="text-muted hover:text-gold transition-colors no-underline">Status<?= $sortIcon('status') ?></a></th>
+                    <th class="bg-black/30 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border">Orders</th>
                     <th class="bg-black/30 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border">Actions</th>
                 </tr>
             </thead>
@@ -95,12 +96,15 @@ $sortIcon = function($col) use ($s, $d) {
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-danger text-white">Inactive</span>
                         <?php endif; ?>
                     </td>
+                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text text-center"><?= (int)$menu['order_count'] ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
                         <div class="flex items-center gap-2">
                             <a href="/menus/<?= e($menu['id']) ?>/edit" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 px-3 py-1.5 text-[0.8125rem] bg-white/6 text-text border-border hover:bg-white/10 hover:text-text">Edit</a>
-                            <form action="/menus/<?= e($menu['id']) ?>/delete" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this menu?');">
+                            <form action="/menus/<?= e($menu['id']) ?>/delete" method="POST" class="m-0">
                                 <?= \App\Core\Csrf::field() ?>
-                                <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 px-3 py-1.5 text-[0.8125rem] bg-danger text-white border-danger hover:bg-danger-hover hover:border-danger-hover hover:text-white">Delete</button>
+                                <button type="button"
+                                    onclick="handleDeleteMenu(event, <?= (int)$menu['order_count'] ?>)"
+                                    class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 px-3 py-1.5 text-[0.8125rem] bg-danger text-white border-danger hover:bg-danger-hover hover:border-danger-hover hover:text-white <?= ($menu['order_count'] ?? 0) > 0 ? 'opacity-40 cursor-not-allowed' : '' ?>">Delete</button>
                             </form>
                         </div>
                     </td>
