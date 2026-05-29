@@ -15,7 +15,10 @@
             thumbImg.onload = function () {
                 img.src = thumbSrc;
                 img.style.opacity = '1';
+                img.style.transition = 'none';
                 img.classList.add('blur-up');
+                void img.offsetHeight;
+                img.style.transition = '';
 
                 // Step 3: load full image
                 var fullImg = new Image();
