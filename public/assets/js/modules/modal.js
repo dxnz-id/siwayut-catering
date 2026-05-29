@@ -78,21 +78,21 @@
                 closeBtn.addEventListener('click', close);
             }
 
-            // Auto-attach data-modal-confirm handlers
-            document.querySelectorAll('[data-modal-confirm]').forEach(function (el) {
-                el.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    var msg = el.dataset.modalConfirm || 'Are you sure?';
-                    var form = el.closest('form');
-                    Modal.confirm({
-                        title: 'Confirm',
-                        message: msg,
-                        type: 'danger',
-                        confirmText: 'Delete',
-                        onConfirm: function () {
-                            if (form) form.submit();
-                        }
-                    });
+            // Event delegation for data-modal-confirm (works after AJAX content replace)
+            document.addEventListener('click', function (e) {
+                var el = e.target.closest('[data-modal-confirm]');
+                if (!el) return;
+                e.preventDefault();
+                var msg = el.dataset.modalConfirm || 'Are you sure?';
+                var form = el.closest('form');
+                Modal.confirm({
+                    title: 'Confirm',
+                    message: msg,
+                    type: 'danger',
+                    confirmText: 'Delete',
+                    onConfirm: function () {
+                        if (form) form.submit();
+                    }
                 });
             });
         },
