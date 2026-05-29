@@ -168,20 +168,39 @@ $result = $userModel->paginate(page: 2, perPage: 10);
 $model->all(orderBy: 'malicious_column'); // kembali (fallback) ke 'id'
 ```
 
-## Format Migrasi
+## Format migrasi
 
-Berkas migrasi berada di `database/migrations/` sebagai SQL biasa:
+Migrasi adalah **kelas PHP** di `database/migrations/`, mewarisi `App\Core\BaseMigration`:
 
 ```
 database/migrations/
-└── 001_create_users_table.sql
+└── 001_create_users_table.php   → Database\Migrations\CreateUsersTable
 ```
 
-Penamaan: `{NNN}_{deskripsi}.sql` — nomor urut + deskripsi snake_case.
+| Konvensi | Contoh |
+|----------|--------|
+| Nama berkas | `{NNN}_{deskripsi_snake}.php` |
+| Namespace | `Database\Migrations` |
+| `up()` / `down()` | Mengembalikan SQL `string` atau `string[]` |
 
-Membuat migrasi baru: `php vanilla make:migration create_products_table`
+```bash
+php vanilla make:migration create_products_table
+php vanilla migrate
+php vanilla migrate:fresh
+```
 
-Menjalankan migrasi: `php vanilla migrate`
+## Skema katering (saat ini)
+
+| Tabel | Fungsi |
+|-------|--------|
+| `users` | Admin & pelanggan (`role`) |
+| `categories`, `events` | Pengelompokan menu |
+| `menus` | Item menu + gambar + `minimum_portions` |
+| `customers` | Data kontak; `user_id` opsional |
+| `orders` | Header pesanan + `payment_status` |
+| `order_items` | Baris menu per pesanan |
+
+Migrasi `010` menghapus kolom `menu_id` / `quantity` dari `orders` (diganti `order_items`).
 
 ---
 

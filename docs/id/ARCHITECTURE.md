@@ -122,10 +122,12 @@ Urutan inisialisasi yang tepat dalam `public/index.php` → `bootstrap/app.php`:
 
 | Lapisan | Kelas | Tanggung Jawab |
 |---------|-------|----------------|
-| **Controller** | `BaseController`, `AuthController`, `UserController` | Menangani permintaan HTTP, memvalidasi input, mendelegasikan ke service, merender view |
-| **Service** | `AuthService`, `UserService`, `FileUploadService` | Logika bisnis, hashing kata sandi, orkestrasi |
-| **Model** | `BaseModel`, `User` | Kueri database melalui prepared statement PDO |
-| **Database** | `Database` (singleton) | Manajemen koneksi PDO |
+| **Controller** | `AuthController`, `WelcomeController`, `UserController`, `CategoryController`, `EventController`, `MenuController`, `OrderController` | HTTP, validasi, redirect, view/JSON |
+| **Service** | `AuthService`, `UserService`, `CategoryService`, `EventService`, `MenuService`, `OrderService`, `FileUploadService`, `AiService` | Logika bisnis, upload, AI, item pesanan |
+| **Model** | `User`, `Category`, `Event`, `Menu`, `Customer`, `Order` | PDO; `Order` dengan join & `order_items` |
+| **Database** | `Database` (singleton) | Koneksi PDO |
+
+Utilitas inti tambahan: `Encryptor` (HMAC password), `Turnstile` (captcha), `BaseMigration`.
 
 ## Sistem Konfigurasi
 

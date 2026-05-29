@@ -108,11 +108,22 @@ $this->render('raw-page', $data, '');
 
 Partials are reusable template fragments in `src/Views/partials/`:
 
-| Partial       | Purpose                                       |
-| ------------- | --------------------------------------------- |
-| `sidebar.php` | Navigation sidebar with links and logout form |
-| `navbar.php`  | Top bar with page title and user info         |
-| `flash.php`   | Success/error alert messages                  |
+| Partial | Purpose |
+| ------- | ------- |
+| `sidebar.php` | Admin nav: categories, events, menus, orders, users |
+| `navbar.php` | Page title and user info |
+| `table-header.php`, `table-search.php`, `table-sort.php`, `table-pagination.php` | Reusable admin table UI |
+| `create-modal.php` | Shared modal shell for create/edit forms |
+
+### View components (`src/Views/components/`)
+
+| Component | Purpose |
+| --------- | ------- |
+| `progressive-image.php` | LQIP blur-up image |
+| `modal.php`, `toast.php` | Admin dialogs and notifications |
+| `form/input.php`, `form/select.php`, `form/textarea.php` | Form field partials |
+
+Invoke with `component('progressive-image', ['src' => 'menus/file.jpg', 'alt' => '...'])`.
 
 Include from layouts:
 
@@ -135,28 +146,22 @@ Include from layouts:
 
 The `e()` helper function delegates to `View::e()`.
 
-## Directory Structure
+## Directory structure
 
 ```
 src/Views/
-├── auth/
-│   └── auth.php          # Login form
-├── errors/
-│   ├── 404.php            # Not found page
-│   └── 500.php            # Server error page
-├── layouts/
-│   ├── auth.php           # Auth layout
-│   └── main.php           # Admin layout
-├── partials/
-│   ├── flash.php          # Flash alerts
-│   ├── navbar.php         # Top navigation
-│   └── sidebar.php        # Side navigation
-├── user/
-│   ├── create.php         # User create form
-│   ├── edit.php           # User edit form
-│   └── index.php          # User listing
-└── welcome.php            # Welcome page
+├── auth/auth.php           # Login + register (tabs)
+├── category|event|menu|order|user/index.php   # Admin lists + modals
+├── menu/show.php           # Menu detail + recent orders
+├── order/public-form.php, track.php, track-result.php, show.php
+├── components/             # Reusable UI fragments
+├── layouts/main.php, auth.php
+├── partials/               # Sidebar, navbar, table helpers
+├── errors/404.php, 500.php
+└── welcome.php             # Public landing (no layout)
 ```
+
+Admin CRUD uses **modals on `index.php`** pages — there are no separate `create.php` / `edit.php` templates.
 
 ## BaseController Integration
 
@@ -177,7 +182,7 @@ class UserController extends BaseController {
 
 - **`$content` variable name**: Do not pass a `content` key in `$data` — it will be overwritten by the template output.
 - **`extract()` overwrites**: All `$data` keys become variables. Avoid keys that collide with PHP globals or layout variables.
-- **Error templates**: Default error messages in `src/Views/errors/` are in **Indonesian**.
+- **Error templates**: Default copy in `src/Views/errors/` is in **English**; production 500 fallback in `bootstrap/app.php` matches.
 
 ---
 

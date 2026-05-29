@@ -72,7 +72,7 @@ $createTitle = 'Add Event';
 $createAction = '/events';
 $createSubmitText = 'Save Event';
 ob_start();
-component('form/input', ['name' => 'name', 'label' => 'Event Name (e.g., Idul Fitri 2026)', 'required' => true]);
+component('form/input', ['name' => 'name', 'label' => 'Event Name (e.g., Eid al-Fitr 2026)', 'required' => true]);
 echo '<div class="grid grid-cols-2 gap-4">';
 component('form/input', ['name' => 'start_date', 'label' => 'Start Date', 'type' => 'date', 'required' => true]);
 component('form/input', ['name' => 'end_date', 'label' => 'End Date', 'type' => 'date', 'required' => true]);

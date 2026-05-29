@@ -122,10 +122,18 @@ The exact initialization order in `public/index.php` → `bootstrap/app.php`:
 
 | Layer | Classes | Responsibility |
 |-------|---------|----------------|
-| **Controller** | `BaseController`, `AuthController`, `UserController` | Handle HTTP requests, validate input, delegate to services, render views |
-| **Service** | `AuthService`, `UserService`, `FileUploadService` | Business logic, password hashing, orchestration |
-| **Model** | `BaseModel`, `User` | Database queries via PDO prepared statements |
+| **Controller** | `AuthController`, `WelcomeController`, `UserController`, `CategoryController`, `EventController`, `MenuController`, `OrderController` | HTTP handling, validation, redirects, view/JSON responses |
+| **Service** | `AuthService`, `UserService`, `CategoryService`, `EventService`, `MenuService`, `OrderService`, `FileUploadService`, `AiService` | Business logic, uploads, AI descriptions, order line items |
+| **Model** | `User`, `Category`, `Event`, `Menu`, `Customer`, `Order` | PDO queries; `Order` includes joins and `order_items` helpers |
 | **Database** | `Database` (singleton) | PDO connection management |
+
+### Additional core utilities
+
+| Class | Purpose |
+|-------|---------|
+| `Encryptor` | `APP_KEY`-backed HMAC for passwords; optional AES encrypt/decrypt |
+| `Turnstile` | Cloudflare Turnstile verification on public POST endpoints |
+| `BaseMigration` | PHP migration contract used by `database/migrations/*.php` |
 
 ## Configuration System
 
@@ -180,6 +188,9 @@ set_exception_handler()        ← bootstrap/app.php
 | `Validator` | `src/Core/Validator.php` | [VALIDATION.md](VALIDATION.md) |
 | `Database` | `src/Core/Database.php` | [DATABASE.md](DATABASE.md) |
 | `Logger` | `src/Core/Logger.php` | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| `Encryptor` | `src/Core/Encryptor.php` | [SECURITY.md](SECURITY.md) |
+| `Turnstile` | `src/Core/Turnstile.php` | [SECURITY.md](SECURITY.md) |
+| `BaseMigration` | `src/Core/BaseMigration.php` | [DATABASE.md](DATABASE.md) |
 | `BaseModel` | `src/Models/BaseModel.php` | [DATABASE.md](DATABASE.md) |
 | `BaseController` | `src/Controllers/BaseController.php` | [ROUTING.md](ROUTING.md) |
 | `MiddlewareInterface` | `src/Middleware/MiddlewareInterface.php` | [MIDDLEWARE.md](MIDDLEWARE.md) |

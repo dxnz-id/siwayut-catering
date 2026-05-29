@@ -1,50 +1,60 @@
 # Siwayut Catering — Vanilla PHP MVC Framework
 
-> A lightweight, zero-dependency PHP 8.2+ MVC micro-framework for catering management.
+> A lightweight PHP 8.2+ MVC micro-framework for catering order management — public site, customer accounts, and admin dashboard.
 
 ![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-## Features
+## Application features
 
-### Implemented
+| Area | Capabilities |
+|------|----------------|
+| **Public site** | Landing page with parallax hero, featured menus, infinite scroll (`GET /api/menus`) |
+| **Customer auth** | Login / register at `/auth` (links to `customers` via `user_id`) |
+| **Orders** | Public order form (multi-menu line items), order tracking by ID |
+| **Admin** | CRUD for categories, events, menus (image upload + AI description), orders (status + payment), users |
+| **Security** | Session auth, role middleware, optional Cloudflare Turnstile, CSRF tokens in forms, `APP_KEY`-backed password HMAC |
+| **Media** | Image upload with LQIP thumbnails (`FileUploadService` + progressive-image component) |
+
+## Framework features
 
 - IoC Container with reflection-based auto-wiring
-- Router with HTTP verb methods, route parameters, and grouped middleware
-- Middleware pipeline (Auth, CSRF, Role-based access)
-- Session management with flash messages and old input
-- CSRF protection with timing-safe verification
-- Input validation with 10 built-in rules
-- BaseModel with ActiveRecord-style CRUD and pagination
-- View rendering with layouts, partials, and XSS escaping
+- Router with HTTP verbs, route parameters, nested middleware groups
+- Middleware pipeline (`auth`, `role:{name}`, `csrf` — opt-in per group)
+- Session with flash messages and old input
+- CSRF token generation and timing-safe verification
+- Input validation with built-in rules (+ `unique` table checks)
+- `BaseModel` with CRUD, pagination, and sort-column whitelist
+- View rendering with layouts, partials, `component()` helper, XSS escaping
 - Exception hierarchy with global error handler
 - Daily rotating file logger
-- Database migrations and seeding
-- `vanilla` CLI tool (artisan-like)
+- PHP class migrations and seeders
+- `vanilla` CLI (serve, migrate, seed, make:*, routes)
 
-### Scaffolded / Implemented Resources
+## Tech stack
 
-- File upload service
-- Multi-resource CRUD pattern (Users, Categories, Events, Menus, and Orders implemented)
+| Layer | Technology |
+|-------|------------|
+| Backend | PHP 8.2+ (`strict_types`), zero Composer runtime deps |
+| Database | MySQL / MariaDB via PDO |
+| Templates | Native PHP |
+| CSS | Tailwind CSS v4 (`@tailwindcss/cli`), split source files under `public/assets/css/` |
+| Frontend JS | Vanilla modules under `public/assets/js/modules/` |
+| Optional | OpenAI-compatible API (menu descriptions), Cloudflare Turnstile |
 
-## Tech Stack
-
-- **Language**: PHP 8.2+ (strict_types, promoted properties, match expressions, never return type)
-- **Database**: MySQL / MariaDB via PDO
-- **Template Engine**: Native PHP templates
-- **Dependencies**: Zero third-party runtime dependencies (Composer for autoloading only)
-
-## Quick Install
+## Quick install
 
 ```bash
-git clone <repository-url> && cd siwayut-catering
+git clone <repository-url> siwayut-catering && cd siwayut-catering
 composer install
-cp .env.example .env   # then edit database credentials
+npm install
+cp .env.example .env   # set APP_KEY, DB_*, optional AI & Turnstile
+npm run css:build
 ```
 
 → Full guide: [INSTALLATION.md](INSTALLATION.md)
 
-## Quick Start
+## Quick start
 
 ```bash
 php vanilla db:create
@@ -53,50 +63,58 @@ php vanilla db:seed --class=AdminSeeder
 php vanilla serve
 ```
 
-Then open `http://localhost:8000/login` — login with `admin@admin.com` / `password`.
+- Home: `http://localhost:8000`
+- Admin login: `http://localhost:8000/auth` — `admin@admin.com` / `password`
 
-→ Full guide: [QUICKSTART.md](QUICKSTART.md)
+→ [QUICKSTART.md](QUICKSTART.md)
 
-## Project Structure
+## Project structure
 
 ```
 siwayut-catering/
-├── bootstrap/          # Application bootstrap
-├── config/             # Configuration files
-├── database/           # Migrations and seeders
-├── docs/               # Documentation
-├── public/             # Web root (index.php, assets)
+├── bootstrap/app.php       # Container, session, exception handler
+├── config/                 # app, database, bindings, routes
+├── database/
+│   ├── migrations/         # PHP migration classes (*.php)
+│   └── seeds/              # AdminSeeder, MenuSeeder, OrderSeeder
+├── docs/                   # Documentation (EN + id/)
+├── public/
+│   ├── index.php           # Front controller
+│   ├── uploads → ../storage/uploads
+│   └── assets/css|js       # Built CSS + JS modules
 ├── src/
-│   ├── Controllers/    # HTTP controllers
-│   ├── Core/           # Framework core classes
-│   ├── Exceptions/     # Exception hierarchy
-│   ├── Helpers/        # Global helper functions
-│   ├── Middleware/      # Request middleware
-│   ├── Models/         # Database models
-│   ├── Services/       # Business logic services
-│   └── Views/          # PHP templates
-├── storage/            # Logs and uploads
-└── vanilla             # CLI tool
+│   ├── Controllers/        # Auth, Welcome, User, Category, Event, Menu, Order
+│   ├── Core/               # Framework primitives
+│   ├── Middleware/
+│   ├── Models/             # User, Category, Event, Menu, Customer, Order
+│   ├── Services/
+│   └── Views/
+├── storage/logs|uploads
+├── vanilla                 # CLI entrypoint
+├── package.json            # Tailwind build scripts
+└── composer.json
 ```
 
-## Documentation
+## Documentation index
 
-| #   | Document                               | Description                                 |
-| --- | -------------------------------------- | ------------------------------------------- |
-| 1   | [INSTALLATION.md](INSTALLATION.md)     | Setup from zero to running server           |
-| 2   | [QUICKSTART.md](QUICKSTART.md)         | Build your first feature in 5 minutes       |
-| 3   | [ARCHITECTURE.md](ARCHITECTURE.md)     | Request lifecycle and system design         |
-| 4   | [CONTAINER.md](CONTAINER.md)           | IoC container and auto-wiring               |
-| 5   | [ROUTING.md](ROUTING.md)               | Routes, parameters, and groups              |
-| 6   | [MIDDLEWARE.md](MIDDLEWARE.md)         | Middleware pipeline and built-in middleware |
-| 7   | [DATABASE.md](DATABASE.md)             | Database connection and BaseModel API       |
-| 8   | [VALIDATION.md](VALIDATION.md)         | Input validation rules                      |
-| 9   | [VIEWS.md](VIEWS.md)                   | Templates, layouts, and partials            |
-| 10  | [ERROR_HANDLING.md](ERROR_HANDLING.md) | Exception hierarchy and error pages         |
-| 11  | [SECURITY.md](SECURITY.md)             | XSS, CSRF, SQL injection, auth              |
-| 12  | [CONVENTIONS.md](CONVENTIONS.md)       | Naming and code style rules                 |
-| 13  | [EXAMPLES.md](EXAMPLES.md)             | Copy-paste recipes                          |
-| 14  | [CONTRIBUTING.md](CONTRIBUTING.md)     | Contributor guide                           |
+| # | Document | Description |
+|---|----------|-------------|
+| 1 | [INSTALLATION.md](INSTALLATION.md) | Setup from zero to running server |
+| 2 | [QUICKSTART.md](QUICKSTART.md) | Build your first feature in 5 minutes |
+| 3 | [ARCHITECTURE.md](ARCHITECTURE.md) | Request lifecycle and system design |
+| 4 | [CONTAINER.md](CONTAINER.md) | IoC container and auto-wiring |
+| 5 | [ROUTING.md](ROUTING.md) | Routes, parameters, and groups |
+| 6 | [MIDDLEWARE.md](MIDDLEWARE.md) | Middleware pipeline |
+| 7 | [DATABASE.md](DATABASE.md) | Schema, migrations, BaseModel API |
+| 8 | [VALIDATION.md](VALIDATION.md) | Input validation rules |
+| 9 | [VIEWS.md](VIEWS.md) | Templates, layouts, components |
+| 10 | [ERROR_HANDLING.md](ERROR_HANDLING.md) | Exceptions and error pages |
+| 11 | [SECURITY.md](SECURITY.md) | XSS, CSRF, auth, Turnstile, APP_KEY |
+| 12 | [CONVENTIONS.md](CONVENTIONS.md) | Naming and code style |
+| 13 | [EXAMPLES.md](EXAMPLES.md) | Copy-paste recipes |
+| 14 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributor guide |
+
+Bahasa Indonesia: [id/README.md](id/README.md)
 
 ## License
 

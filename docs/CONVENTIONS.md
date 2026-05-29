@@ -11,7 +11,7 @@
 | Middleware | PascalCase + `Middleware` suffix | `AuthMiddleware.php` |
 | Exception | PascalCase + `Exception` suffix | `ValidationException.php` |
 | Views | snake_case directory + file | `user/index.php` |
-| Migrations | `NNN_snake_case.sql` | `001_create_users_table.sql` |
+| Migrations | `NNN_snake_case.php` → `Database\Migrations\{Class}` | `001_create_users_table.php` |
 | Seeders | PascalCase + `Seeder` suffix | `AdminSeeder.php` |
 | Config files | snake_case | `app.php`, `database.php` |
 | CSS/JS assets | snake_case | `app.css`, `app.js` |

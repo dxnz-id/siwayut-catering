@@ -79,7 +79,7 @@ $container->bind(\App\Controllers\DashboardController::class, function ($c) {
 ## Langkah 5: Uji di Browser
 
 1. Jalankan server: `php vanilla serve`
-2. Login di `http://localhost:8000/login`
+2. Login di `http://localhost:8000/auth`
 3. Navigasi ke `http://localhost:8000/dashboard`
 4. Anda akan melihat: **"Selamat datang, Administrator!"**
 
