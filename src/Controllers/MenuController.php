@@ -12,6 +12,7 @@ use App\Services\MenuService;
 use App\Services\CategoryService;
 use App\Services\EventService;
 use App\Services\AiService;
+use App\Models\Order;
 
 class MenuController extends BaseController {
     public function __construct(
@@ -62,6 +63,26 @@ class MenuController extends BaseController {
             'filterEvent' => $eventId,
             'sort_by' => $orderBy,
             'dir' => $direction,
+        ]);
+    }
+
+    public function show(Request $request): void {
+        $id = (int) $request->param('id');
+        $menu = $this->menuService->find($id);
+        if (!$menu) throw new NotFoundException('Menu not found');
+
+        $category = $this->categoryService->find((int)$menu['category_id']);
+        $event = $this->eventService->find((int)$menu['event_id']);
+
+        $orderModel = new Order();
+        $recentOrders = $orderModel->getOrdersByMenuId($id, 10);
+
+        $this->render('menu/show', [
+            'title' => $menu['name'] . ' — Menu Detail',
+            'menu' => $menu,
+            'category' => $category,
+            'event' => $event,
+            'recentOrders' => $recentOrders,
         ]);
     }
 

@@ -33,6 +33,17 @@ ORDER BY oi.`id` ASC";
         $this->execute($sql, [$orderId, $item['menu_id'], $item['quantity'], $item['price_at_time'], $item['subtotal']]);
     }
 
+    public function getOrdersByMenuId(int $menuId, int $limit = 10): array {
+        $sql = "SELECT o.*, c.`name` AS customer_name
+FROM `orders` o
+INNER JOIN `customers` c ON c.`id` = o.`customer_id`
+INNER JOIN `order_items` oi ON oi.`order_id` = o.`id`
+WHERE oi.`menu_id` = ?
+ORDER BY o.`created_at` DESC
+LIMIT ?";
+        return $this->query($sql, [$menuId, $limit]);
+    }
+
     public function countByMenuIds(array $menuIds): array {
         if (empty($menuIds)) return [];
         $placeholders = implode(',', array_fill(0, count($menuIds), '?'));

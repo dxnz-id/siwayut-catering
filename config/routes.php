@@ -50,6 +50,7 @@ return function (Router $router): void {
 
             // Menus
             $r->get('/menus',                           [MenuController::class, 'index']);
+            $r->get('/menus/{id}',                      [MenuController::class, 'show']);
             $r->post('/menus',                          [MenuController::class, 'store']);
             $r->post('/menus/generate-description',     [MenuController::class, 'generateDescription']);
             $r->post('/menus/{id}',                     [MenuController::class, 'update']);

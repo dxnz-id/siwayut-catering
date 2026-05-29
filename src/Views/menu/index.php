@@ -44,7 +44,7 @@ $filters = [
             </thead>
             <tbody>
                 <?php foreach ($menus as $menu): ?>
-                <tr>
+                <tr class="cursor-pointer hover:bg-white/[0.03]" onclick="if(!event.target.closest('a,button,form')){location.href='/menus/<?= (int)$menu['id'] ?>'}">
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= e($menu['id']) ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
                         <?php if ($menu['image']): ?>
