@@ -63,10 +63,8 @@
                 </button>
             </form>
         </div>
-        <div class="text-center text-muted text-xs mt-8 pb-8">
-            <a href="/" class="text-gold no-underline hover:text-gold">Siwayut Catering</a> — <?= __('tagline') ?>
-        </div>
     </main>
+    <?php component('footer') ?>
     <?php
     $flashError = \App\Core\Session::getFlash('error');
     $pageFlashes = [];

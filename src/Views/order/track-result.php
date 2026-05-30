@@ -174,10 +174,8 @@
             <a href="javascript:void(0)" onclick="history.back();return false" class="block text-center mt-6 text-gold no-underline text-[0.9rem] font-medium transition-all duration-300 hover:[text-shadow:0_0_8px_var(--color-gold-glow)]"><?= __('back') ?></a>
         </div>
 
-        <div class="text-center text-muted text-xs mt-8 pb-8">
-            <a href="/" class="text-gold no-underline hover:text-gold">Siwayut Catering</a> — <?= __('tagline') ?>
-        </div>
     </main>
+    <?php component('footer') ?>
 </body>
 
 </html>

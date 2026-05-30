@@ -159,10 +159,7 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-border py-8 text-center text-xs text-muted">
-        <p>&copy; <?= date('Y') ?> Siwayut Catering</p>
-    </footer>
+    <?php component('footer') ?>
 
     <script src="/assets/js/modules/progressive-image.js"></script>
     <script src="/assets/js/app.js"></script>

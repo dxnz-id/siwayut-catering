@@ -24,7 +24,7 @@ return [
 
     // Welcome / Landing
     'premium_holiday_catering' => 'Premium Holiday Catering',
-    'exquisite_taste' => 'Exquisite Taste<br>For Your Most Sacred Moments',
+    'exquisite_taste' => 'Exquisite Taste<br>For Your Most Memorable Moments',
     'hero_desc' => 'Siwayut Catering provides exclusive catering menus specially crafted to celebrate your holidays. Enjoy delicious dishes without the hassle together with your loved ones.',
     'featured_menu' => 'Featured Holiday Menu',
     'no_menu_avail' => 'No menu items available at the moment.',
@@ -33,7 +33,7 @@ return [
     'our_location' => 'Our Location',
     'working_hours' => 'Saturday - Thursday: 08:00 - 17:00',
     'all_rights_reserved' => 'All rights reserved.',
-    'tagline' => 'Exquisite Taste For Your Most Sacred Moments',
+    'tagline' => 'Exquisite Taste For Your Most Memorable Moments',
 
     // Auth
     'sign_in_subtitle' => 'Sign in to your account',

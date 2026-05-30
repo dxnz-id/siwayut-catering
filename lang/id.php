@@ -24,7 +24,7 @@ return [
 
     // Welcome / Landing
     'premium_holiday_catering' => 'Katering Liburan Premium',
-    'exquisite_taste' => 'Rasa Istimewa Untuk Momen Tersuci Anda',
+    'exquisite_taste' => 'Rasa Istimewa Untuk Momen Paling Berkesan Anda',
     'hero_desc' => 'Siwayut Catering menyediakan menu katering eksklusif yang dirancang khusus untuk merayakan hari raya Anda. Nikmati hidangan lezat tanpa repot bersama orang-orang tercinta.',
     'featured_menu' => 'Menu Liburan Spesial',
     'no_menu_avail' => 'Belum ada menu yang tersedia saat ini.',
@@ -33,7 +33,7 @@ return [
     'our_location' => 'Lokasi Kami',
     'working_hours' => 'Sabtu - Kamis: 08:00 - 17:00',
     'all_rights_reserved' => 'Hak cipta dilindungi.',
-    'tagline' => 'Rasa Istimewa Untuk Momen Tersuci Anda',
+    'tagline' => 'Rasa Istimewa Untuk Momen Paling Berkesan Anda',
 
     // Auth
     'sign_in_subtitle' => 'Masuk ke akun Anda',

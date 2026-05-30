@@ -37,6 +37,10 @@
                         <a href="/orders" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('dashboard') ?></a>
                         <?php else: ?>
                         <a href="/my-orders" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('my_orders') ?></a>
+                        <form method="POST" action="/logout" class="m-0 p-0 inline">
+                            <?= \App\Core\Csrf::field() ?>
+                            <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer"><?= __('logout') ?></button>
+                        </form>
                         <?php endif; ?>
                     <?php else: ?>
                         <a href="/auth" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('login') ?></a>
@@ -247,12 +251,7 @@
             </section>
         </main>
 
-        <!-- Footer -->
-        <footer class="border-t border-border py-10 bg-bg/40 text-center text-sm text-muted">
-            <div class="max-w-[1200px] mx-auto px-6">
-                <p>&copy; <?= date('Y') ?> Siwayut Catering. <?= __('all_rights_reserved') ?></p>
-            </div>
-        </footer>
+        <?php component('footer') ?>
     </div>
 
     <script id="menu-data" type="application/json"><?= json_encode([

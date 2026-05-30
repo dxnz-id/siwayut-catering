@@ -19,6 +19,10 @@
             <div class="flex items-center gap-3">
                 <?php component('lang-switcher') ?>
                 <a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('back') ?></a>
+                <form method="POST" action="/logout" class="m-0 p-0 inline">
+                    <?= \App\Core\Csrf::field() ?>
+                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer"><?= __('logout') ?></button>
+                </form>
             </div>
         </div>
     </header>
@@ -63,9 +67,7 @@
 
     </main>
 
-    <footer class="border-t border-border py-8 text-center text-xs text-muted">
-        <p>&copy; <?= date('Y') ?> Siwayut Catering</p>
-    </footer>
+    <?php component('footer') ?>
 
     <script src="/assets/js/app.js"></script>
 </body>
