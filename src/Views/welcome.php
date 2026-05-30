@@ -62,7 +62,7 @@
                             <?= __('order_now') ?>
                         </a>
                         <a href="/track-order"
-                            class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-base font-semibold no-underline whitespace-nowrap min-w-[210px] bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-transparent hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] hover:-translate-y-0.5 transition-all duration-300"><?= __('track_order') ?></a>
+                            class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-base font-semibold no-underline whitespace-nowrap min-w-[210px] bg-white/5 border border-white/5 text-text backdrop-blur-[8px] hover:text-gold hover:bg-gold/20 hover:border-gold/40 hover:-translate-y-0.5 transition-all duration-300"><?= __('track_order') ?></a>
                     </div>
                 </section>
 
