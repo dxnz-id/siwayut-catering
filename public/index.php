@@ -24,6 +24,8 @@ $router  = new Router($app);
 $router->addMiddleware('auth', \App\Middleware\AuthMiddleware::class);
 $router->addMiddleware('role', \App\Middleware\RoleMiddleware::class);
 $router->addMiddleware('csrf', \App\Middleware\CsrfMiddleware::class);
+$router->addMiddleware('session.timeout', \App\Middleware\IdleTimeoutMiddleware::class);
+$router->addMiddleware('rate.limit', \App\Middleware\RateLimitMiddleware::class);
 
 $registerRoutes = require BASE_PATH . '/config/routes.php';
 $registerRoutes($router);

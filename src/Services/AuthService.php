@@ -16,13 +16,21 @@ class AuthService {
     }
 
     public function login(string $email, string $password): bool {
+        $attempts = (int)Session::get('_login_attempts', 0);
+        if ($attempts >= 3) {
+            sleep(min($attempts - 2, 10));
+        }
+
         $user = $this->userModel->findByEmail($email);
         if (!$user) {
+            Session::set('_login_attempts', $attempts + 1);
             return false;
         }
         if (!password_verify(Encryptor::hmac($password), $user['password'])) {
+            Session::set('_login_attempts', $attempts + 1);
             return false;
         }
+        Session::forget('_login_attempts');
         Session::regenerate();
         Session::set('user', [
             'id' => $user['id'],
@@ -34,6 +42,7 @@ class AuthService {
     }
 
     public function logout(): void {
+        session_regenerate_id(true);
         Session::destroy();
     }
 

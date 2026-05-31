@@ -1,12 +1,19 @@
 <?php
 declare(strict_types=1);
-// File: src/Core/Session.php
 
 namespace App\Core;
 
 class Session {
     public static function start(): void {
         if (session_status() === PHP_SESSION_NONE) {
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => APP_ENV === 'production',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
             session_start();
         }
     }
@@ -66,5 +73,14 @@ class Session {
 
     public static function setOld(array $data): void {
         $_SESSION['_old_input'] = $data;
+    }
+
+    public static function touchActivity(): void {
+        self::set('_last_activity', time());
+    }
+
+    public static function isExpired(int $ttl): bool {
+        $last = self::get('_last_activity', 0);
+        return $last > 0 && (time() - $last) > $ttl;
     }
 }
