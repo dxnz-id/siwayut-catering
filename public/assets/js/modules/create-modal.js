@@ -40,11 +40,11 @@
             titleEl.textContent = titleEl.dataset.origTitle;
         }
         var errorsEl = getErrorsEl(modalId);
-        if (errorsEl) { errorsEl.classList.add('hidden'); errorsEl.innerHTML = ''; }
+        if (errorsEl) { errorsEl.classList.add('hidden'); errorsEl.textContent = ''; }
         var preview = document.querySelector('#' + modalId + ' [data-image-preview]');
         if (preview) {
             preview.classList.add('hidden');
-            preview.innerHTML = '';
+            preview.textContent = '';
         }
     }
 
@@ -73,7 +73,7 @@
         setTimeout(function () {
             el.classList.add('hidden');
             var errors = getErrorsEl(modalId);
-            if (errors) { errors.classList.add('hidden'); errors.innerHTML = ''; }
+            if (errors) { errors.classList.add('hidden'); errors.textContent = ''; }
         }, 150);
         openModals = openModals.filter(function (i) { return i !== modalId; });
         if (openModals.length === 0) document.body.style.overflow = '';
@@ -163,7 +163,7 @@
                         img.src = '/uploads/' + filename.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                         img.className = 'w-24 h-24 object-cover rounded-lg border border-border';
                         img.onerror = function () { this.style.display = 'none'; };
-                        preview.innerHTML = '';
+                        preview.textContent = '';
                         preview.appendChild(img);
                         preview.classList.remove('hidden');
                     }
@@ -214,7 +214,7 @@
                     }
                 } else {
                     if (errorsEl) {
-                        errorsEl.innerHTML = '';
+                        errorsEl.textContent = '';
                         if (data.message) {
                             var p = document.createElement('p');
                             p.className = 'mb-2 font-medium';
@@ -239,7 +239,7 @@
             })
             .catch(function (err) {
                 if (errorsEl) {
-                    errorsEl.innerHTML = '';
+                    errorsEl.textContent = '';
                     var p = document.createElement('p');
                     p.textContent = 'Something went wrong: ' + err.message;
                     errorsEl.appendChild(p);

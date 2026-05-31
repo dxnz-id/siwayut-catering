@@ -72,8 +72,8 @@ return function (Router $router): void {
             // Orders
             $r->get('/orders',              [OrderController::class, 'index']);
             $r->post('/orders',             [OrderController::class, 'store']);
-            $r->get('/orders/{id}',         [OrderController::class, 'show']);
-            $r->post('/orders/{id}',        [OrderController::class, 'update']);
+            $r->get('/orders/{order_number}',  [OrderController::class, 'show']);
+            $r->post('/orders/{order_number}', [OrderController::class, 'update']);
         });
     });
 };

@@ -7,6 +7,7 @@ class Event extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'events';
+        $this->fillable = ['name', 'start_date', 'end_date', 'status'];
         $this->sortableColumns = ['id', 'name', 'start_date', 'end_date', 'status', 'created_at', 'menu_count'];
         $this->searchableColumns = [
             'id',

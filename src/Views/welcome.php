@@ -5,11 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= \App\Core\View::e($title ?? 'Siwayut Catering') ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
 </head>
@@ -273,7 +269,7 @@
         'lastPage' => $lastPage,
         'eventMap' => $eventMap,
         'categories' => array_map(fn($c) => ['id' => (int) $c['id'], 'name' => $c['name']], $categories),
-    ], JSON_UNESCAPED_UNICODE) ?></script>
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?></script>
 
     <script src="/assets/js/modules/turnstile.js"></script>
     <script src="/assets/js/modules/toast.js"></script>

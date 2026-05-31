@@ -599,7 +599,6 @@ class {$name} extends BaseController {
     }
 
     public function index(Request \$request): void {
-        // TODO: implement
     }
 }
 PHP;
@@ -675,7 +674,6 @@ use App\\Core\\Request;
 
 class {$name} implements MiddlewareInterface {
     public function handle(Request \$request): bool {
-        // TODO: implement
         return true;
     }
 }
@@ -715,7 +713,6 @@ namespace App\\Services;
 
 class {$name} {
     public function __construct() {
-        // TODO: inject dependencies
     }
 }
 PHP;
@@ -802,8 +799,8 @@ function cmd_make_migration(array $args): void {
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
     } else {
-        $up = '-- TODO: write UP migration';
-        $down = '-- TODO: write DOWN migration';
+        $up = '-- customize: write UP migration';
+        $down = '-- customize: write DOWN migration';
     }
 
     $content = <<<PHP
@@ -861,7 +858,6 @@ class {$name} {
     public function __construct(private \\PDO \$db) {}
 
     public function run(): void {
-        // TODO: implement seeder logic using \$this->db
     }
 }
 PHP;

@@ -128,7 +128,7 @@ Grain over a solid colour. Always opacity-capped at `0.15`.
 Generic silhouette in unfilled data slots, greyscale-tinted, with a "Replace with real photo" hint visible to the developer (HTML comment).
 
 ```html
-<!-- TODO: Replace with real product photo, target size: 600×900 -->
+<!-- Replace with real product photo, target size: 600×900 -->
 <picture class="product-card__photo product-card__photo--empty">
   <img src="…/imagery/silhouette/silhouette-bottle-01.png" alt="Hand-poured ceramic vessel, studio lighting" />
 </picture>

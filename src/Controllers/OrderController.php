@@ -301,8 +301,8 @@ class OrderController extends BaseController
 
     public function show(Request $request): void
     {
-        $id = $request->param('id');
-        $order = $this->resolveOrder($id);
+        $orderNumber = $request->param('order_number');
+        $order = $this->resolveOrder($orderNumber);
 
         if (!$order) {
             throw new NotFoundException(__('order_not_found'));
@@ -321,7 +321,7 @@ class OrderController extends BaseController
 
     public function update(Request $request): void
     {
-        $id = $request->param('id');
+        $orderNumber = $request->param('order_number');
         $data = $request->only(['status', 'payment_status']);
 
         $order = $this->resolveOrder($id);

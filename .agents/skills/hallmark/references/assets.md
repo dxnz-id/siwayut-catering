@@ -20,7 +20,7 @@ When imagery is needed *and* the user hasn't supplied real assets, pick from thi
 
 **Swappability — non-negotiable:**
 
-- Every placeholder image carries an HTML comment immediately above it: `<!-- TODO: Replace with real <thing>, target size: <WxH> -->`.
+- Every placeholder image carries an HTML comment immediately above it: `<!-- Replace with real asset, target size: <WxH> -->`.
 - All placeholder URLs reference a single constant — a `--placeholder-base` CSS variable or `PLACEHOLDER_BASE` config constant. User edits one place to swap the entire site.
 - Alt text describes the **intended** subject ("Hand-thrown ceramic mug, top-down on linen") not the placeholder ("Picsum image"). When the user swaps in the real photo, alt is already correct.
 

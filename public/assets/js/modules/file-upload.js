@@ -70,7 +70,13 @@
             fileName.textContent = file.name;
 
             var typeLabel = getFileTypeLabel(file.type) || file.type || 'Unknown';
-            fileMeta.innerHTML = '<span>' + typeLabel + '</span><span>' + formatFileSize(file.size) + '</span>';
+            fileMeta.innerHTML = '';
+            var span1 = document.createElement('span');
+            span1.textContent = typeLabel;
+            fileMeta.appendChild(span1);
+            var span2 = document.createElement('span');
+            span2.textContent = formatFileSize(file.size);
+            fileMeta.appendChild(span2);
 
             if (file.type.startsWith('image/')) {
                 thumb.style.display = 'block';

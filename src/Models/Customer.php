@@ -7,6 +7,7 @@ class Customer extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'customers';
+        $this->fillable = ['customer_code', 'user_id', 'name', 'phone', 'email', 'address', 'notes'];
         $this->sortableColumns = ['id', 'customer_code', 'name', 'phone', 'created_at'];
         $this->searchableColumns = ['id', 'customer_code', 'name', 'phone', 'email', 'address'];
     }

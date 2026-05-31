@@ -7,6 +7,7 @@ class Order extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'orders';
+        $this->fillable = ['order_number', 'customer_id', 'event_id', 'event_date', 'total_price', 'delivery_address', 'notes', 'status', 'payment_status'];
         $this->sortableColumns = ['id', 'order_number', 'customer_id', 'event_id', 'event_date', 'total_price', 'status', 'payment_status', 'created_at', 'customer_name', 'items_count'];
     }
 

@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace App\Core;
 
 class Encryptor {
-    private const CIPHER = 'aes-256-cbc';
+    private const CIPHER = 'aes-256-gcm';
+    private const TAG_LEN = 16;
 
     public static function key(): string {
         $raw = APP_KEY;
@@ -20,8 +21,9 @@ class Encryptor {
             throw new \RuntimeException('APP_KEY is not set.');
         }
         $iv = random_bytes(openssl_cipher_iv_length(self::CIPHER));
-        $ciphertext = openssl_encrypt($plaintext, self::CIPHER, $key, OPENSSL_RAW_DATA, $iv);
-        return base64_encode($iv . $ciphertext);
+        $tag = '';
+        $ciphertext = openssl_encrypt($plaintext, self::CIPHER, $key, OPENSSL_RAW_DATA, $iv, $tag);
+        return base64_encode($iv . $tag . $ciphertext);
     }
 
     public static function decrypt(string $payload): string {
@@ -35,8 +37,9 @@ class Encryptor {
         }
         $ivLen = openssl_cipher_iv_length(self::CIPHER);
         $iv = substr($data, 0, $ivLen);
-        $ciphertext = substr($data, $ivLen);
-        $result = openssl_decrypt($ciphertext, self::CIPHER, $key, OPENSSL_RAW_DATA, $iv);
+        $tag = substr($data, $ivLen, self::TAG_LEN);
+        $ciphertext = substr($data, $ivLen + self::TAG_LEN);
+        $result = openssl_decrypt($ciphertext, self::CIPHER, $key, OPENSSL_RAW_DATA, $iv, $tag);
         if ($result === false) {
             throw new \RuntimeException('Decryption failed.');
         }

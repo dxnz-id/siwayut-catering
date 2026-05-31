@@ -5,11 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= \App\Core\View::e($title ?? 'Order Catering — Siwayut Catering') ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/app.css?v=3">
 
     <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
@@ -135,15 +131,22 @@
         var menuList = <?= $menuJson ?>;
 
         function buildSelect(index) {
-            var html = '<select name="items[' + index + '][menu_id]" required class="w-full px-4 py-3 bg-white/5 text-text border border-border rounded-xl font-body leading-relaxed text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20">';
-            html += '<option value=""><?= e(__('select_menu')) ?></option>';
+            var select = document.createElement('select');
+            select.name = 'items[' + index + '][menu_id]';
+            select.required = true;
+            select.className = 'w-full px-4 py-3 bg-white/5 text-text border border-border rounded-xl font-body leading-relaxed text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20';
+            var emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.textContent = '<?= e(__('select_menu')) ?>';
+            select.appendChild(emptyOpt);
             for (var i = 0; i < menuList.length; i++) {
                 var m = menuList[i];
-                var price = 'Rp ' + Number(m.price).toLocaleString('id-ID');
-                html += '<option value="' + m.id + '">' + m.name + ' \u2014 ' + price + '</option>';
+                var opt = document.createElement('option');
+                opt.value = m.id;
+                opt.textContent = m.name + ' \u2014 ' + 'Rp ' + Number(m.price).toLocaleString('id-ID');
+                select.appendChild(opt);
             }
-            html += '</select>';
-            return html;
+            return select.outerHTML;
         }
 
         function updateIndices() {

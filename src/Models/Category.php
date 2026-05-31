@@ -7,6 +7,7 @@ class Category extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'categories';
+        $this->fillable = ['name', 'slug'];
         $this->sortableColumns = ['id', 'name', 'slug', 'created_at'];
         $this->searchableColumns = [
             'id',

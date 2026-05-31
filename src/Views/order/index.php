@@ -183,7 +183,7 @@ require __DIR__ . '/../partials/create-modal.php';
 <script>
 <?php $menuJson = json_encode(array_map(function($m) {
     return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price']];
-}, $menus)); ?>
+}, $menus), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
 (function() {
     'use strict';
     var container = document.getElementById('menu-items-container');
@@ -193,15 +193,22 @@ require __DIR__ . '/../partials/create-modal.php';
     var menuList = <?= $menuJson ?>;
 
     function buildSelect(index) {
-        var html = '<select name="items[' + index + '][menu_id]" required class="w-full px-3 py-3 border border-border rounded-lg text-sm leading-relaxed text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">';
-        html += '<option value=""><?= __('select_menu') ?></option>';
+        var select = document.createElement('select');
+        select.name = 'items[' + index + '][menu_id]';
+        select.required = true;
+        select.className = 'w-full px-3 py-3 border border-border rounded-lg text-sm leading-relaxed text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light';
+        var emptyOpt = document.createElement('option');
+        emptyOpt.value = '';
+        emptyOpt.textContent = '<?= e(__('select_menu')) ?>';
+        select.appendChild(emptyOpt);
         for (var i = 0; i < menuList.length; i++) {
             var m = menuList[i];
-            var price = 'Rp ' + Number(m.price).toLocaleString('id-ID');
-            html += '<option value="' + m.id + '">' + m.name + ' (' + price + ')</option>';
+            var opt = document.createElement('option');
+            opt.value = m.id;
+            opt.textContent = m.name + ' (' + 'Rp ' + Number(m.price).toLocaleString('id-ID') + ')';
+            select.appendChild(opt);
         }
-        html += '</select>';
-        return html;
+        return select.outerHTML;
     }
 
     function updateIndices() {
