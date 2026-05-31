@@ -4,6 +4,7 @@
 /storage/logs/*.log
 /storage/uploads/*
 !/storage/uploads/.gitkeep
+/storage/rate-limit/*
 .DS_Store
 Thumbs.db
 *.cache
