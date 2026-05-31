@@ -2,17 +2,13 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars((string) ($title ?? 'Login'), ENT_QUOTES, 'UTF-8') ?> —
-        <?= htmlspecialchars((string) APP_NAME, ENT_QUOTES, 'UTF-8') ?>
-    </title>
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/app.css?v=2">
-    <?php if (\App\Core\Turnstile::enabled()): ?>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    <?php endif; ?>
-    <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
+    <?php
+    $titleSuffix = APP_NAME;
+    if (\App\Core\Turnstile::enabled()) {
+        $headExtra = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
+    }
+    require __DIR__ . '/../partials/head.php';
+    ?>
 </head>
 
 <body>
@@ -33,8 +29,7 @@
     <script src="/assets/js/modules/ai-description.js"></script>
     <?php component('modal') ?>
     <?php component('toast') ?>
-    <sc ript src="/assets/js/app.js">
-        </script>
+    <script src="/assets/js/app.js"></script>
 </body>
 
 </html>

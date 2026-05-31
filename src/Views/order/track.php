@@ -1,29 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= \App\Core\View::e($title ?? 'Track Order — Siwayut Catering') ?></title>
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/app.css?v=3">
-    <?php if (\App\Core\Turnstile::enabled()): ?>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    <?php endif; ?>
-    <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
-</head>
-
-<body class="bg-bg text-text min-h-screen leading-relaxed font-body overflow-x-hidden bg-fixed bg-[radial-gradient(circle_at_15%_25%,rgba(229,142,38,0.12)_0%,transparent_45%),radial-gradient(circle_at_85%_75%,rgba(234,32,39,0.08)_0%,transparent_45%)]">
-
-    <header class="sticky top-0 z-[100] bg-bg/60 backdrop-blur-[12px] border-b border-border py-4">
-        <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2 no-underline text-text">
-                <span class="text-[1.8rem] drop-shadow-[0_0_8px_var(--accent-gold-glow)]">🍲</span>
-                <span class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-gold bg-clip-text text-transparent">Siwayut Catering</span>
-            </a>
-            <a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('back') ?></a>
-        </div>
-    </header>
 
     <main class="max-w-[540px] mx-auto px-6">
         <div class="bg-card-bg border border-border backdrop-blur-[16px] rounded-xl p-10 px-8 max-md:p-6 max-md:px-5 mt-16">
@@ -61,20 +36,4 @@
             </form>
         </div>
     </main>
-    <?php component('footer') ?>
-    <?php
-    $flashError = \App\Core\Session::getFlash('error');
-    $pageFlashes = [];
-    if ($flashError) $pageFlashes[] = ['type' => 'error', 'message' => $flashError];
-    ?>
-    <script src="/assets/js/modules/turnstile.js"></script>
-    <script src="/assets/js/modules/toast.js"></script>
-    <script src="/assets/js/modules/file-upload.js"></script>
-    <script src="/assets/js/modules/progressive-image.js"></script>
-    <script src="/assets/js/modules/load-more-menu.js"></script>
-    <script src="/assets/js/modules/ai-description.js"></script>
-    <?php component('toast', ['flashes' => $pageFlashes]) ?>
-    <script src="/assets/js/app.js"></script>
-</body>
 
-</html>

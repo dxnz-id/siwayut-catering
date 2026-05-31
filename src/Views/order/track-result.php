@@ -1,29 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= \App\Core\View::e($title ?? 'Order Detail — Siwayut Catering') ?></title>
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/app.css?v=3">
-    <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
-</head>
-
-<body
-    class="bg-bg text-text min-h-screen leading-relaxed font-body overflow-x-hidden bg-fixed bg-[radial-gradient(circle_at_15%_25%,rgba(229,142,38,0.12)_0%,transparent_45%),radial-gradient(circle_at_85%_75%,rgba(234,32,39,0.08)_0%,transparent_45%)]">
-
-    <header class="sticky top-0 z-[100] bg-bg/60 backdrop-blur-[12px] border-b border-border py-4">
-        <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2 no-underline text-text">
-                <span class="text-[1.8rem] drop-shadow-[0_0_8px_var(--accent-gold-glow)]">🍲</span>
-                <span
-                    class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-gold bg-clip-text text-transparent">Siwayut
-                    Catering</span>
-            </a>
-
-        </div>
-    </header>
 
     <?php
     $statusLabels = [
@@ -184,7 +159,3 @@
         </div>
 
     </main>
-    <?php component('footer') ?>
-</body>
-
-</html>

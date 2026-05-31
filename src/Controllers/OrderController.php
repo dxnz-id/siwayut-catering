@@ -39,11 +39,18 @@ class OrderController extends BaseController
             $eventMap[$ev['id']] = $ev['name'];
         }
 
+        $navExtra = '<a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back') . '</a>'
+            . '<form method="POST" action="/logout" class="m-0 p-0 inline">'
+            . \App\Core\Csrf::field()
+            . '<button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer">' . __('logout') . '</button>'
+            . '</form>';
+
         $this->render('order/my-orders', [
             'title' => __('my_orders') . ' — Siwayut Catering',
             'orders' => $orders,
             'eventMap' => $eventMap,
-        ], '');
+            'navExtra' => $navExtra,
+        ], 'public');
     }
 
     public function publicForm(Request $request): void
@@ -56,7 +63,8 @@ class OrderController extends BaseController
             'title' => __('order_catering') . ' — Siwayut Catering',
             'menus' => $activeMenus,
             'events' => $events,
-        ], '');
+            'navExtra' => '<a href="/" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back_home') . '</a>',
+        ], 'public');
     }
 
     public function publicSubmit(Request $request): void
@@ -115,7 +123,8 @@ class OrderController extends BaseController
     {
         $this->render('order/track', [
             'title' => __('track_order_title') . ' — Siwayut Catering',
-        ], '');
+            'navExtra' => '<a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back') . '</a>',
+        ], 'public');
     }
 
     public function track(Request $request): void
@@ -196,7 +205,8 @@ class OrderController extends BaseController
             'customer' => $customer,
             'items' => $items,
             'event' => $event,
-        ], '');
+            'navExtra' => '<a href="/track-order" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('track_another') . '</a>',
+        ], 'public');
     }
 
     public function index(Request $request): void

@@ -2,12 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 Internal Server Error</title>
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/app.css?v=2">
-    <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
+    <?php $title = '500 Internal Server Error'; require __DIR__ . '/../partials/head.php' ?>
 </head>
 
 <body class="bg-[#09090b] text-[#f4f4f5] font-body flex justify-center items-center min-h-screen text-center m-0">

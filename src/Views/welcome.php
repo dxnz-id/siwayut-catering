@@ -1,58 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="parallax-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= \App\Core\View::e($title ?? 'Siwayut Catering') ?></title>
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/app.css">
-    <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
-</head>
-
-<body
-    class="bg-bg text-text min-h-screen leading-relaxed overflow-x-hidden bg-fixed bg-[radial-gradient(circle_at_15%_25%,rgba(229,142,38,0.12)_0%,transparent_45%),radial-gradient(circle_at_85%_75%,rgba(234,32,39,0.08)_0%,transparent_45%)]">
-
-    <div class="parallax-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-
-    <div class="relative z-10 flex-none">
-        <!-- Sticky Glass Navbar -->
-        <?php $navUser = \App\Core\Session::get('user'); ?>
-        <header class="sticky top-0 z-[100] bg-bg/60 backdrop-blur-[12px] border-b border-border py-4">
-            <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
-                <a href="/" class="flex items-center gap-2 no-underline text-text">
-                    <span class="text-[1.8rem] drop-shadow-[0_0_8px_var(--accent-gold-glow)]">🍲</span>
-                    <span
-                        class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-gold bg-clip-text text-transparent">Siwayut
-                        Catering</span>
-                </a>
-                <div class="flex items-center gap-3">
-                    <?php component('lang-switcher') ?>
-                    <?php if ($navUser): ?>
-                        <?php if ($navUser['role'] === 'admin'): ?>
-                            <a href="/orders"
-                                class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('dashboard') ?></a>
-                        <?php else: ?>
-                            <a href="/my-orders"
-                                class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('my_orders') ?></a>
-                            <form method="POST" action="/logout" class="m-0 p-0 inline">
-                                <?= \App\Core\Csrf::field() ?>
-                                <button type="submit"
-                                    class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer"><?= __('logout') ?></button>
-                            </form>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <a href="/auth"
-                            class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('login') ?></a>
-                    <?php endif; ?>
-                </div>
-        </header>
-
-        <main>
+<div class="relative z-10">
+    <main>
             <div class="max-w-[1200px] mx-auto px-6">
                 <!-- Hero Section -->
                 <section class="py-20 md:py-24 text-center relative">
@@ -260,7 +213,6 @@
             </section>
         </main>
 
-        <?php component('footer') ?>
     </div>
 
     <script id="menu-data" type="application/json"><?= json_encode([
@@ -270,17 +222,6 @@
         'eventMap' => $eventMap,
         'categories' => array_map(fn($c) => ['id' => (int) $c['id'], 'name' => $c['name']], $categories),
     ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?></script>
-
-    <script src="/assets/js/modules/turnstile.js"></script>
-    <script src="/assets/js/modules/toast.js"></script>
-    <script src="/assets/js/modules/file-upload.js"></script>
-    <script src="/assets/js/modules/progressive-image.js"></script>
-    <script src="/assets/js/modules/load-more-menu.js"></script>
-    <script src="/assets/js/modules/modal.js"></script>
-    <script src="/assets/js/modules/ai-description.js"></script>
-    <?php component('modal') ?>
-    <?php component('toast') ?>
-    <script src="/assets/js/app.js?v=2"></script>
 
     <script>
         (function () {
@@ -296,6 +237,3 @@
             update();
         })();
     </script>
-</body>
-
-</html>

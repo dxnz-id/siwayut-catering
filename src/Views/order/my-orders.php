@@ -1,38 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= \App\Core\View::e($title) ?></title>
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/app.css?v=2">
-    <link rel="icon" type="image/svg+xml" href="/assets/icon/favicon.svg">
-</head>
-
-<body class="bg-[#09090b] text-[#f4f4f5] font-body min-h-screen">
-
-    <!-- Navbar -->
-    <header class="sticky top-0 z-[100] bg-bg/60 backdrop-blur-[12px] border-b border-border py-4">
-        <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2 no-underline text-text">
-                <span class="text-[1.8rem] drop-shadow-[0_0_8px_var(--accent-gold-glow)]">🍲</span>
-                <span
-                    class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-gold bg-clip-text text-transparent">Siwayut
-                    Catering</span>
-            </a>
-            <div class="flex items-center gap-3">
-                <?php component('lang-switcher') ?>
-                <a href="javascript:void(0)" onclick="history.back();return false"
-                    class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300"><?= __('back') ?></a>
-                <form method="POST" action="/logout" class="m-0 p-0 inline">
-                    <?= \App\Core\Csrf::field() ?>
-                    <button type="submit"
-                        class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer"><?= __('logout') ?></button>
-                </form>
-            </div>
-        </div>
-    </header>
 
     <main class="max-w-[900px] mx-auto px-6 py-10">
 
@@ -80,10 +46,3 @@
         <?php endif; ?>
 
     </main>
-
-    <?php component('footer') ?>
-
-    <script src="/assets/js/app.js"></script>
-</body>
-
-</html>
