@@ -19,6 +19,10 @@ class LangController
 
         // Redirect back to referring page, or home if no referrer
         $referrer = $_SERVER['HTTP_REFERER'] ?? '/';
+        $host = parse_url($referrer, PHP_URL_HOST);
+        if ($host && $host !== ($_SERVER['HTTP_HOST'] ?? '')) {
+            $referrer = '/';
+        }
         header('Location: ' . $referrer);
         exit;
     }

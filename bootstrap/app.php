@@ -17,11 +17,8 @@ set_exception_handler(function (Throwable $e) {
     http_response_code($statusCode);
 
     if (APP_DEBUG) {
-        echo "<h1>Exception Caught</h1>";
-        echo "<p><strong>Type:</strong> " . get_class($e) . "</p>";
-        echo "<p><strong>Message:</strong> " . \App\Core\View::e($e->getMessage()) . "</p>";
-        echo "<p><strong>File:</strong> " . $e->getFile() . " on line " . $e->getLine() . "</p>";
-        echo "<pre>" . \App\Core\View::e($e->getTraceAsString()) . "</pre>";
+        echo "<h1>Error</h1>";
+        echo "<p>" . \App\Core\View::e($e->getMessage()) . "</p>";
     } else {
         $message = $isHttpException ? $e->getMessage() : 'Terjadi kesalahan pada server kami.';
         if ($statusCode === 404 && file_exists(BASE_PATH . '/src/Views/errors/404.php')) {

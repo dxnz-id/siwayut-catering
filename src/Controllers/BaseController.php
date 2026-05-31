@@ -32,6 +32,10 @@ abstract class BaseController {
 
     protected function back(string $fallback = '/dashboard'): never {
         $referer = $_SERVER['HTTP_REFERER'] ?? $fallback;
+        $host = parse_url($referer, PHP_URL_HOST);
+        if ($host && $host !== ($_SERVER['HTTP_HOST'] ?? '')) {
+            $referer = $fallback;
+        }
         Response::redirect($referer);
     }
 
