@@ -7,6 +7,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Core\Logger;
 use App\Exceptions\NotFoundException;
 use App\Services\EventService;
 
@@ -71,11 +72,13 @@ class EventController extends BaseController {
             }
             $this->redirectWithFlash('/events', 'success', __('event_added'));
         } catch (\Exception $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
             if ($request->isAjax()) {
-                Response::jsonError(__('failed_create_event', ['error' => $e->getMessage()]));
+                Response::jsonError(__('failed_create_event', ['error' => $errorMsg]));
             }
             $this->withOldInput($data);
-            Session::flash('error', __('failed_create_event', ['error' => $e->getMessage()]));
+            Session::flash('error', __('failed_create_event', ['error' => $errorMsg]));
             $this->redirect('/events/create');
         }
     }
@@ -111,9 +114,11 @@ class EventController extends BaseController {
             if ($request->isAjax()) Response::jsonSuccess(null, __('event_updated'));
             $this->redirectWithFlash('/events', 'success', __('event_updated'));
         } catch (\Exception $e) {
-            if ($request->isAjax()) Response::jsonError(__('failed_update_event', ['error' => $e->getMessage()]));
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
+            if ($request->isAjax()) Response::jsonError(__('failed_update_event', ['error' => $errorMsg]));
             $this->withOldInput($data);
-            Session::flash('error', __('failed_update_event', ['error' => $e->getMessage()]));
+            Session::flash('error', __('failed_update_event', ['error' => $errorMsg]));
             $this->redirect("/events/{$id}/edit");
         }
     }
@@ -128,10 +133,12 @@ class EventController extends BaseController {
                 $this->redirectWithFlash('/events', 'error', __('failed_delete_event'));
             }
         } catch (\PDOException $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
             if ($e->getCode() == 23000) {
                 $this->redirectWithFlash('/events', 'error', __('event_in_use'));
             } else {
-                $this->redirectWithFlash('/events', 'error', __('db_error', ['error' => $e->getMessage()]));
+                $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
+                $this->redirectWithFlash('/events', 'error', __('db_error', ['error' => $errorMsg]));
             }
         }
     }

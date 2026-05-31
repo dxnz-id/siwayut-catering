@@ -317,6 +317,7 @@ return [
     'failed_update_event' => 'Failed to update event: :error',
     'failed_update_user' => 'Failed to update user: :error',
     'failed_update_order' => 'Failed to update order: :error',
+    'operation_failed' => 'An error occurred. Please try again.',
     'db_error' => 'Database error: :error',
 
     // UI extras

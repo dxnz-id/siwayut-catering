@@ -1,0 +1,10 @@
+vendor/
+node_modules/
+.git
+.gitignore
+docker-compose.override.yml
+.DS_Store
+storage/logs/
+storage/uploads/
+public/assets/css/app.css
+public/assets/js/app.js

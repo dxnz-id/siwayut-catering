@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\{Request, Response, Session, Validator, Database, Turnstile};
+use App\Core\{Request, Response, Session, Validator, Database, Turnstile, Logger};
 use App\Exceptions\NotFoundException;
 use App\Services\OrderService;
 use App\Services\MenuService;
@@ -277,11 +277,13 @@ class OrderController extends BaseController
             }
             $this->redirectWithFlash('/orders', 'success', __('order_created'));
         } catch (\Exception $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
             if ($request->isAjax()) {
-                Response::jsonError($e->getMessage());
+                Response::jsonError($errorMsg);
             }
             $this->withOldInput($data);
-            Session::flash('error', $e->getMessage());
+            Session::flash('error', $errorMsg);
             $this->redirect('/orders/create');
         }
     }
@@ -348,9 +350,11 @@ class OrderController extends BaseController
                 Response::jsonSuccess(null, __('order_updated'));
             $this->redirectWithFlash('/orders', 'success', __('order_update_success'));
         } catch (\Exception $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
             if ($request->isAjax())
-                Response::jsonError(__('failed_update_order', ['error' => $e->getMessage()]));
-            Session::flash('error', __('failed_update_order', ['error' => $e->getMessage()]));
+                Response::jsonError(__('failed_update_order', ['error' => $errorMsg]));
+            Session::flash('error', __('failed_update_order', ['error' => $errorMsg]));
             $this->redirect("/orders/{$order['order_number']}");
         }
     }

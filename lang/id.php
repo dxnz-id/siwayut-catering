@@ -317,6 +317,7 @@ return [
     'failed_update_event' => 'Gagal memperbarui acara: :error',
     'failed_update_user' => 'Gagal memperbarui pengguna: :error',
     'failed_update_order' => 'Gagal memperbarui pesanan: :error',
+    'operation_failed' => 'Terjadi kesalahan. Silakan coba lagi.',
     'db_error' => 'Kesalahan database: :error',
 
     // UI extras

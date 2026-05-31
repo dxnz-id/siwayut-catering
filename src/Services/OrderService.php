@@ -88,6 +88,7 @@ class OrderService {
 
         // Create order
         $orderId = $this->order->create([
+            'order_number' => 'TEMP',
             'customer_id' => $customerId,
             'event_id' => $data['event_id'],
             'event_date' => $data['event_date'],

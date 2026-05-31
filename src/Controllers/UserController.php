@@ -3,7 +3,7 @@ declare(strict_types=1);
 // File: src/Controllers/UserController.php
 
 namespace App\Controllers;
-use App\Core\{Request, Response, Session, Validator, Database};
+use App\Core\{Request, Response, Session, Validator, Database, Logger};
 use App\Services\UserService;
 
 class UserController extends BaseController {
@@ -69,11 +69,13 @@ class UserController extends BaseController {
             }
             $this->redirectWithFlash('/users', 'success', __('user_created'));
         } catch (\Exception $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
             if ($request->isAjax()) {
-                Response::jsonError(__('failed_create_user', ['error' => $e->getMessage()]));
+                Response::jsonError(__('failed_create_user', ['error' => $errorMsg]));
             }
             $this->withOldInput($data);
-            Session::flash('error', __('failed_create_user', ['error' => $e->getMessage()]));
+            Session::flash('error', __('failed_create_user', ['error' => $errorMsg]));
             $this->redirect('/users/create');
         }
     }
@@ -116,9 +118,11 @@ class UserController extends BaseController {
             if ($request->isAjax()) Response::jsonSuccess(null, __('user_updated'));
             $this->redirectWithFlash('/users', 'success', __('user_updated'));
         } catch (\Exception $e) {
-            if ($request->isAjax()) Response::jsonError(__('failed_update_user', ['error' => $e->getMessage()]));
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
+            if ($request->isAjax()) Response::jsonError(__('failed_update_user', ['error' => $errorMsg]));
             $this->withOldInput($data);
-            Session::flash('error', __('failed_update_user', ['error' => $e->getMessage()]));
+            Session::flash('error', __('failed_update_user', ['error' => $errorMsg]));
             $this->redirect("/users/{$id}/edit");
         }
     }

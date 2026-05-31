@@ -7,6 +7,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Core\Validator;
+use App\Core\Logger;
 use App\Exceptions\NotFoundException;
 use App\Services\MenuService;
 use App\Services\CategoryService;
@@ -147,11 +148,13 @@ class MenuController extends BaseController {
             }
             $this->redirectWithFlash('/menus', 'success', __('menu_added'));
         } catch (\Exception $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
             if ($request->isAjax()) {
-                Response::jsonError(__('failed_create_menu', ['error' => $e->getMessage()]));
+                Response::jsonError(__('failed_create_menu', ['error' => $errorMsg]));
             }
             $this->withOldInput($data);
-            Session::flash('error', __('failed_create_menu', ['error' => $e->getMessage()]));
+            Session::flash('error', __('failed_create_menu', ['error' => $errorMsg]));
             $this->redirect('/menus/create');
         }
     }
@@ -214,9 +217,11 @@ class MenuController extends BaseController {
             if ($request->isAjax()) Response::jsonSuccess(null, __('menu_updated'));
             $this->redirectWithFlash('/menus', 'success', __('menu_updated'));
         } catch (\Exception $e) {
-            if ($request->isAjax()) Response::jsonError(__('failed_update_menu', ['error' => $e->getMessage()]));
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
+            if ($request->isAjax()) Response::jsonError(__('failed_update_menu', ['error' => $errorMsg]));
             $this->withOldInput($data);
-            Session::flash('error', __('failed_update_menu', ['error' => $e->getMessage()]));
+            Session::flash('error', __('failed_update_menu', ['error' => $errorMsg]));
             $this->redirect("/menus/{$code}");
         }
     }
@@ -234,7 +239,9 @@ class MenuController extends BaseController {
             $description = $this->aiService->generateDescription($context);
             Response::json(['description' => $description]);
         } catch (\Throwable $e) {
-            Response::jsonError($e->getMessage(), [], 500);
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
+            Response::jsonError($errorMsg, [], 500);
         }
     }
 
@@ -251,10 +258,12 @@ class MenuController extends BaseController {
                 $this->redirectWithFlash('/menus', 'error', __('failed_delete_menu'));
             }
         } catch (\PDOException $e) {
+            Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
             if ($e->getCode() == 23000) {
                 $this->redirectWithFlash('/menus', 'error', __('menu_has_orders'));
             } else {
-                $this->redirectWithFlash('/menus', 'error', __('db_error', ['error' => $e->getMessage()]));
+                $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
+                $this->redirectWithFlash('/menus', 'error', __('db_error', ['error' => $errorMsg]));
             }
         }
     }
