@@ -16,7 +16,12 @@ class View {
     public function render(string $template, array $data = [], string $layout = 'main'): void {
         $content = $this->partial($template, $data);
         if ($layout) {
-            extract($data);
+            foreach ($data as $_key => $_value) {
+                if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $_key)) {
+                    $$_key = $_value;
+                }
+            }
+            unset($_key, $_value);
             require $this->layoutsPath . '/' . $layout . '.php';
         } else {
             echo $content;
@@ -24,7 +29,12 @@ class View {
     }
 
     public function partial(string $template, array $data = []): string {
-        extract($data);
+        foreach ($data as $_key => $_value) {
+            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $_key)) {
+                $$_key = $_value;
+            }
+        }
+        unset($_key, $_value);
         ob_start();
         require $this->viewsPath . '/' . $template . '.php';
         return ob_get_clean();

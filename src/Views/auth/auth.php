@@ -1,4 +1,3 @@
-<!-- File: src/Views/auth/auth.php -->
 <?php $activeTab = ($activeTab ?? 'login') === 'register' ? 'register' : 'login'; ?>
 <section class="w-full px-4 py-8 md:py-10">
     <div class="bg-[#18181b] border border-white/10 rounded-[24px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] w-full max-w-[420px] mx-auto p-10">
@@ -99,7 +98,7 @@
                         <label for="register-password" class="block text-sm font-medium text-text mb-1.5"><?= __('password') ?></label>
                         <input type="password" id="register-password" name="password"
                             class="w-full px-3 py-3 border border-border rounded-lg text-sm leading-relaxed text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light"
-                            placeholder="<?= __('min_chars', ['min' => 6]) ?>" required>
+                            placeholder="<?= __('min_chars', ['min' => 8]) ?>" required>
                     </div>
 
                     <div class="mb-5">

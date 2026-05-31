@@ -90,7 +90,12 @@ if (!function_exists('now')) {
 if (!function_exists('component')) {
     function component(string $_componentName_, array $_componentData_ = []): void
     {
-        extract($_componentData_);
+        foreach ($_componentData_ as $_ck => $_cv) {
+            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $_ck)) {
+                $$_ck = $_cv;
+            }
+        }
+        unset($_ck, $_cv);
         require base_path('src/Views/components/' . ltrim($_componentName_, '/') . '.php');
     }
 }

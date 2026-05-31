@@ -78,13 +78,19 @@ class AiService {
         return $text;
     }
 
+    private function sanitize(string $value): string {
+        $value = str_replace(["\r\n", "\r", "\n"], ' ', $value);
+        $value = preg_replace('/[^\p{L}\p{N}\s.,!?()\-&@#$%\/:;+\'"]/u', '', $value);
+        return trim(mb_substr($value, 0, 200));
+    }
+
     private function buildPrompt(array $ctx): string {
         $parts = [];
-        if (!empty($ctx['name'])) $parts[] = "Menu: {$ctx['name']}";
-        if (!empty($ctx['category'])) $parts[] = "Kategori: {$ctx['category']}";
-        if (!empty($ctx['event'])) $parts[] = "Acara: {$ctx['event']}";
+        if (!empty($ctx['name'])) $parts[] = "Menu: " . $this->sanitize($ctx['name']);
+        if (!empty($ctx['category'])) $parts[] = "Kategori: " . $this->sanitize($ctx['category']);
+        if (!empty($ctx['event'])) $parts[] = "Acara: " . $this->sanitize($ctx['event']);
         if (!empty($ctx['price'])) $parts[] = "Harga: Rp " . number_format((float)$ctx['price'], 0, ',', '.');
-        if (!empty($ctx['minimum_portions'])) $parts[] = "Minimal porsi: {$ctx['minimum_portions']}";
+        if (!empty($ctx['minimum_portions'])) $parts[] = "Minimal porsi: " . $this->sanitize((string)$ctx['minimum_portions']);
 
         return "Buat deskripsi menu catering yang menggugah selera dalam Bahasa Indonesia berdasarkan data berikut:\n" . implode("\n", $parts) . "\n\nDeskripsi:";
     }

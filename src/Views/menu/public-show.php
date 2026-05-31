@@ -70,7 +70,7 @@
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.7rem] font-semibold uppercase tracking-widest"
                                 style="background:<?= $menu['status'] === 'active' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' ?>;color:<?= $menu['status'] === 'active' ? '#10b981' : '#ef4444' ?>">
-                                <?= __($menu['status']) ?>
+                                <?= e(__($menu['status'])) ?>
                             </span>
                             <span class="text-[0.7rem] text-muted uppercase tracking-widest"><?= __('menu') ?></span>
                         </div>

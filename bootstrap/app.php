@@ -26,7 +26,7 @@ set_exception_handler(function (Throwable $e) {
         } elseif (file_exists(BASE_PATH . '/src/Views/errors/500.php')) {
             require BASE_PATH . '/src/Views/errors/500.php';
         } else {
-            echo "<h1>{$statusCode} Error</h1><p>" . htmlspecialchars($message) . "</p>";
+            echo "<h1>{$statusCode} Error</h1><p>" . \App\Core\View::e($message) . "</p>";
         }
     }
     exit(1);

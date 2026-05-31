@@ -305,6 +305,7 @@ return [
     'user_created' => 'User created successfully.',
     'user_updated' => 'User updated successfully.',
     'cannot_delete_self' => 'You cannot delete your own account.',
+    'cannot_delete_admin' => 'You cannot delete other admin accounts.',
     'user_deleted' => 'User deleted successfully.',
     'invalid_credentials' => 'Invalid email or password.',
     'registration_success' => 'Registration successful. Please sign in.',

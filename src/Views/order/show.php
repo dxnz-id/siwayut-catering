@@ -38,7 +38,7 @@
                                     echo $st[$order['status']] ?? '#a1a1aa';
                                 ?>"
                                  data-status="<?= e($order['status']) ?>">
-                                <?= __($order['status']) ?>
+                                <?= e(__($order['status'])) ?>
                             </span>
                             <span class="payment-status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.7rem] font-semibold uppercase tracking-widest"
                                 style="background:<?php
@@ -49,11 +49,11 @@
                                     echo $pt[$order['payment_status']] ?? '#a1a1aa';
                                 ?>"
                                  data-payment="<?= e($order['payment_status']) ?>">
-                                <?= __($order['payment_status']) ?>
+                                <?= e(__($order['payment_status'])) ?>
                             </span>
                             <span class="text-[0.7rem] text-muted uppercase tracking-widest"><?= __('order') ?></span>
                         </div>
-                        <h1 class="text-2xl md:text-3xl font-bold font-display text-text leading-tight"><?= __('order') ?> <span class="text-gold"><?= htmlspecialchars($order['order_number']) ?></span></h1>
+                        <h1 class="text-2xl md:text-3xl font-bold font-display text-text leading-tight"><?= __('order') ?> <span class="text-gold"><?= e($order['order_number']) ?></span></h1>
                     </div>
                 </div>
                 <div class="text-right shrink-0">

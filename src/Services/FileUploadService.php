@@ -68,10 +68,21 @@ class FileUploadService {
     }
 
     public function uploadFromUrl(string $url, ?string $subdirectory = null): string {
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            throw new \RuntimeException('Only HTTP/HTTPS URLs are allowed.');
+        }
+
+        $host = parse_url($url, PHP_URL_HOST);
+        $ip = gethostbyname($host);
+        if ($ip !== $host && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            throw new \RuntimeException('Access to private or reserved IP ranges is not allowed.');
+        }
+
         $context = stream_context_create(['http' => ['timeout' => 15, 'user_agent' => 'SiwayutCatering/1.0']]);
         $content = @file_get_contents($url, false, $context);
         if ($content === false) {
-            throw new \RuntimeException("Failed to download image from URL: {$url}");
+            throw new \RuntimeException('Failed to download image from URL.');
         }
 
         $finfo = new \finfo(FILEINFO_MIME_TYPE);

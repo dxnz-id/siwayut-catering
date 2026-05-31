@@ -93,6 +93,13 @@ class Validator {
                     $column = $argParts[1] ?? $field;
                     $exceptId = $argParts[2] ?? null;
 
+                    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+                        return true;
+                    }
+                    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $column)) {
+                        $column = $field;
+                    }
+
                     $sql = "SELECT COUNT(*) FROM `{$table}` WHERE `{$column}` = ?";
                     $params = [$value];
                     if ($exceptId !== null) {

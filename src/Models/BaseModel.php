@@ -15,7 +15,6 @@ abstract class BaseModel {
     protected array $fillable = [];
 
     public function __construct() {
-        // DB connection deferred — initialized lazily on first query
     }
 
     protected function db(): PDO {
@@ -23,6 +22,10 @@ abstract class BaseModel {
             $this->db = Database::getInstance();
         }
         return $this->db;
+    }
+
+    private function validColumn(string $name): bool {
+        return preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name) === 1;
     }
 
     public function all(array $conditions = [], string $orderBy = 'created_at', string $direction = 'DESC'): array {
@@ -34,10 +37,13 @@ abstract class BaseModel {
         if (!empty($conditions)) {
             $clauses = [];
             foreach ($conditions as $col => $val) {
+                if (!$this->validColumn($col)) continue;
                 $clauses[] = "`{$col}` = ?";
                 $bindings[] = $val;
             }
-            $sql .= ' WHERE ' . implode(' AND ', $clauses);
+            if (!empty($clauses)) {
+                $sql .= ' WHERE ' . implode(' AND ', $clauses);
+            }
         }
 
         $sql .= " ORDER BY `{$orderBy}` {$direction}";
@@ -54,9 +60,11 @@ abstract class BaseModel {
         $clauses = [];
         $bindings = [];
         foreach ($conditions as $col => $val) {
+            if (!$this->validColumn($col)) continue;
             $clauses[] = "`{$col}` = ?";
             $bindings[] = $val;
         }
+        if (empty($clauses)) return null;
         $sql = "SELECT * FROM `{$this->table}` WHERE " . implode(' AND ', $clauses) . " LIMIT 1";
         $results = $this->query($sql, $bindings);
         return $results[0] ?? null;
@@ -68,8 +76,12 @@ abstract class BaseModel {
         $clauses = [];
         $bindings = [];
         foreach ($conditions as $col => $val) {
+            if (!$this->validColumn($col)) continue;
             $clauses[] = "`{$col}` = ?";
             $bindings[] = $val;
+        }
+        if (empty($clauses)) {
+            return $this->query("SELECT * FROM `{$this->table}` ORDER BY `{$orderBy}` {$direction}", $bindings);
         }
         $sql = "SELECT * FROM `{$this->table}` WHERE " . implode(' AND ', $clauses) . " ORDER BY `{$orderBy}` {$direction}";
         return $this->query($sql, $bindings);
@@ -79,7 +91,16 @@ abstract class BaseModel {
         if (!empty($this->fillable)) {
             $data = array_intersect_key($data, array_flip($this->fillable));
         }
-        $columns = array_keys($data);
+        $clean = [];
+        foreach ($data as $col => $val) {
+            if ($this->validColumn($col)) {
+                $clean[$col] = $val;
+            }
+        }
+        if (empty($clean)) {
+            throw new \InvalidArgumentException('No valid columns provided for insert.');
+        }
+        $columns = array_keys($clean);
         $placeholders = array_fill(0, count($columns), '?');
         $sql = sprintf(
             "INSERT INTO `%s` (`%s`) VALUES (%s)",
@@ -87,7 +108,7 @@ abstract class BaseModel {
             implode('`, `', $columns),
             implode(', ', $placeholders)
         );
-        $this->execute($sql, array_values($data));
+        $this->execute($sql, array_values($clean));
         return (int) $this->db()->lastInsertId();
     }
 
@@ -95,9 +116,11 @@ abstract class BaseModel {
         $setClauses = [];
         $bindings = [];
         foreach ($data as $col => $val) {
+            if (!$this->validColumn($col)) continue;
             $setClauses[] = "`{$col}` = ?";
             $bindings[] = $val;
         }
+        if (empty($setClauses)) return false;
         $bindings[] = $id;
         $sql = sprintf(
             "UPDATE `%s` SET %s WHERE `%s` = ?",
@@ -119,10 +142,13 @@ abstract class BaseModel {
         if (!empty($conditions)) {
             $clauses = [];
             foreach ($conditions as $col => $val) {
+                if (!$this->validColumn($col)) continue;
                 $clauses[] = "`{$col}` = ?";
                 $bindings[] = $val;
             }
-            $sql .= ' WHERE ' . implode(' AND ', $clauses);
+            if (!empty($clauses)) {
+                $sql .= ' WHERE ' . implode(' AND ', $clauses);
+            }
         }
         $stmt = $this->db()->prepare($sql);
         $stmt->execute($bindings);
@@ -141,6 +167,7 @@ abstract class BaseModel {
         $clauses = [];
         foreach ($conditions as $col => $val) {
             if ($val !== '' && $val !== null) {
+                if (!$this->validColumn($col)) continue;
                 $clauses[] = "`{$col}` = ?";
                 $bindings[] = $val;
             }
@@ -149,10 +176,13 @@ abstract class BaseModel {
         if ($search !== '' && !empty($searchColumns)) {
             $likeClauses = [];
             foreach ($searchColumns as $col) {
+                if (!$this->validColumn($col)) continue;
                 $likeClauses[] = "`{$col}` LIKE ?";
                 $bindings[] = "%{$search}%";
             }
-            $clauses[] = '(' . implode(' OR ', $likeClauses) . ')';
+            if (!empty($likeClauses)) {
+                $clauses[] = '(' . implode(' OR ', $likeClauses) . ')';
+            }
         }
 
         if (!empty($clauses)) {

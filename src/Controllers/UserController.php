@@ -49,7 +49,7 @@ class UserController extends BaseController {
         $validator->validate($data, [
             'name' => 'required|min:2|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'password' => 'required|min:8',
             'role' => 'required|in:admin,user',
         ]);
 
@@ -101,7 +101,7 @@ class UserController extends BaseController {
 
         $password = $data['password'] ?? '';
         if ($password !== '') {
-            $rules['password'] = 'min:6|confirmed';
+            $rules['password'] = 'min:8|confirmed';
         }
 
         $validator->validate($data, $rules);
@@ -133,6 +133,11 @@ class UserController extends BaseController {
 
         if ($currentUser && (int) $currentUser['id'] === $id) {
             $this->redirectWithFlash('/users', 'error', __('cannot_delete_self'));
+        }
+
+        $targetUser = $this->userService->getById($id);
+        if ($targetUser && ($targetUser['role'] ?? '') === 'admin') {
+            $this->redirectWithFlash('/users', 'error', __('cannot_delete_admin'));
         }
 
         $this->userService->delete($id);

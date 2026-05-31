@@ -305,6 +305,7 @@ return [
     'user_created' => 'Pengguna berhasil dibuat.',
     'user_updated' => 'Pengguna berhasil diperbarui.',
     'cannot_delete_self' => 'Anda tidak dapat menghapus akun Anda sendiri.',
+    'cannot_delete_admin' => 'Anda tidak dapat menghapus akun admin lain.',
     'user_deleted' => 'Pengguna berhasil dihapus.',
     'invalid_credentials' => 'Email atau kata sandi tidak valid.',
     'registration_success' => 'Pendaftaran berhasil. Silakan masuk.',

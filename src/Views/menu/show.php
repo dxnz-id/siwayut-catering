@@ -42,7 +42,7 @@
                     <div class="inline-flex items-center gap-2.5 mb-2">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.7rem] font-semibold uppercase tracking-widest"
                             style="background:<?= $menu['status'] === 'active' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' ?>;color:<?= $menu['status'] === 'active' ? '#10b981' : '#ef4444' ?>">
-                            <?= __($menu['status']) ?>
+                            <?= e(__($menu['status'])) ?>
                         </span>
                         <span class="text-[0.7rem] text-muted uppercase tracking-widest"><?= __('menu') ?></span>
                     </div>
@@ -142,7 +142,7 @@
             <a href="/orders/<?= e($ord['order_number']) ?>"
                 class="flex items-center justify-between gap-4 px-5 py-3.5 rounded-xl bg-white/[0.02] border border-white/5 no-underline text-inherit hover:bg-white/[0.04] hover:border-white/10 transition-all duration-200 group">
                 <div class="min-w-0">
-                    <div class="text-sm font-medium text-text"><?= htmlspecialchars($ord['order_number']) ?></div>
+                    <div class="text-sm font-medium text-text"><?= e($ord['order_number']) ?></div>
                     <div class="text-xs text-muted"><?= date('d M Y', strtotime($ord['created_at'])) ?></div>
                 </div>
                 <div class="flex items-center gap-3 shrink-0">
@@ -155,7 +155,7 @@
                             $st = ['pending'=>'#f59e0b','processing'=>'#818cf8','delivering'=>'#818cf8','completed'=>'#10b981','cancelled'=>'#ef4444'];
                             echo $st[$ord['status']] ?? '#a1a1aa';
                         ?>">
-                        <?= __($ord['status']) ?>
+                        <?= e(__($ord['status'])) ?>
                     </span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-muted/30 group-hover:text-gold/50 transition-colors duration-200"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
                 </div>

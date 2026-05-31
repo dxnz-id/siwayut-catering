@@ -62,9 +62,9 @@
                             <div class="w-28 shrink-0">
                                 <input type="number" name="items[0][quantity]" value="1" min="1" required
                                     class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20"
-                                    placeholder="<?= __('qty') ?>">
+                                    placeholder="<?= e(__('qty')) ?>">
                             </div>
-                            <button type="button" class="remove-menu-item mt-1 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0 hidden" data-index="0" title="<?= __('remove') ?>">
+                            <button type="button" class="remove-menu-item mt-1 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0 hidden" data-index="0" title="<?= e(__('remove')) ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
@@ -125,7 +125,7 @@
     <script>
 <?php $menuJson = json_encode(array_map(function($m) {
     return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price']];
-}, $menus)); ?>
+}, $menus), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP); ?>
     (function() {
         'use strict';
         var container = document.getElementById('menu-items-container');
@@ -136,7 +136,7 @@
 
         function buildSelect(index) {
             var html = '<select name="items[' + index + '][menu_id]" required class="w-full px-4 py-3 bg-white/5 text-text border border-border rounded-xl font-body leading-relaxed text-[0.95rem] outline-none transition-all duration-300 focus:border-gold focus:ring-[3px] focus:ring-gold/20">';
-            html += '<option value=""><?= __('select_menu') ?></option>';
+            html += '<option value=""><?= e(__('select_menu')) ?></option>';
             for (var i = 0; i < menuList.length; i++) {
                 var m = menuList[i];
                 var price = 'Rp ' + Number(m.price).toLocaleString('id-ID');
@@ -173,9 +173,9 @@
                 buildSelect(newIndex) +
                 '</div>' +
                 '<div class="w-28 shrink-0">' +
-                '<input type="number" name="items[' + newIndex + '][quantity]" value="1" min="1" required class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl font-body leading-relaxed text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20" placeholder="<?= __('qty') ?>">' +
+                '<input type="number" name="items[' + newIndex + '][quantity]" value="1" min="1" required class="w-full px-4 py-3 bg-white/5 border border-border rounded-xl font-body leading-relaxed text-text text-[0.95rem] outline-none transition-all duration-300 placeholder:text-white/20 focus:border-gold focus:ring-[3px] focus:ring-gold/20" placeholder="<?= e(__('qty')) ?>">' +
                 '</div>' +
-                '<button type="button" class="remove-menu-item mt-1 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0" data-index="' + newIndex + '" title="<?= __('remove') ?>">' +
+                '<button type="button" class="remove-menu-item mt-1 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0" data-index="' + newIndex + '" title="<?= e(__('remove')) ?>">' +
                 '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>';
             container.appendChild(div);
             updateIndices();

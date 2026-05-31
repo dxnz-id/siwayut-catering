@@ -32,7 +32,8 @@
             html += '<span class="progressive-wrap" style="display:inline-block;overflow:hidden;line-height:0;vertical-align:top;width:100%;height:100%;">';
             html += '<img src="' + esc(paths.thumb) + '" data-full="' + esc(paths.full) + '" alt="' + esc(menu.name) + '"';
             html += ' class="progressive-img blur-up" style="display:block;width:100%;height:100%;object-fit:cover"';
-            html += ' onerror="this.onerror=null;this.src=\'' + paths.full + '\';this.classList.remove(\'blur-up\');this.classList.add(\'loaded\')">';
+            var safeFull = esc(paths.full).replace(/'/g, '&#39;');
+            html += ' onerror="this.onerror=null;this.src=\'' + safeFull + '\';this.classList.remove(\'blur-up\');this.classList.add(\'loaded\')">';
             html += '</span>';
         } else {
             html += '<span style="font-size:3.5rem;">🍱</span>';

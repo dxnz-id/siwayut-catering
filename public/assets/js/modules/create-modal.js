@@ -159,7 +159,12 @@
                     var field = preview.dataset.imagePreview || 'image';
                     var filename = data[field];
                     if (filename) {
-                        preview.innerHTML = '<img src="/uploads/' + filename + '" class="w-24 h-24 object-cover rounded-lg border border-border" onerror="this.style.display=\'none\'">';
+                        var img = document.createElement('img');
+                        img.src = '/uploads/' + filename.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                        img.className = 'w-24 h-24 object-cover rounded-lg border border-border';
+                        img.onerror = function () { this.style.display = 'none'; };
+                        preview.innerHTML = '';
+                        preview.appendChild(img);
                         preview.classList.remove('hidden');
                     }
                 }
@@ -209,24 +214,35 @@
                     }
                 } else {
                     if (errorsEl) {
-                        var html = data.message ? '<p class="mb-2 font-medium">' + data.message + '</p>' : '';
+                        errorsEl.innerHTML = '';
+                        if (data.message) {
+                            var p = document.createElement('p');
+                            p.className = 'mb-2 font-medium';
+                            p.textContent = data.message;
+                            errorsEl.appendChild(p);
+                        }
                         if (data.errors) {
-                            html += '<ul class="list-disc pl-4 space-y-0.5">';
+                            var ul = document.createElement('ul');
+                            ul.className = 'list-disc pl-4 space-y-0.5';
                             for (var key in data.errors) {
                                 if (data.errors.hasOwnProperty(key)) {
-                                    html += '<li>' + data.errors[key] + '</li>';
+                                    var li = document.createElement('li');
+                                    li.textContent = data.errors[key];
+                                    ul.appendChild(li);
                                 }
                             }
-                            html += '</ul>';
+                            errorsEl.appendChild(ul);
                         }
-                        errorsEl.innerHTML = html;
                         errorsEl.classList.remove('hidden');
                     }
                 }
             })
             .catch(function (err) {
                 if (errorsEl) {
-                    errorsEl.innerHTML = '<p>Something went wrong: ' + err.message + '</p>';
+                    errorsEl.innerHTML = '';
+                    var p = document.createElement('p');
+                    p.textContent = 'Something went wrong: ' + err.message;
+                    errorsEl.appendChild(p);
                     errorsEl.classList.remove('hidden');
                 }
             })

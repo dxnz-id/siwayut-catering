@@ -23,7 +23,7 @@ class Csrf {
     }
 
     public static function field(): string {
-        return '<input type="hidden" name="_csrf_token" value="' . self::token() . '">';
+        return '<input type="hidden" name="_csrf_token" value="' . htmlspecialchars(self::token(), ENT_QUOTES, 'UTF-8') . '">';
     }
 
     public static function regenerate(): string {

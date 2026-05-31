@@ -68,7 +68,7 @@
                                 $st = ['pending' => '#f59e0b', 'processing' => '#818cf8', 'delivering' => '#818cf8', 'completed' => '#10b981', 'cancelled' => '#ef4444'];
                                 echo $st[$ord['status']] ?? '#a1a1aa';
                                 ?>">
-                                <?= __($ord['status']) ?>
+                                <?= e(__($ord['status'])) ?>
                             </span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor"

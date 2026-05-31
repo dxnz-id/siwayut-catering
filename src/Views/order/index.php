@@ -1,5 +1,5 @@
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold font-display text-text"><?= htmlspecialchars($title ?? 'Orders') ?></h1>
+    <h1 class="text-2xl font-bold font-display text-text"><?= e($title ?? 'Orders') ?></h1>
     <a href="#" onclick="openCreateModal('createOrderModal');return false" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-primary text-white border-primary hover:bg-primary-hover hover:border-primary-hover hover:shadow-[0_0_15px_var(--color-gold-glow)] hover:text-white">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
         <?= __('create_order') ?></a>
@@ -79,7 +79,7 @@ $sortIcon = function($col) use ($s, $d) {
             <tbody>
                 <?php foreach ($orders as $order): ?>
                 <tr class="cursor-pointer hover:bg-white/[0.03]" onclick="location.href='/orders/<?= e($order['order_number']) ?>'">
-                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text font-medium"><?= htmlspecialchars($order['order_number']) ?></td>
+                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text font-medium"><?= e($order['order_number']) ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
                         <div class="font-medium"><?= e($order['customer_name'] ?? __('unknown')) ?></div>
                         <div class="text-[0.8125rem] text-muted"><?= e($order['customer_phone'] ?? '-') ?></div>
@@ -99,7 +99,7 @@ $sortIcon = function($col) use ($s, $d) {
                         $colorClass = $statusColors[$order['status']] ?? 'var(--color-text-muted)';
                         ?>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase" style="background: <?= $colorClass ?>; color: white;">
-                            <?= __($order['status']) ?>
+                            <?= e(__($order['status'])) ?>
                         </span>
                     </td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
@@ -117,7 +117,7 @@ $sortIcon = function($col) use ($s, $d) {
                         ];
                         ?>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase" style="background: <?= $paymentColor ?>; color: white;">
-                            <?= htmlspecialchars($paymentLabels[$order['payment_status']] ?? $order['payment_status']) ?>
+                            <?= e($paymentLabels[$order['payment_status']] ?? $order['payment_status']) ?>
                         </span>
                     </td>
 

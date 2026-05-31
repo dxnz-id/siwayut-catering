@@ -160,13 +160,16 @@ class OrderController extends BaseController
             $this->redirect('/track-order');
         }
 
-        $this->redirect('/track-order/' . urlencode($orderNumber) . '?phone=' . urlencode($phone));
+        $verified = Session::get('track_verified', []);
+        $verified[] = $orderNumber;
+        Session::set('track_verified', $verified);
+
+        $this->redirect('/track-order/' . urlencode($orderNumber));
     }
 
     public function trackResult(Request $request): void
     {
         $orderNumber = $request->param('id');
-        $phone = $request->input('phone') ?? '';
 
         $order = $this->orderService->findByOrderNumber($orderNumber);
         if (!$order) {
@@ -175,22 +178,20 @@ class OrderController extends BaseController
 
         $customer = $this->customer->find((int) $order['customer_id']);
 
-        // Skip phone verification if logged-in user owns this order
         $user = Session::get('user');
         $isOwner = $user && $customer && !empty($customer['user_id']) && (int) $customer['user_id'] === (int) $user['id'];
-        if (!$isOwner) {
-            $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-            $cleanCustomerPhone = preg_replace('/[^0-9]/', '', $customer['phone'] ?? '');
-            if ($cleanCustomerPhone !== $cleanPhone) {
-                $this->redirect('/track-order');
-            }
+        $verifiedOrders = Session::get('track_verified', []);
+        $isVerified = in_array($orderNumber, $verifiedOrders, true);
+
+        if (!$isOwner && !$isVerified) {
+            $this->redirect('/track-order');
         }
 
         $items = $this->orderService->getItems((int) $order['id']);
         $event = $this->eventService->find((int) $order['event_id']);
 
         $this->render('order/track-result', [
-            'title' => __('order_details') . ' ' . htmlspecialchars($orderNumber) . ' — Siwayut Catering',
+            'title' => __('order_details') . ' ' . e($orderNumber) . ' — Siwayut Catering',
             'order' => $order,
             'customer' => $customer,
             'items' => $items,
