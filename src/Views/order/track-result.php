@@ -82,15 +82,18 @@ $statusStyles = [
                 </table>
             </div>
 
-            <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('event') ?></div>
-            <div class="text-text"><?= \App\Core\View::e($event['name'] ?? '-') ?></div>
+            <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('occasion') ?></div>
+            <div class="text-text"><?php $occKey = 'occasion_' . $order['occasion']; $occLabel = __($occKey); echo \App\Core\View::e($occLabel !== $occKey ? $occLabel : $order['occasion']); ?></div>
 
             <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('total_price') ?></div>
             <div class="font-display text-xl font-bold text-gold">Rp
                 <?= number_format((float) $order['total_price'], 0, ',', '.') ?></div>
 
             <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('event_date') ?></div>
-            <div class="text-text"><?= date('d F Y, H:i', strtotime($order['event_date'])) ?></div>
+            <div class="text-text"><?php
+                $dt = strtotime($order['event_date']);
+                echo date('H:i', $dt) !== '12:00' ? date('d F Y, H:i', $dt) : date('d F Y', $dt);
+            ?></div>
 
             <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('address') ?></div>
             <div class="text-text"><?= nl2br(\App\Core\View::e($order['delivery_address'])) ?></div>

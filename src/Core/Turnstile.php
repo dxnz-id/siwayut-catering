@@ -24,7 +24,6 @@ class Turnstile {
             CURLOPT_TIMEOUT => 5,
         ]);
         $result = json_decode(curl_exec($ch), true);
-        curl_close($ch);
 
         return ($result['success'] ?? false) === true;
     }

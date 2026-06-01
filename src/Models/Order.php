@@ -7,8 +7,8 @@ class Order extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'orders';
-        $this->fillable = ['order_number', 'customer_id', 'event_id', 'event_date', 'total_price', 'delivery_address', 'notes', 'status', 'payment_status'];
-        $this->sortableColumns = ['id', 'order_number', 'customer_id', 'event_id', 'event_date', 'total_price', 'status', 'payment_status', 'created_at', 'customer_name', 'items_count'];
+        $this->fillable = ['order_number', 'customer_id', 'event_date', 'occasion', 'total_price', 'delivery_address', 'notes', 'status', 'payment_status'];
+        $this->sortableColumns = ['id', 'order_number', 'customer_id', 'occasion', 'event_date', 'total_price', 'status', 'payment_status', 'created_at', 'customer_name', 'items_count'];
     }
 
     public function find(int $id): ?array {
@@ -106,7 +106,6 @@ LIMIT ?";
                 'CAST(o.`id` AS CHAR) LIKE ?',
                 'o.`order_number` LIKE ?',
                 'CAST(o.`customer_id` AS CHAR) LIKE ?',
-                'CAST(o.`event_id` AS CHAR) LIKE ?',
                 'o.`event_date` LIKE ?',
                 'CAST(o.`total_price` AS CHAR) LIKE ?',
                 'o.`status` LIKE ?',

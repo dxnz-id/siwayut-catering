@@ -8,7 +8,6 @@ use App\Core\{Request, Response, Session, Validator, Database, Turnstile, Logger
 use App\Exceptions\NotFoundException;
 use App\Services\OrderService;
 use App\Services\MenuService;
-use App\Services\EventService;
 use App\Models\Customer;
 
 class OrderController extends BaseController
@@ -16,7 +15,6 @@ class OrderController extends BaseController
     public function __construct(
         private OrderService $orderService,
         private MenuService $menuService,
-        private EventService $eventService,
         private Customer $customer
     ) {
         parent::__construct();
@@ -33,12 +31,6 @@ class OrderController extends BaseController
         $customer = $this->customer->findByUserId((int) $user['id']);
         $orders = $customer ? $this->orderService->getOrdersByCustomerId((int) $customer['id']) : [];
 
-        $events = $this->eventService->getActive();
-        $eventMap = [];
-        foreach ($events as $ev) {
-            $eventMap[$ev['id']] = $ev['name'];
-        }
-
         $navExtra = '<a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back') . '</a>'
             . '<form method="POST" action="/logout" class="m-0 p-0 inline">'
             . \App\Core\Csrf::field()
@@ -48,7 +40,6 @@ class OrderController extends BaseController
         $this->render('order/my-orders', [
             'title' => __('my_orders') . ' — Siwayut Catering',
             'orders' => $orders,
-            'eventMap' => $eventMap,
             'navExtra' => $navExtra,
         ], 'public');
     }
@@ -57,32 +48,36 @@ class OrderController extends BaseController
     {
         $menus = $this->menuService->all();
         $activeMenus = array_filter($menus, fn($m) => ($m['status'] ?? 'active') === 'active');
-        $events = $this->eventService->getActive();
 
         $this->render('order/public-form', [
             'title' => __('order_catering') . ' — Siwayut Catering',
             'menus' => $activeMenus,
-            'events' => $events,
             'navExtra' => '<a href="/" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back_home') . '</a>',
         ], 'public');
     }
 
     public function publicSubmit(Request $request): void
     {
-        $data = $request->only(['name', 'event_date', 'address', 'notes']);
+        $data = $request->only(['name', 'event_date', 'event_time', 'occasion', 'occasion_custom', 'address', 'notes']);
         $items = $request->input('items', []);
 
+        // Keep raw date/time for form redisplay
+        $rawDate = $data['event_date'];
+        $rawTime = $data['event_time'] ?? '';
 
+        $data['occasion'] = ($data['occasion'] ?? '') === '__other__' ? trim($data['occasion_custom'] ?? '') : ($data['occasion'] ?? '');
+        $data['event_date'] .= ' ' . ($data['event_time'] ?: '12:00') . ':00';
 
         $validator = new Validator();
         $validator->validate($data, [
             'name' => 'required|min:3|max:255',
-            'event_date' => 'required',
+            'event_date' => 'required|after_or_equal:today',
             'address' => 'required|min:10',
+            'occasion' => 'required',
         ]);
 
         if ($validator->fails()) {
-            $this->withOldInput($data);
+            $this->withOldInput(array_merge($data, ['event_date' => $rawDate, 'event_time' => $rawTime]));
             $errors = $validator->errors();
             $firstError = reset($errors);
             Session::flash('error', $firstError);
@@ -90,15 +85,22 @@ class OrderController extends BaseController
         }
 
         if (empty($items) || !is_array($items)) {
-            $this->withOldInput($data);
+            $this->withOldInput(array_merge($data, ['event_date' => $rawDate, 'event_time' => $rawTime]));
             Session::flash('error', __('select_menu_item'));
             $this->redirect('/order-form');
+        }
+
+        $occasion = $data['occasion'];
+        $displayDate = date('d/m/Y', strtotime($data['event_date']));
+        if (!empty($data['event_time'])) {
+            $displayDate = date('d/m/Y H:i', strtotime($data['event_date']));
         }
 
         // Build WhatsApp message
         $message = __('whatsapp_intro') . "\n\n"
             . __('whatsapp_name') . ": {$data['name']}\n"
-            . __('whatsapp_event_date') . ": {$data['event_date']}\n"
+            . __('whatsapp_event_date') . ": {$displayDate}\n"
+            . __('whatsapp_occasion') . ": {$occasion}\n"
             . __('whatsapp_address') . ": {$data['address']}\n"
             . __('whatsapp_menu_items') . ":\n";
 
@@ -197,14 +199,12 @@ class OrderController extends BaseController
         }
 
         $items = $this->orderService->getItems((int) $order['id']);
-        $event = $this->eventService->find((int) $order['event_id']);
 
         $this->render('order/track-result', [
             'title' => __('order_details') . ' ' . e($orderNumber) . ' — Siwayut Catering',
             'order' => $order,
             'customer' => $customer,
             'items' => $items,
-            'event' => $event,
             'navExtra' => '<a href="/track-order" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('track_another') . '</a>',
         ], 'public');
     }
@@ -222,14 +222,12 @@ class OrderController extends BaseController
         $result = $this->orderService->paginate($page, 10, $search, $filters, $orderBy, $direction);
 
         $menus = $this->menuService->paginate(1, 1000)['data'];
-        $events = $this->eventService->getActive();
 
         $this->render('order/index', [
             'title' => __('orders'),
             'orders' => $result['data'],
             'pagination' => $result,
             'menus' => $menus,
-            'events' => $events,
             'search' => $search,
             'filters' => $filters,
             'sort_by' => $orderBy,
@@ -237,30 +235,21 @@ class OrderController extends BaseController
         ]);
     }
 
-    public function create(Request $request): void
-    {
-        $menus = $this->menuService->paginate(1, 100)['data'];
-        $events = $this->eventService->getActive();
-
-        $this->render('order/create', [
-            'title' => __('create_order'),
-            'menus' => $menus,
-            'events' => $events,
-        ]);
-    }
-
     public function store(Request $request): void
     {
-        $data = $request->only(['phone', 'customer_name', 'delivery_address', 'event_id', 'event_date', 'notes']);
+        $data = $request->only(['phone', 'customer_name', 'delivery_address', 'event_date', 'event_time', 'occasion', 'occasion_custom', 'notes']);
         $items = $request->input('items', []);
+
+        $data['occasion'] = $data['occasion'] === '__other__' ? trim($data['occasion_custom'] ?? '') : ($data['occasion'] ?? '');
+        $data['event_date'] .= ' ' . ($data['event_time'] ?: '12:00') . ':00';
 
         $validator = new Validator(Database::getInstance());
         $validator->validate($data, [
             'phone' => 'required|min:10|max:20',
             'customer_name' => 'required|min:3|max:255',
             'delivery_address' => 'required|min:10',
-            'event_id' => 'required|numeric',
-            'event_date' => 'required',
+            'event_date' => 'required|after_or_equal:today',
+            'occasion' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -269,7 +258,7 @@ class OrderController extends BaseController
             }
             $this->withOldInput($data);
             Session::flash('errors', json_encode($validator->errors()));
-            $this->redirect('/orders/create');
+            $this->redirect('/orders');
         }
 
         if (empty($items) || !is_array($items)) {
@@ -278,7 +267,7 @@ class OrderController extends BaseController
             }
             $this->withOldInput($data);
             Session::flash('error', __('select_menu_item'));
-            $this->redirect('/orders/create');
+            $this->redirect('/orders');
         }
 
         try {
@@ -295,7 +284,7 @@ class OrderController extends BaseController
             }
             $this->withOldInput($data);
             Session::flash('error', $errorMsg);
-            $this->redirect('/orders/create');
+            $this->redirect('/orders');
         }
     }
 
@@ -326,15 +315,16 @@ class OrderController extends BaseController
             'order' => $order,
             'customer' => $customer,
             'items' => $items,
+            'canEditCustomerName' => empty($customer['user_id']),
         ]);
     }
 
     public function update(Request $request): void
     {
         $orderNumber = $request->param('order_number');
-        $data = $request->only(['status', 'payment_status']);
+        $data = $request->only(['customer_name', 'delivery_address', 'event_date', 'event_time', 'occasion', 'occasion_custom', 'notes', 'status', 'payment_status']);
 
-        $order = $this->resolveOrder($id);
+        $order = $this->resolveOrder($orderNumber);
         if (!$order) {
             if ($request->isAjax())
                 Response::jsonError(__('order_not_found_short'));
@@ -342,8 +332,21 @@ class OrderController extends BaseController
             $this->redirect('/orders');
         }
 
+        // Don't allow changing customer name if they have an account
+        $customer = $this->customer->find((int) $order['customer_id']);
+        if ($customer && !empty($customer['user_id'])) {
+            $data['customer_name'] = $customer['name'];
+        }
+
+        $data['occasion'] = ($data['occasion'] ?? '') === '__other__' ? trim($data['occasion_custom'] ?? '') : ($data['occasion'] ?? '');
+        $data['event_date'] .= ' ' . ($data['event_time'] ?: '12:00') . ':00';
+
         $validator = new Validator();
         $validator->validate($data, [
+            'customer_name' => 'required|min:3|max:255',
+            'delivery_address' => 'required|min:10',
+            'event_date' => 'required|after_or_equal:today',
+            'occasion' => 'required',
             'status' => 'required|in:pending,processing,delivering,completed,cancelled',
             'payment_status' => 'required|in:unpaid,paid,refunded',
         ]);
@@ -356,10 +359,10 @@ class OrderController extends BaseController
         }
 
         try {
-            $this->orderService->updateStatus((int) $order['id'], $data['status'], $data['payment_status']);
+            $this->orderService->updateOrder((int) $order['id'], $data);
             if ($request->isAjax())
                 Response::jsonSuccess(null, __('order_updated'));
-            $this->redirectWithFlash('/orders', 'success', __('order_update_success'));
+            $this->redirectWithFlash('/orders/' . $order['order_number'], 'success', __('order_update_success'));
         } catch (\Exception $e) {
             Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
             $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');

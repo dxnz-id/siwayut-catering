@@ -70,7 +70,7 @@ $sortIcon = function($col) use ($s, $d) {
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('order_number') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('order_no') ?><?= $sortIcon('order_number') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('customer_name') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('customer') ?><?= $sortIcon('customer_name') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('items_count') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('items') ?><?= $sortIcon('items_count') ?></a></th>
-                    <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('event_date') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('event_date') ?><?= $sortIcon('event_date') ?></a></th>
+                    <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('occasion') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('occasion') ?><?= $sortIcon('occasion') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('total_price') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('total_price') ?><?= $sortIcon('total_price') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('status') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('status') ?><?= $sortIcon('status') ?></a></th>
                     <th class="bg-black/30 text-left text-xs font-semibold uppercase tracking-wider text-muted border-b border-border"><a href="<?= $sortUrl('payment_status') ?>" class="flex items-center gap-1 px-4 py-3 group text-muted hover:text-gold transition-colors no-underline"><?= __('payment') ?><?= $sortIcon('payment_status') ?></a></th>
@@ -85,7 +85,7 @@ $sortIcon = function($col) use ($s, $d) {
                         <div class="text-[0.8125rem] text-muted"><?= e($order['customer_phone'] ?? '-') ?></div>
                     </td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= (int)($order['item_cnt'] ?? 0) ?> <?= __('items') ?></td>
-                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= date('d M Y H:i', strtotime($order['event_date'])) ?></td>
+                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?php $occKey = 'occasion_' . $order['occasion']; $occLabel = __($occKey); echo e($occLabel !== $occKey ? $occLabel : $order['occasion']); ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text font-medium text-success">Rp <?= number_format((float)$order['total_price'], 0, ',', '.') ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text">
                         <?php
@@ -155,7 +155,6 @@ component('form/input', ['name' => 'phone', 'label' => __('phone_member'), 'plac
 component('form/input', ['name' => 'customer_name', 'label' => __('customer_name'), 'required' => true]);
 echo '</div>';
 component('form/input', ['name' => 'delivery_address', 'label' => __('delivery_address'), 'required' => true]);
-component('form/select', ['name' => 'event_id', 'label' => __('event'), 'options' => array_column($events ?? [], 'name', 'id'), 'required' => true]);
 echo '<h4 class="mt-6 mb-4 pb-2 border-b border-border font-display font-semibold text-text" style="color:var(--color-text)">' . __('menu_items') . '</h4>';
 echo '<div id="menu-items-container" class="flex flex-col gap-3">';
 echo '    <div class="menu-item-row flex items-start gap-2" data-index="0">';
@@ -173,10 +172,27 @@ echo '        </button>';
 echo '    </div>';
 echo '</div>';
 echo '<button type="button" id="add-menu-item" class="inline-flex items-center justify-center gap-2 px-3 py-1.5 text-[0.8125rem] rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-white/6 text-text border-border hover:bg-white/10 hover:text-text mt-2">' . __('add_another_menu') . '</button>';
-echo '<div class="grid grid-cols-2 gap-4 mt-4">';
-component('form/input', ['name' => 'event_date', 'label' => __('event_date_time'), 'type' => 'datetime-local', 'required' => true]);
-component('form/input', ['name' => 'notes', 'label' => __('additional_notes'), 'placeholder' => __('notes_placeholder_short')]);
+echo '<div class="grid grid-cols-3 gap-4 mt-4">';
+echo '<div>';
+component('form/input', ['name' => 'event_date', 'label' => __('event_date'), 'type' => 'date', 'required' => true, 'min' => date('Y-m-d')]);
 echo '</div>';
+echo '<div>';
+component('form/input', ['name' => 'event_time', 'label' => __('event_time'), 'type' => 'time', 'required' => false]);
+echo '</div>';
+echo '<div class="relative">';
+component('form/select', ['name' => 'occasion', 'label' => __('occasion'), 'placeholder' => __('occasion_placeholder'), 'options' => [
+    'birthday' => __('occasion_birthday'),
+    'wedding' => __('occasion_wedding'),
+    'corporate' => __('occasion_corporate'),
+    'family' => __('occasion_family'),
+    'arisan' => __('occasion_arisan'),
+    'khitanan' => __('occasion_khitanan'),
+    '__other__' => __('occasion_other'),
+], 'required' => true]);
+echo '<input type="text" id="occasion_custom" placeholder="' . __('occasion_custom_placeholder') . '" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light mt-2" style="display:none">';
+echo '</div>';
+echo '</div>';
+component('form/input', ['name' => 'notes', 'label' => __('additional_notes'), 'placeholder' => __('notes_placeholder_short')]);
 $createFormContent = ob_get_clean();
 require __DIR__ . '/../partials/create-modal.php';
 ?>
@@ -184,8 +200,28 @@ require __DIR__ . '/../partials/create-modal.php';
 <?php $menuJson = json_encode(array_map(function($m) {
     return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price']];
 }, $menus), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
+function toggleOccasionAdmin(sel) {
+    var custom = document.getElementById('occasion_custom');
+    if (!custom) return;
+    if (sel.value === '__other__') {
+        custom.style.display = '';
+        custom.name = 'occasion';
+        sel.name = '';
+        custom.focus();
+    } else {
+        custom.style.display = 'none';
+        custom.name = '';
+        custom.value = '';
+        sel.name = 'occasion';
+    }
+}
 (function() {
     'use strict';
+    // Init occasion toggle on page load
+    var occSel = document.querySelector('#createOrderModal-form select[name="occasion"]');
+    if (occSel) {
+        toggleOccasionAdmin(occSel);
+    }
     var container = document.getElementById('menu-items-container');
     var addBtn = document.getElementById('add-menu-item');
     if (!container || !addBtn) return;

@@ -7,10 +7,10 @@
             <?= __('back_to_orders') ?>
         </a>
         <div class="flex items-center gap-3">
-            <button type="button" id="toggle-edit-status"
+            <button type="button" onclick="showEditOrderModal()"
                 class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-white/5 border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg>
-                <?= __('update_status') ?>
+                <?= __('update') ?>
             </button>
         </div>
     </div>
@@ -82,35 +82,6 @@
             <?= __('ordered_on') ?> <?= date('d M Y', strtotime($order['created_at'])) ?>
         </span>
     </div>
-
-    <!-- Status update form (hidden by default) -->
-    <form id="status-form" action="/orders/<?= e($order['order_number']) ?>" method="POST" class="hidden mb-8">
-        <?= csrf_field() ?>
-        <div class="bg-white/[0.03] border border-white/5 rounded-xl p-5 flex items-end gap-4 flex-wrap">
-            <div class="flex-1 min-w-[160px]">
-                <label class="block text-xs text-muted font-medium mb-1.5"><?= __('status') ?></label>
-                <select name="status" class="w-full px-3 py-2.5 border border-white/10 rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-gold/50 focus:ring-[3px] focus:ring-gold/10 transition-all duration-200">
-                    <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>><?= __('pending') ?></option>
-                    <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>><?= __('processing') ?></option>
-                    <option value="delivering" <?= $order['status'] === 'delivering' ? 'selected' : '' ?>><?= __('delivering') ?></option>
-                    <option value="completed" <?= $order['status'] === 'completed' ? 'selected' : '' ?>><?= __('completed') ?></option>
-                    <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>><?= __('cancelled') ?></option>
-                </select>
-            </div>
-            <div class="flex-1 min-w-[160px]">
-                <label class="block text-xs text-muted font-medium mb-1.5"><?= __('payment') ?></label>
-                <select name="payment_status" class="w-full px-3 py-2.5 border border-white/10 rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-gold/50 focus:ring-[3px] focus:ring-gold/10 transition-all duration-200">
-                    <option value="unpaid" <?= $order['payment_status'] === 'unpaid' ? 'selected' : '' ?>><?= __('unpaid') ?></option>
-                    <option value="paid" <?= $order['payment_status'] === 'paid' ? 'selected' : '' ?>><?= __('paid') ?></option>
-                    <option value="refunded" <?= $order['payment_status'] === 'refunded' ? 'selected' : '' ?>><?= __('refunded') ?></option>
-                </select>
-            </div>
-            <button type="submit"
-                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-gold border-gold text-white shadow-[0_0_12px_var(--color-gold-glow)] hover:shadow-[0_0_20px_var(--color-gold-glow)]">
-                <?= __('save_changes') ?>
-            </button>
-        </div>
-    </form>
 
     <!-- Two-column: Timeline + Details -->
     <div class="grid grid-cols-1 md:grid-cols-[1fr_1.6fr] gap-8 mb-10">
@@ -188,7 +159,14 @@
                             <?php else: ?><span class="text-muted">-</span><?php endif; ?>
                         </div>
                         <div class="text-muted"><?= __('event_date') ?></div>
-                        <div class="text-text"><?= date('d F Y, H:i', strtotime($order['event_date'])) ?></div>
+                        <div class="text-text"><?php
+                            $dt = strtotime($order['event_date']);
+                            echo date('H:i', $dt) !== '12:00' ? date('d F Y, H:i', $dt) : date('d F Y', $dt);
+                        ?></div>
+                        <?php if ($order['occasion']): ?>
+                        <div class="text-muted"><?= __('occasion') ?></div>
+                        <div class="text-text"><?php $occKey = 'occasion_' . $order['occasion']; $occLabel = __($occKey); echo \App\Core\View::e($occLabel !== $occKey ? $occLabel : $order['occasion']); ?></div>
+                        <?php endif; ?>
                         <div class="text-muted"><?= __('address') ?></div>
                         <div class="text-text"><?= nl2br(e($order['delivery_address'])) ?></div>
                         <?php if ($order['notes']): ?>
@@ -240,54 +218,230 @@
     </div>
 </div>
 
+<?php
+$occKey = 'occasion_' . $order['occasion'];
+$occLabel = __($occKey);
+$isPredefined = $occLabel !== $occKey;
+$selOccasion = $isPredefined ? $order['occasion'] : '__other__';
+$customOccasion = $isPredefined ? '' : $order['occasion'];
+?>
+<div id="editOrderModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)">
+    <div class="flex min-h-full items-center justify-center p-4" style="pointer-events:none">
+    <div class="bg-[#18181b] border border-white/10 rounded-2xl shadow-2xl w-full max-w-[700px] mx-auto max-h-[90vh] flex flex-col overflow-hidden" style="pointer-events:auto;transform:scale(0.95) translateY(10px);opacity:0;transition:transform 200ms cubic-bezier(0.16,1,0.3,1),opacity 200ms ease-out">
+        <div class="flex items-center justify-between p-6 border-b border-white/10 shrink-0">
+            <h3 class="text-lg font-bold font-display text-white"><?= __('edit_order') ?></h3>
+            <button type="button" onclick="closeEditOrderModal()" class="w-8 h-8 flex items-center justify-center rounded-lg text-muted hover:text-text hover:bg-white/5 transition-all duration-150 cursor-pointer border-0 bg-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form id="editOrderModal-form" method="POST" action="/orders/<?= e($order['order_number']) ?>" class="flex flex-col flex-1 min-h-0" data-order-number="<?= e($order['order_number']) ?>">
+            <?= csrf_field() ?>
+            <div id="editOrderModal-errors" class="hidden p-4 mx-6 mt-4 rounded-lg bg-danger/10 border border-danger/30 text-danger text-sm shrink-0"></div>
+            <div class="p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('customer_name') ?> <span class="text-danger">*</span></label>
+                        <?php if ($canEditCustomerName): ?>
+                        <input type="text" name="customer_name" value="<?= e($customer['name'] ?? '') ?>" required class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
+                        <?php else: ?>
+                        <div class="relative">
+                            <input type="text" name="customer_name" value="<?= e($customer['name'] ?? '') ?>" readonly required class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body opacity-60 cursor-not-allowed focus:outline-none">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-muted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
+                            </span>
+                        </div>
+                        <p class="text-xs text-muted mt-1"><?= __('customer_name_locked') ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('phone') ?></label>
+                        <input type="text" readonly value="<?= e($customer['phone'] ?? '') ?>" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body opacity-60 cursor-not-allowed">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-1.5"><?= __('delivery_address') ?> <span class="text-danger">*</span></label>
+                    <textarea name="delivery_address" required class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light min-h-[80px] resize-vertical"><?= e($order['delivery_address']) ?></textarea>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('event_date') ?> <span class="text-danger">*</span></label>
+                        <input type="date" name="event_date" value="<?= e(substr($order['event_date'], 0, 10)) ?>" min="<?= date('Y-m-d') ?>" required class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('event_time') ?></label>
+                        <input type="time" name="event_time" value="<?php $et = substr($order['event_date'], 11, 5); echo $et !== '12:00' ? e($et) : ''; ?>" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
+                    </div>
+                    <div class="relative">
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('occasion') ?> <span class="text-danger">*</span></label>
+                        <select id="edit-occasion-select" name="occasion" onchange="toggleOccasionEdit(this)" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
+                            <option value=""><?= __('occasion_placeholder') ?></option>
+                            <option value="birthday" <?= $selOccasion === 'birthday' ? 'selected' : '' ?>><?= __('occasion_birthday') ?></option>
+                            <option value="wedding" <?= $selOccasion === 'wedding' ? 'selected' : '' ?>><?= __('occasion_wedding') ?></option>
+                            <option value="corporate" <?= $selOccasion === 'corporate' ? 'selected' : '' ?>><?= __('occasion_corporate') ?></option>
+                            <option value="family" <?= $selOccasion === 'family' ? 'selected' : '' ?>><?= __('occasion_family') ?></option>
+                            <option value="arisan" <?= $selOccasion === 'arisan' ? 'selected' : '' ?>><?= __('occasion_arisan') ?></option>
+                            <option value="khitanan" <?= $selOccasion === 'khitanan' ? 'selected' : '' ?>><?= __('occasion_khitanan') ?></option>
+                            <option value="__other__" <?= $selOccasion === '__other__' ? 'selected' : '' ?>><?= __('occasion_other') ?></option>
+                        </select>
+                        <input type="text" id="edit-occasion-custom" value="<?= e($customOccasion) ?>" placeholder="<?= __('occasion_custom_placeholder') ?>" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light mt-2" style="display:<?= $selOccasion === '__other__' ? '' : 'none' ?>">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('status') ?> <span class="text-danger">*</span></label>
+                        <select name="status" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
+                            <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>><?= __('pending') ?></option>
+                            <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>><?= __('processing') ?></option>
+                            <option value="delivering" <?= $order['status'] === 'delivering' ? 'selected' : '' ?>><?= __('delivering') ?></option>
+                            <option value="completed" <?= $order['status'] === 'completed' ? 'selected' : '' ?>><?= __('completed') ?></option>
+                            <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>><?= __('cancelled') ?></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-1.5"><?= __('payment') ?> <span class="text-danger">*</span></label>
+                        <select name="payment_status" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
+                            <option value="unpaid" <?= $order['payment_status'] === 'unpaid' ? 'selected' : '' ?>><?= __('unpaid') ?></option>
+                            <option value="paid" <?= $order['payment_status'] === 'paid' ? 'selected' : '' ?>><?= __('paid') ?></option>
+                            <option value="refunded" <?= $order['payment_status'] === 'refunded' ? 'selected' : '' ?>><?= __('refunded') ?></option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-1.5"><?= __('notes') ?></label>
+                    <textarea name="notes" class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light min-h-[60px] resize-vertical"><?= e($order['notes'] ?? '') ?></textarea>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-white/10 shrink-0">
+                <button type="button" onclick="closeEditOrderModal()" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body bg-white/6 text-text border-border hover:bg-white/10 hover:text-text"><?= __('cancel') ?></button>
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-primary text-white border-primary hover:bg-primary-hover hover:border-primary-hover hover:shadow-[0_0_15px_var(--color-gold-glow)] hover:text-white"><?= __('save_changes') ?></button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
 <script>
+function toggleOccasionEdit(sel) {
+    var custom = document.getElementById('edit-occasion-custom');
+    if (!custom) return;
+    if (sel.value === '__other__') {
+        custom.style.display = '';
+        custom.name = 'occasion';
+        sel.name = '';
+        custom.focus();
+    } else {
+        custom.style.display = 'none';
+        custom.name = '';
+        custom.value = '';
+        sel.name = 'occasion';
+    }
+}
+
+function showEditOrderModal() {
+    var el = document.getElementById('editOrderModal');
+    if (!el) return;
+    el.classList.remove('hidden');
+    var card = el.firstElementChild.firstElementChild;
+    void card.offsetHeight;
+    card.style.transform = 'scale(1) translateY(0)';
+    card.style.opacity = '1';
+    document.body.style.overflow = 'hidden';
+    // Init occasion toggle
+    var occSel = document.getElementById('edit-occasion-select');
+    if (occSel) toggleOccasionEdit(occSel);
+}
+
+function closeEditOrderModal() {
+    var el = document.getElementById('editOrderModal');
+    if (!el) return;
+    var card = el.firstElementChild.firstElementChild;
+    if (card) { card.style.transform = 'scale(0.95) translateY(10px)'; card.style.opacity = '0'; }
+    setTimeout(function() { el.classList.add('hidden'); }, 150);
+    document.body.style.overflow = '';
+}
+
 (function() {
-    'use strict';
+    var form = document.getElementById('editOrderModal-form');
+    if (!form) return;
 
-    var toggleBtn = document.getElementById('toggle-edit-status');
-    var statusForm = document.getElementById('status-form');
-    if (toggleBtn && statusForm) {
-        toggleBtn.addEventListener('click', function() {
-            statusForm.classList.toggle('hidden');
-        });
-    }
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (form.dataset.submitting) return;
+        form.dataset.submitting = '1';
 
-    if (statusForm) {
-        statusForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var form = e.target;
-            var btn = form.querySelector('button[type="submit"]');
-            var origText = btn.textContent;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> <?= __('saving') ?>';
+        var btn = form.querySelector('button[type="submit"]');
+        var origText = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> <?= __('saving') ?>'; }
 
-            fetch(form.action, {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                body: new FormData(form)
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(resp) {
-                if (resp.success) {
-                    window.location.reload();
-                } else {
-                    if (window.AppModules && window.AppModules.toast) {
-                        window.AppModules.toast.show(resp.error || '<?= __('update_failed') ?>', 'error');
-                    }
-                    btn.disabled = false;
-                    btn.textContent = origText;
-                }
-            })
-            .catch(function() {
+        var errorsEl = document.getElementById('editOrderModal-errors');
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(resp) {
+            if (resp.success) {
+                closeEditOrderModal();
                 if (window.AppModules && window.AppModules.toast) {
-                    window.AppModules.toast.show('<?= __('network_error') ?>', 'error');
+                    window.AppModules.toast.show(resp.message || '<?= __('order_updated') ?>', 'success');
                 }
-                btn.disabled = false;
-                btn.textContent = origText;
-            });
+                window.location.reload();
+            } else {
+                if (errorsEl) {
+                    errorsEl.textContent = '';
+                    if (resp.message) {
+                        var p = document.createElement('p');
+                        p.className = 'mb-2 font-medium';
+                        p.textContent = resp.message;
+                        errorsEl.appendChild(p);
+                    }
+                    if (resp.errors) {
+                        var ul = document.createElement('ul');
+                        ul.className = 'list-disc pl-4 space-y-0.5';
+                        for (var key in resp.errors) {
+                            if (resp.errors.hasOwnProperty(key)) {
+                                var li = document.createElement('li');
+                                li.textContent = resp.errors[key];
+                                ul.appendChild(li);
+                            }
+                        }
+                        errorsEl.appendChild(ul);
+                    }
+                    errorsEl.classList.remove('hidden');
+                }
+                if (btn) { btn.disabled = false; btn.textContent = origText; }
+            }
+        })
+        .catch(function(err) {
+            if (errorsEl) {
+                errorsEl.textContent = '';
+                var p = document.createElement('p');
+                p.textContent = '<?= __('network_error') ?>';
+                errorsEl.appendChild(p);
+                errorsEl.classList.remove('hidden');
+            }
+            if (btn) { btn.disabled = false; btn.textContent = origText; }
+        })
+        .finally(function() {
+            delete form.dataset.submitting;
+        });
+    });
+
+    // Close via overlay click
+    el = document.getElementById('editOrderModal');
+    if (el) {
+        el.addEventListener('click', function(e) {
+            if (e.target === el) closeEditOrderModal();
         });
     }
-
-
 })();
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var el = document.getElementById('editOrderModal');
+        if (el && !el.classList.contains('hidden')) closeEditOrderModal();
+    }
+});
 </script>

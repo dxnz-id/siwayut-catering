@@ -146,6 +146,14 @@ class Validator {
                 }
                 return true;
 
+            case 'after_or_equal':
+                $compare = $argument === 'today' ? date('Y-m-d') : $argument;
+                if ($value !== null && $value !== '' && $value < $compare) {
+                    $this->errors[$field] = __('validation_after_or_equal', ['field' => $label]);
+                    return false;
+                }
+                return true;
+
             default:
                 return true;
         }

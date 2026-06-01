@@ -7,11 +7,10 @@ class OrderSeeder {
     public function __construct(private \PDO $db) {}
 
     public function run(): void {
-        $events = $this->db->query("SELECT id FROM events")->fetchAll(\PDO::FETCH_COLUMN);
         $menus = $this->db->query("SELECT id, price, name FROM menus")->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (empty($events) || empty($menus)) {
-            echo "Error: Events or Menus table is empty. Please run MenuSeeder first.\n";
+        if (empty($menus)) {
+            echo "Error: Menus table is empty. Please run MenuSeeder first.\n";
             return;
         }
 
@@ -40,14 +39,15 @@ class OrderSeeder {
         echo "Customers seeded successfully.\n";
 
         $statuses = ['pending', 'processing', 'delivering', 'completed', 'cancelled'];
+        $occasionOptions = ['birthday', 'wedding', 'corporate', 'family', 'arisan', 'khitanan', 'Ulang Tahun Perusahaan', 'Wisuda', 'Syukuran Rumah'];
 
-        $stmtOrder = $this->db->prepare("INSERT INTO orders (customer_id, event_id, event_date, total_price, delivery_address, notes, status, created_at, updated_at, order_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtOrder = $this->db->prepare("INSERT INTO orders (customer_id, event_date, total_price, delivery_address, notes, status, occasion, created_at, updated_at, order_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $stmtItem = $this->db->prepare("INSERT INTO order_items (order_id, menu_id, quantity, price_at_time, subtotal) VALUES (?, ?, ?, ?, ?)");
 
         for ($i = 0; $i < 15; $i++) {
             $customerId = $customerIds[array_rand($customerIds)];
-            $eventId = $events[array_rand($events)];
+            $occasion = $occasionOptions[array_rand($occasionOptions)];
             $menu = $menus[array_rand($menus)];
             $menuId = $menu['id'];
             $menuPrice = $menu['price'];
@@ -55,7 +55,10 @@ class OrderSeeder {
             $quantity = rand(5, 50) * 10;
             $totalPrice = $quantity * $menuPrice;
             $daysOffset = rand(1, 30);
-            $eventDate = date('Y-m-d H:i:s', strtotime("+$daysOffset days"));
+            $eventDateBase = strtotime("+$daysOffset days");
+            $hour = rand(1, 5) === 1 ? 12 : rand(8, 20);
+            $minute = rand(0, 3) === 0 ? 0 : rand(0, 59);
+            $eventDate = date('Y-m-d', $eventDateBase) . sprintf(' %02d:%02d:00', $hour, $minute);
             $status = $statuses[array_rand($statuses)];
 
             $notesOptions = [
@@ -80,8 +83,8 @@ class OrderSeeder {
             $orderNumber = 'ORD-' . date('Ymd', strtotime($now)) . '-' . str_pad((string)($i + 1), 4, '0', STR_PAD_LEFT);
 
             $stmtOrder->execute([
-                $customerId, $eventId, $eventDate, $totalPrice,
-                $deliveryAddress, $notes, $status, $now, $now, $orderNumber
+                $customerId, $eventDate, $totalPrice,
+                $deliveryAddress, $notes, $status, $occasion, $now, $now, $orderNumber
             ]);
 
             $orderId = (int) $this->db->lastInsertId();

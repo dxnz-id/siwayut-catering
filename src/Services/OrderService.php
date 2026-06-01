@@ -36,7 +36,7 @@ class OrderService {
 
     /**
      * Create order with multiple menu items.
-     * $data = ['phone', 'customer_name', 'delivery_address', 'event_id', 'event_date', 'notes']
+     * $data = ['phone', 'customer_name', 'delivery_address', 'event_date', 'occasion', 'notes']
      * $items = [['menu_id' => int, 'quantity' => int], ...]
      */
     public function createOrder(array $data, array $items): int {
@@ -90,8 +90,8 @@ class OrderService {
         $orderId = $this->order->create([
             'order_number' => 'TEMP',
             'customer_id' => $customerId,
-            'event_id' => $data['event_id'],
             'event_date' => $data['event_date'],
+            'occasion' => $data['occasion'] ?? '',
             'total_price' => $totalPrice,
             'delivery_address' => $data['delivery_address'],
             'notes' => $data['notes'] ?? '',
@@ -117,11 +117,23 @@ class OrderService {
         return $this->order->countByMenuIds($menuIds);
     }
 
-    public function updateStatus(int $id, string $status, string $paymentStatus): bool {
-        return $this->order->update($id, [
-            'status' => $status,
-            'payment_status' => $paymentStatus,
-            'updated_at' => date('Y-m-d H:i:s')
+    public function updateOrder(int $id, array $data): void {
+        $this->order->update($id, [
+            'event_date' => $data['event_date'],
+            'occasion' => $data['occasion'],
+            'delivery_address' => $data['delivery_address'],
+            'notes' => $data['notes'] ?? '',
+            'status' => $data['status'],
+            'payment_status' => $data['payment_status'],
+            'updated_at' => date('Y-m-d H:i:s'),
         ]);
+
+        $order = $this->order->find($id);
+        if ($order) {
+            $this->customer->update((int)$order['customer_id'], [
+                'name' => $data['customer_name'],
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
     }
 }
