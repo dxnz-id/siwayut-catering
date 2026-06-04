@@ -8,13 +8,15 @@ class User extends BaseModel {
     public function __construct() {
         parent::__construct();
         $this->table = 'users';
-        $this->fillable = ['user_code', 'name', 'email', 'password', 'role'];
-        $this->sortableColumns = ['id', 'user_code', 'name', 'email', 'role', 'created_at', 'updated_at'];
+        $this->fillable = ['user_code', 'name', 'email', 'phone', 'address', 'password', 'role'];
+        $this->sortableColumns = ['id', 'user_code', 'name', 'email', 'phone', 'role', 'created_at', 'updated_at'];
         $this->searchableColumns = [
             'id',
             'user_code',
             'name',
             'email',
+            'phone',
+            'address',
             'role',
             'created_at',
             'updated_at',

@@ -12,7 +12,8 @@ use App\Exceptions\NotFoundException;
 use App\Services\CategoryService;
 use App\Services\MenuService;
 
-class CategoryController extends BaseController {
+class CategoryController extends BaseController
+{
     public function __construct(
         private CategoryService $categoryService,
         private MenuService $menuService
@@ -20,7 +21,8 @@ class CategoryController extends BaseController {
         parent::__construct();
     }
 
-    public function index(Request $request): void {
+    public function index(Request $request): void
+    {
         $page = (int) $request->input('page', 1);
         $search = $request->input('search', '');
         $orderBy = $request->input('sort_by', 'created_at');
@@ -32,7 +34,7 @@ class CategoryController extends BaseController {
         $categories = array_map(fn($c) => [...$c, 'menu_count' => $menuCounts[$c['id']] ?? 0], $result['data']);
 
         $this->render('category/index', [
-            'title' => __('menu_categories'),
+            'title' => __('categories'),
             'categories' => $categories,
             'pagination' => $result,
             'search' => $search,
@@ -41,13 +43,15 @@ class CategoryController extends BaseController {
         ]);
     }
 
-    public function create(Request $request): void {
+    public function create(Request $request): void
+    {
         $this->render('category/create', [
             'title' => __('add_category'),
         ]);
     }
 
-    public function store(Request $request): void {
+    public function store(Request $request): void
+    {
         $data = $request->only(['name']);
 
         $validator = new Validator();
@@ -82,14 +86,17 @@ class CategoryController extends BaseController {
         }
     }
 
-    public function apiShow(Request $request): void {
+    public function apiShow(Request $request): void
+    {
         $id = (int) $request->param('id');
         $category = $this->categoryService->find($id);
-        if (!$category) Response::jsonError(__('not_found_api'), [], 404);
+        if (!$category)
+            Response::jsonError(__('not_found_api'), [], 404);
         Response::jsonSuccess($category);
     }
 
-    public function update(Request $request): void {
+    public function update(Request $request): void
+    {
         $id = (int) $request->param('id');
         $data = $request->only(['name']);
 
@@ -99,7 +106,8 @@ class CategoryController extends BaseController {
         ]);
 
         if ($validator->fails()) {
-            if ($request->isAjax()) Response::jsonError(__('validation_failed'), $validator->errors());
+            if ($request->isAjax())
+                Response::jsonError(__('validation_failed'), $validator->errors());
             $this->withOldInput($data);
             Session::flash('errors', json_encode($validator->errors()));
             $this->redirect("/categories/{$id}/edit");
@@ -107,21 +115,24 @@ class CategoryController extends BaseController {
 
         try {
             $this->categoryService->update($id, $data);
-            if ($request->isAjax()) Response::jsonSuccess(null, __('category_updated'));
+            if ($request->isAjax())
+                Response::jsonSuccess(null, __('category_updated'));
             $this->redirectWithFlash('/categories', 'success', __('category_updated'));
         } catch (\Exception $e) {
             Logger::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
             $errorMsg = APP_DEBUG ? $e->getMessage() : __('operation_failed');
-            if ($request->isAjax()) Response::jsonError(__('failed_update_category', ['error' => $errorMsg]));
+            if ($request->isAjax())
+                Response::jsonError(__('failed_update_category', ['error' => $errorMsg]));
             $this->withOldInput($data);
             Session::flash('error', __('failed_update_category', ['error' => $errorMsg]));
             $this->redirect("/categories/{$id}/edit");
         }
     }
 
-    public function destroy(Request $request): void {
+    public function destroy(Request $request): void
+    {
         $id = (int) $request->param('id');
-        
+
         try {
             if ($this->categoryService->delete($id)) {
                 $this->redirectWithFlash('/categories', 'success', __('category_deleted'));

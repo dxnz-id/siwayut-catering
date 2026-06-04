@@ -4,7 +4,7 @@ declare(strict_types=1);
 // File: config/routes.php
 
 use App\Core\Router;
-use App\Controllers\{AuthController, UserController, WelcomeController, MenuController, CategoryController, OrderController, EventController, LangController, DashboardController, ReportController};
+use App\Controllers\{AuthController, UserController, WelcomeController, MenuController, CategoryController, OrderController, EventController, LangController, DashboardController, ReportController, ProfileController};
 
 return function (Router $router): void {
     $router->group(['middleware' => ['csrf']], function (Router $r): void {
@@ -38,6 +38,9 @@ return function (Router $router): void {
 
         $r->group(['middleware' => ['auth', 'session.timeout:7200']], function (Router $r): void {
             $r->get('/my-orders', [OrderController::class, 'myOrders']);
+            $r->get('/profile',                [ProfileController::class, 'edit']);
+            $r->post('/profile',               [ProfileController::class, 'update']);
+            $r->post('/profile/password',      [ProfileController::class, 'changePassword']);
         });
 
         $r->group(['middleware' => ['auth', 'role:admin', 'session.timeout:1800']], function (Router $r): void {

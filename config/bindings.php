@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Core\Container;
 use App\Models\{User, Menu, Category, Customer, Order, Event};
-use App\Services\{AuthService, UserService, FileUploadService, MenuService, CategoryService, OrderService, EventService, AiService};
-use App\Controllers\{AuthController, UserController, WelcomeController, MenuController, CategoryController, OrderController, EventController, DashboardController, ReportController};
+use App\Services\{AuthService, UserService, FileUploadService, MenuService, CategoryService, OrderService, EventService, AiService, ProfileService};
+use App\Controllers\{AuthController, UserController, WelcomeController, MenuController, CategoryController, OrderController, EventController, DashboardController, ReportController, ProfileController};
 
 // Models
 $container->bind(User::class, fn(Container $c): object => new User());
@@ -43,3 +43,5 @@ $container->bind(MenuController::class, fn(Container $c): object => new MenuCont
 $container->bind(OrderController::class, fn(Container $c): object => new OrderController($c->make(OrderService::class), $c->make(MenuService::class), $c->make(Customer::class)));
 $container->bind(DashboardController::class, fn(Container $c): object => new DashboardController($c->make(OrderService::class)));
 $container->bind(ReportController::class, fn(Container $c): object => new ReportController($c->make(OrderService::class)));
+$container->bind(ProfileService::class, fn(Container $c): object => new ProfileService($c->make(User::class)));
+$container->bind(ProfileController::class, fn(Container $c): object => new ProfileController($c->make(ProfileService::class)));
