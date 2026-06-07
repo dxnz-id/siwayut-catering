@@ -1,0 +1,118 @@
+# Instalasi
+
+## Prasyarat
+
+| Kebutuhan | Versi |
+|-------------|---------|
+| PHP | ^8.2 |
+| Composer | ^2.0 |
+| MySQL / MariaDB | ^8.0 / ^10.6 |
+| PHP Extensions | `pdo`, `pdo_mysql`, `mbstring` |
+
+Verifikasi prasyarat:
+
+```bash
+php -v                          # Harus menunjukkan 8.2+
+composer -V                     # Harus menunjukkan 2.x
+php -m | grep -E 'pdo|mbstring' # Harus menampilkan pdo, pdo_mysql, mbstring
+mysql --version                 # Harus menunjukkan 8.0+ atau MariaDB 10.6+
+```
+
+## Clone & Install
+
+```bash
+git clone <repository-url> siwayut-catering
+cd siwayut-catering
+composer install
+```
+
+## Konfigurasi Environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` dengan pengaturan Anda:
+
+| Variabel | Deskripsi | Default |
+|----------|-------------|---------|
+| `APP_NAME` | Nama tampilan aplikasi | `My App` |
+| `APP_ENV` | Environment (`local`, `production`) | `local` |
+| `APP_DEBUG` | Tampilkan detail error (`true`/`false`) | `true` |
+| `APP_TIMEZONE` | Timezone PHP | `Asia/Jakarta` |
+| `APP_URL` | Base URL untuk helper asset/url | `http://localhost` |
+| `DB_DRIVER` | Driver PDO | `mysql` |
+| `DB_HOST` | Host database | `127.0.0.1` |
+| `DB_PORT` | Port database | `3306` |
+| `DB_DATABASE` | Nama database | `myapp` |
+| `DB_USERNAME` | Username database | `root` |
+| `DB_PASSWORD` | Password database | *(kosong)* |
+| `AI_API_URL` | Base URL API yang kompatibel dengan OpenAI (contoh: `https://generativelanguage.googleapis.com/v1beta/openai/`) | *(kosong)* |
+| `AI_API_KEY` | API key untuk penyedia AI | *(kosong)* |
+| `AI_MODEL` | Nama model (contoh: `gemini-2.0-flash`, `gpt-4o-mini`) | *(kosong)* |
+
+> **Penting**: Atur `APP_DEBUG=false` pada environment production untuk mencegah tereksposnya stack trace.
+
+## Pengaturan Database
+
+Gunakan CLI `vanilla` untuk membuat database, menjalankan migration, dan melakukan seeding:
+
+```bash
+php vanilla db:create
+php vanilla migrate
+php vanilla db:seed --class=AdminSeeder
+```
+
+Output yang diharapkan:
+
+```
+  DONE    Database 'myapp' created successfully.
+  DONE    Migrated:  001_create_users_table.sql
+  DONE    Ran 1 migration(s).
+  DONE    Database seeding completed.
+```
+
+Seeder akan membuat akun admin default:
+- **Email**: `admin@admin.com`
+- **Password**: `password`
+
+## Menjalankan Server Pengembangan
+
+```bash
+php vanilla serve
+```
+
+Atau gunakan Composer:
+
+```bash
+composer run dev
+```
+
+Keduanya akan menjalankan server bawaan PHP di `http://localhost:8000`.
+
+Output yang diharapkan:
+
+```
+  Vanilla Framework v1.0.0 (PHP 8.x.x)
+  INFO    Starting development server on http://localhost:8000
+```
+
+## Verifikasi Instalasi
+
+1. Buka `http://localhost:8000` — Anda seharusnya melihat halaman selamat datang
+2. Buka `http://localhost:8000/login` — Anda seharusnya melihat formulir login
+3. Login dengan `admin@admin.com` / `password` — Anda seharusnya diarahkan ke halaman pengguna
+
+## Pemecahan Masalah (Troubleshooting)
+
+| Masalah | Solusi |
+|---------|----------|
+| `Unknown database 'myapp'` | Jalankan `php vanilla db:create` |
+| `Table 'myapp.users' doesn't exist` | Jalankan `php vanilla migrate` |
+| `Class not found` | Jalankan `composer dump-autoload` |
+| `pdo_mysql not found` | Instal: `sudo apt install php-mysql` |
+| Port 8000 sedang digunakan | Gunakan `php vanilla serve --port=8080` |
+
+---
+
+Selanjutnya: [QUICKSTART.md](QUICKSTART.md)

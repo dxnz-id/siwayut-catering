@@ -1,103 +1,54 @@
-# Siwayut Catering — Vanilla PHP MVC Framework
+# Siwayut Documentation Index
 
-> A lightweight, zero-dependency PHP 8.2+ MVC micro-framework for catering management.
+Welcome to the Master Documentation Index for Siwayut Catering. 
 
-![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+> *Also available in: [Indonesian](id/README.md)*
 
-## Features
+Our comprehensive documentation is organized into the following categories to help you navigate the system:
 
-### Implemented
+### 📁 Architecture & Core (`core/`)
+- [Architecture Overview](core/ARCHITECTURE.md)
+- [Container & DI](core/CONTAINER.md)
+- [Routing & Request](core/ROUTING.md)
+- [Middleware](core/MIDDLEWARE.md)
 
-- IoC Container with reflection-based auto-wiring
-- Router with HTTP verb methods, route parameters, and grouped middleware
-- Middleware pipeline (Auth, CSRF, Role-based access)
-- Session management with flash messages and old input
-- CSRF protection with timing-safe verification
-- Input validation with 10 built-in rules
-- BaseModel with ActiveRecord-style CRUD and pagination
-- View rendering with layouts, partials, and XSS escaping
-- Exception hierarchy with global error handler
-- Daily rotating file logger
-- Database migrations and seeding
-- `vanilla` CLI tool (artisan-like)
+### 📁 Database & Models (`database/`)
+- [Database Setup & Indexing](database/DATABASE.md)
+- [Models & ERD](database/MODELS.md)
 
-### Scaffolded / Implemented Resources
+### 📁 Backend & Logic (`backend/`)
+- [Controllers](backend/CONTROLLERS.md)
+- [Services](backend/SERVICES.md)
+- [Validation](backend/VALIDATION.md)
+- [File Upload](backend/FILE_UPLOAD.md)
+- [API Reference](backend/API.md)
 
-- File upload service
-- Multi-resource CRUD pattern (Users, Categories, Events, Menus, and Orders implemented)
+### 📁 Frontend & Views (`frontend/`)
+- [Views & Templates](frontend/VIEWS.md)
+- [Frontend Architecture](frontend/FRONTEND.md)
+- [Internationalization](frontend/INTERNATIONALIZATION.md)
 
-## Tech Stack
+### 📁 Security & Operations (`security/`)
+- [Security Features](security/SECURITY.md)
+- [Error Handling](security/ERROR_HANDLING.md)
+- [Deployment Guide](security/DEPLOYMENT.md)
+- [Testing & QA](security/TESTING.md)
+- [Troubleshooting](security/TROUBLESHOOTING.md)
 
-- **Language**: PHP 8.2+ (strict_types, promoted properties, match expressions, never return type)
-- **Database**: MySQL / MariaDB via PDO
-- **Template Engine**: Native PHP templates
-- **Dependencies**: Zero third-party runtime dependencies (Composer for autoloading only)
+### 📁 Guides & References (`guides/`)
+- [User Guide](guides/USER_GUIDE.md)
+- [Customer Flow](guides/CUSTOMER_FLOW.md)
+- [Conventions](guides/CONVENTIONS.md)
+- [Examples & Recipes](guides/EXAMPLES.md)
+- [CLI Reference](guides/CLI.md)
+- [Contributing](guides/CONTRIBUTING.md)
 
-## Quick Install
+### 📁 General (`general/`)
+- [Features](general/FEATURES.md)
+- [Installation](general/INSTALLATION.md)
+- [Quickstart](general/QUICKSTART.md)
+- [Financial Roadmap](general/financial-roadmap.md)
+- [Changelog](general/CHANGELOG.md)
 
-```bash
-git clone <repository-url> && cd siwayut-catering
-composer install
-cp .env.example .env   # then edit database credentials
-```
-
-→ Full guide: [INSTALLATION.md](INSTALLATION.md)
-
-## Quick Start
-
-```bash
-php vanilla db:create
-php vanilla migrate
-php vanilla db:seed --class=AdminSeeder
-php vanilla serve
-```
-
-Then open `http://localhost:8000/login` — login with `admin@admin.com` / `password`.
-
-→ Full guide: [QUICKSTART.md](QUICKSTART.md)
-
-## Project Structure
-
-```
-siwayut-catering/
-├── bootstrap/          # Application bootstrap
-├── config/             # Configuration files
-├── database/           # Migrations and seeders
-├── docs/               # Documentation
-├── public/             # Web root (index.php, assets)
-├── src/
-│   ├── Controllers/    # HTTP controllers
-│   ├── Core/           # Framework core classes
-│   ├── Exceptions/     # Exception hierarchy
-│   ├── Helpers/        # Global helper functions
-│   ├── Middleware/      # Request middleware
-│   ├── Models/         # Database models
-│   ├── Services/       # Business logic services
-│   └── Views/          # PHP templates
-├── storage/            # Logs and uploads
-└── vanilla             # CLI tool
-```
-
-## Documentation
-
-| #   | Document                               | Description                                 |
-| --- | -------------------------------------- | ------------------------------------------- |
-| 1   | [INSTALLATION.md](INSTALLATION.md)     | Setup from zero to running server           |
-| 2   | [QUICKSTART.md](QUICKSTART.md)         | Build your first feature in 5 minutes       |
-| 3   | [ARCHITECTURE.md](ARCHITECTURE.md)     | Request lifecycle and system design         |
-| 4   | [CONTAINER.md](CONTAINER.md)           | IoC container and auto-wiring               |
-| 5   | [ROUTING.md](ROUTING.md)               | Routes, parameters, and groups              |
-| 6   | [MIDDLEWARE.md](MIDDLEWARE.md)         | Middleware pipeline and built-in middleware |
-| 7   | [DATABASE.md](DATABASE.md)             | Database connection and BaseModel API       |
-| 8   | [VALIDATION.md](VALIDATION.md)         | Input validation rules                      |
-| 9   | [VIEWS.md](VIEWS.md)                   | Templates, layouts, and partials            |
-| 10  | [ERROR_HANDLING.md](ERROR_HANDLING.md) | Exception hierarchy and error pages         |
-| 11  | [SECURITY.md](SECURITY.md)             | XSS, CSRF, SQL injection, auth              |
-| 12  | [CONVENTIONS.md](CONVENTIONS.md)       | Naming and code style rules                 |
-| 13  | [EXAMPLES.md](EXAMPLES.md)             | Copy-paste recipes                          |
-| 14  | [CONTRIBUTING.md](CONTRIBUTING.md)     | Contributor guide                           |
-
-## License
-
-MIT
+---
+**Back to project:** [Root README](../README.md)

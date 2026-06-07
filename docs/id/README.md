@@ -1,4 +1,4 @@
-# Siwayut Catering — Framework MVC PHP Vanilla
+# Siwayut Catering — Vanilla PHP MVC Framework
 
 > Framework mikro MVC PHP 8.2+ yang ringan dan tanpa dependensi untuk manajemen katering.
 
@@ -7,42 +7,44 @@
 
 ## Fitur
 
-### Sudah Diimplementasikan
-- IoC Container dengan auto-wiring berbasis reflection
-- Router dengan metode HTTP, parameter rute, dan grup middleware
-- Pipeline Middleware (Otentikasi, CSRF, Akses berbasis peran)
-- Manajemen Session dengan pesan flash dan input lama (old input)
-- Perlindungan CSRF dengan verifikasi aman (timing-safe)
-- Validasi Input dengan 10 aturan bawaan
-- BaseModel dengan gaya ActiveRecord untuk CRUD dan paginasi
-- Rendering View dengan layout, partial, dan perlindungan (escaping) XSS
-- Hierarki Exception dengan penangan kesalahan (error handler) global
-- Logger file bergulir harian
-- Migrasi database dan seeder
-- Alat CLI `vanilla` (mirip artisan)
+### Terimplementasi
 
-### Sumber Daya yang Disediakan / Diimplementasikan (Scaffolded)
-- Layanan unggah (upload) file
-- Pola CRUD multi-sumber daya (Pengguna, Kategori, Hari Raya (Events), Menu, dan Pesanan telah diimplementasikan)
+- IoC Container dengan auto-wiring berbasis refleksi
+- Router dengan metode HTTP verb, parameter route, dan middleware berkelompok
+- Pipeline Middleware (Auth, CSRF, akses berbasis Role)
+- Manajemen Session dengan flash message dan input lama
+- Proteksi CSRF dengan verifikasi timing-safe
+- Validasi input dengan 10 aturan bawaan
+- BaseModel dengan CRUD gaya ActiveRecord dan pagination
+- Rendering View dengan layout, partial, dan escaping XSS
+- Hierarki Exception dengan penangan error global
+- Logger file yang berotasi harian
+- Migrasi database dan seeding
+- Tool CLI `vanilla` (mirip artisan)
 
-## Tumpukan Teknologi (Tech Stack)
+### Sumber Daya yang Dibuat / Diimplementasikan
+
+- Layanan unggah file
+- Pola CRUD multi-sumber daya (Users, Categories, Events, Menus, dan Orders telah diimplementasikan)
+
+## Tech Stack
 
 - **Bahasa**: PHP 8.2+ (strict_types, promoted properties, match expressions, never return type)
-- **Database**: MySQL / MariaDB via PDO
-- **Mesin Templat**: Templat PHP bawaan (Native)
-- **Dependensi**: Nol dependensi runtime pihak ketiga (Composer hanya digunakan untuk autoloading)
+- **Database**: MySQL / MariaDB melalui PDO
+- **Template Engine**: Template PHP native
+- **Dependensi**: Tanpa dependensi runtime pihak ketiga (Composer hanya untuk autoloading)
 
 ## Instalasi Cepat
 
 ```bash
 git clone <repository-url> && cd siwayut-catering
 composer install
-cp .env.example .env   # lalu edit kredensial database
+cp .env.example .env   # kemudian edit kredensial database
 ```
 
-→ Panduan lengkap: [INSTALLATION.md](INSTALLATION.md)
+→ Panduan lengkap: [INSTALLATION.md](general/INSTALLATION.md)
 
-## Mulai Cepat (Quick Start)
+## Memulai Cepat
 
 ```bash
 php vanilla db:create
@@ -51,9 +53,9 @@ php vanilla db:seed --class=AdminSeeder
 php vanilla serve
 ```
 
-Lalu buka `http://localhost:8000/login` — masuk dengan `admin@admin.com` / `password`.
+Kemudian buka `http://localhost:8000/login` — login dengan `admin@admin.com` / `password`.
 
-→ Panduan lengkap: [QUICKSTART.md](QUICKSTART.md)
+→ Panduan lengkap: [QUICKSTART.md](general/QUICKSTART.md)
 
 ## Struktur Proyek
 
@@ -66,35 +68,35 @@ siwayut-catering/
 ├── public/             # Web root (index.php, aset)
 ├── src/
 │   ├── Controllers/    # Controller HTTP
-│   ├── Core/           # Kelas inti framework
+│   ├── Core/           # Class inti framework
 │   ├── Exceptions/     # Hierarki exception
 │   ├── Helpers/        # Fungsi helper global
 │   ├── Middleware/      # Middleware request
 │   ├── Models/         # Model database
-│   ├── Services/       # Layanan logika bisnis (Business logic services)
-│   └── Views/          # Templat PHP
-├── storage/            # Log dan hasil unggahan
-└── vanilla             # Alat CLI
+│   ├── Services/       # Layanan logika bisnis
+│   └── Views/          # Template PHP
+├── storage/            # Log dan unggahan
+└── vanilla             # Tool CLI
 ```
 
 ## Dokumentasi
 
-| # | Dokumen | Deskripsi |
-|---|----------|-------------|
-| 1 | [INSTALLATION.md](INSTALLATION.md) | Persiapan dari nol hingga menjalankan server |
-| 2 | [QUICKSTART.md](QUICKSTART.md) | Buat fitur pertama Anda dalam 5 menit |
-| 3 | [ARCHITECTURE.md](ARCHITECTURE.md) | Siklus hidup request dan desain sistem |
-| 4 | [CONTAINER.md](CONTAINER.md) | IoC container dan auto-wiring |
-| 5 | [ROUTING.md](ROUTING.md) | Rute, parameter, dan grup |
-| 6 | [MIDDLEWARE.md](MIDDLEWARE.md) | Pipeline middleware dan middleware bawaan |
-| 7 | [DATABASE.md](DATABASE.md) | Koneksi database dan API BaseModel |
-| 8 | [VALIDATION.md](VALIDATION.md) | Aturan validasi input |
-| 9 | [VIEWS.md](VIEWS.md) | Templat, layout, dan partial |
-| 10 | [ERROR_HANDLING.md](ERROR_HANDLING.md) | Hierarki exception dan halaman error |
-| 11 | [SECURITY.md](SECURITY.md) | XSS, CSRF, injeksi SQL, auth |
-| 12 | [CONVENTIONS.md](CONVENTIONS.md) | Aturan penamaan dan gaya penulisan kode |
-| 13 | [EXAMPLES.md](EXAMPLES.md) | Resep siap salin-tempel (copy-paste) |
-| 14 | [CONTRIBUTING.md](CONTRIBUTING.md) | Panduan kontributor |
+| #   | Dokumen                                | Deskripsi                                   |
+| --- | -------------------------------------- | ------------------------------------------- |
+| 1   | [INSTALLATION.md](general/INSTALLATION.md)     | Pengaturan dari nol hingga server berjalan  |
+| 2   | [QUICKSTART.md](general/QUICKSTART.md)         | Membangun fitur pertama Anda dalam 5 menit  |
+| 3   | [ARCHITECTURE.md](core/ARCHITECTURE.md)     | Siklus hidup request dan desain sistem      |
+| 4   | [CONTAINER.md](core/CONTAINER.md)           | IoC container dan auto-wiring               |
+| 5   | [ROUTING.md](core/ROUTING.md)               | Route, parameter, dan grup                  |
+| 6   | [MIDDLEWARE.md](core/MIDDLEWARE.md)         | Pipeline middleware dan middleware bawaan   |
+| 7   | [DATABASE.md](database/DATABASE.md)             | Koneksi database dan API BaseModel          |
+| 8   | [VALIDATION.md](backend/VALIDATION.md)         | Aturan validasi input                       |
+| 9   | [VIEWS.md](frontend/VIEWS.md)                   | Template, layout, dan partial               |
+| 10  | [ERROR_HANDLING.md](security/ERROR_HANDLING.md) | Hierarki exception dan halaman error        |
+| 11  | [SECURITY.md](security/SECURITY.md)             | XSS, CSRF, SQL injection, auth              |
+| 12  | [CONVENTIONS.md](guides/CONVENTIONS.md)       | Aturan penamaan dan gaya kode               |
+| 13  | [EXAMPLES.md](guides/EXAMPLES.md)             | Resep salin-tempel                          |
+| 14  | [CONTRIBUTING.md](guides/CONTRIBUTING.md)     | Panduan kontributor                         |
 
 ## Lisensi
 
