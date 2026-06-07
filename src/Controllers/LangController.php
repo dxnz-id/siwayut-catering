@@ -5,8 +5,7 @@ namespace App\Controllers;
 
 use App\Core\{Request, Session};
 
-class LangController
-{
+class LangController {
     private const SUPPORTED = ['id', 'en'];
 
     public function switch(Request $request): void

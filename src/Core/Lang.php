@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-class Lang
-{
+class Lang {
     private static array $translations = [];
     private static ?string $locale = null;
 

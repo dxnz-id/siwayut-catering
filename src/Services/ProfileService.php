@@ -6,8 +6,7 @@ namespace App\Services;
 use App\Core\Encryptor;
 use App\Models\User;
 
-class ProfileService
-{
+class ProfileService {
     public function __construct(
         private User $user
     ) {}
