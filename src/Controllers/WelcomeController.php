@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\{Request, Response, Session};
+use App\Core\{Request, Response};
 use App\Exceptions\NotFoundException;
 use App\Services\{EventService, MenuService, CategoryService};
 
@@ -25,21 +25,6 @@ class WelcomeController extends BaseController {
         // First 9 active menus for the featured grid
         $initial = $this->menuService->paginate(1, 9, ['status' => 'active']);
 
-        $navUser = Session::get('user');
-        if ($navUser) {
-            if ($navUser['role'] === 'admin') {
-                $navExtra = '<a href="/orders" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('dashboard') . '</a>';
-            } else {
-                $navExtra = '<a href="/my-orders" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('my_orders') . '</a>'
-                    . '<form method="POST" action="/logout" class="m-0 p-0 inline">'
-                    . \App\Core\Csrf::field()
-                    . '<button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer">' . __('logout') . '</button>'
-                    . '</form>';
-            }
-        } else {
-            $navExtra = '<a href="/auth" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('login') . '</a>';
-        }
-
         $this->render('welcome', [
             'title' => 'Siwayut Catering — ' . __('premium_holiday_catering'),
             'events' => $events,
@@ -50,7 +35,7 @@ class WelcomeController extends BaseController {
             'perPage' => $initial['per_page'],
             'currentPage' => $initial['current_page'],
             'lastPage' => $initial['last_page'],
-            'navExtra' => $navExtra,
+            'navMode' => 'session',
         ], 'public');
     }
 
@@ -77,7 +62,7 @@ class WelcomeController extends BaseController {
             'category' => $category,
             'event' => $event,
             'related' => array_slice($related, 0, 3),
-            'navExtra' => '<a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back') . '</a>',
+            'navMode' => 'back',
         ], 'public');
     }
 

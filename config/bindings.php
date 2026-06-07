@@ -23,6 +23,7 @@ $container->bind(CategoryService::class, fn(Container $c): object => new Categor
 $container->bind(MenuService::class, fn(Container $c): object => new MenuService($c->make(Menu::class), $c->make(FileUploadService::class)));
 $container->bind(OrderService::class, fn(Container $c): object => new OrderService($c->make(Order::class), $c->make(Customer::class), $c->make(Menu::class)));
 $container->bind(EventService::class, fn(Container $c): object => new EventService($c->make(Event::class)));
+$container->bind(AiService::class, fn(Container $c): object => new AiService());
 
 // Controllers
 $container->bind(WelcomeController::class, fn(Container $c): object => new WelcomeController(

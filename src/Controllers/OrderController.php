@@ -20,6 +20,10 @@ class OrderController extends BaseController
         parent::__construct();
     }
 
+    // ============================================================
+    // PUBLIC: Customer-facing routes
+    // ============================================================
+
     public function myOrders(Request $request): void
     {
         $user = Session::get('user');
@@ -31,16 +35,10 @@ class OrderController extends BaseController
         $customer = $this->customer->findByUserId((int) $user['id']);
         $orders = $customer ? $this->orderService->getOrdersByCustomerId((int) $customer['id']) : [];
 
-        $navExtra = '<a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back') . '</a>'
-            . '<form method="POST" action="/logout" class="m-0 p-0 inline">'
-            . \App\Core\Csrf::field()
-            . '<button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium no-underline bg-transparent border border-transparent text-muted hover:text-danger hover:border-danger/30 hover:bg-danger/10 transition-all duration-300 cursor-pointer">' . __('logout') . '</button>'
-            . '</form>';
-
         $this->render('order/my-orders', [
             'title' => __('my_orders') . ' — Siwayut Catering',
             'orders' => $orders,
-            'navExtra' => $navExtra,
+            'navMode' => 'back_logout',
         ], 'public');
     }
 
@@ -52,7 +50,7 @@ class OrderController extends BaseController
         $this->render('order/public-form', [
             'title' => __('order_catering') . ' — Siwayut Catering',
             'menus' => $activeMenus,
-            'navExtra' => '<a href="/" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back_home') . '</a>',
+            'navMode' => 'back_home',
         ], 'public');
     }
 
@@ -125,7 +123,7 @@ class OrderController extends BaseController
     {
         $this->render('order/track', [
             'title' => __('track_order_title') . ' — Siwayut Catering',
-            'navExtra' => '<a href="javascript:void(0)" onclick="history.back();return false" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('back') . '</a>',
+            'navMode' => 'back',
         ], 'public');
     }
 
@@ -205,9 +203,13 @@ class OrderController extends BaseController
             'order' => $order,
             'customer' => $customer,
             'items' => $items,
-            'navExtra' => '<a href="/track-order" class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium no-underline bg-white/5 border-border text-text backdrop-blur-[8px] hover:bg-gold hover:border-gold hover:shadow-[0_0_15px_var(--color-gold-glow)] transition-all duration-300">' . __('track_another') . '</a>',
+            'navMode' => 'track_another',
         ], 'public');
     }
+
+    // ============================================================
+    // ADMIN: Dashboard routes (requires auth + role:admin)
+    // ============================================================
 
     public function index(Request $request): void
     {
@@ -335,6 +337,10 @@ class OrderController extends BaseController
             $this->redirect('/orders');
         }
     }
+
+    // ============================================================
+    // PRIVATE HELPERS
+    // ============================================================
 
     private function resolveOrder(string $id): ?array
     {

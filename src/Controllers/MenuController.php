@@ -41,9 +41,9 @@ class MenuController extends BaseController {
         $menus = $result['data'];
 
         $categories = $this->categoryService->all();
-        $katMap = [];
+        $categoryMap = [];
         foreach ($categories as $k) {
-            $katMap[$k['id']] = $k['name'];
+            $categoryMap[$k['id']] = $k['name'];
         }
 
         $events = $this->eventService->getActive();
@@ -56,7 +56,7 @@ class MenuController extends BaseController {
             'title' => __('menus'),
             'menus' => $menus,
             'pagination' => $result,
-            'katMap' => $katMap,
+            'categoryMap' => $categoryMap,
             'eventMap' => $eventMap,
             'search' => $search,
             'filterCategory' => $catId,
@@ -99,7 +99,7 @@ class MenuController extends BaseController {
 
     public function store(Request $request): void {
         $data = $request->only(['name', 'description', 'price', 'category_id', 'event_id', 'minimum_portions', 'status']);
-        $gambar = $request->file('image');
+        $imageFile = $request->file('image');
 
         $validator = new Validator();
         $validator->validate($data, [
@@ -120,11 +120,11 @@ class MenuController extends BaseController {
             $this->redirect('/menus/create');
         }
 
-        if ($gambar) {
+        if ($imageFile) {
             $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
             $maxSize = 5242880;
             $finfo = new \finfo(FILEINFO_MIME_TYPE);
-            $mime = $finfo->file($gambar['tmp_name']);
+            $mime = $finfo->file($imageFile['tmp_name']);
             if (!in_array($mime, $allowedMimes, true)) {
                 if ($request->isAjax()) {
                     Response::jsonError(__('invalid_file_type'));
@@ -133,7 +133,7 @@ class MenuController extends BaseController {
                 Session::flash('error', __('invalid_file_type'));
                 $this->redirect('/menus/create');
             }
-            if ($gambar['size'] > $maxSize) {
+            if ($imageFile['size'] > $maxSize) {
                 if ($request->isAjax()) {
                     Response::jsonError(__('file_too_large'));
                 }
@@ -144,7 +144,7 @@ class MenuController extends BaseController {
         }
 
         try {
-            $this->menuService->create($data, $gambar);
+            $this->menuService->create($data, $imageFile);
             if ($request->isAjax()) {
                 Response::jsonSuccess(null, __('menu_added'));
             }
@@ -176,7 +176,7 @@ class MenuController extends BaseController {
         $id = (int)$menu['id'];
 
         $data = $request->only(['name', 'description', 'price', 'category_id', 'event_id', 'minimum_portions', 'status']);
-        $gambar = $request->file('image');
+        $imageFile = $request->file('image');
 
         $validator = new Validator();
         $validator->validate($data, [
@@ -195,18 +195,18 @@ class MenuController extends BaseController {
             $this->redirect("/menus/{$code}");
         }
 
-        if ($gambar) {
+        if ($imageFile) {
             $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
             $maxSize = 5242880;
             $finfo = new \finfo(FILEINFO_MIME_TYPE);
-            $mime = $finfo->file($gambar['tmp_name']);
+            $mime = $finfo->file($imageFile['tmp_name']);
             if (!in_array($mime, $allowedMimes, true)) {
                 if ($request->isAjax()) Response::jsonError(__('invalid_file_type'));
                 $this->withOldInput($data);
                 Session::flash('error', __('invalid_file_type'));
                 $this->redirect("/menus/{$code}");
             }
-            if ($gambar['size'] > $maxSize) {
+            if ($imageFile['size'] > $maxSize) {
                 if ($request->isAjax()) Response::jsonError(__('file_too_large'));
                 $this->withOldInput($data);
                 Session::flash('error', __('file_too_large'));
@@ -215,7 +215,7 @@ class MenuController extends BaseController {
         }
 
         try {
-            $this->menuService->update($id, $data, $gambar);
+            $this->menuService->update($id, $data, $imageFile);
             if ($request->isAjax()) Response::jsonSuccess(null, __('menu_updated'));
             $this->redirectWithFlash('/menus', 'success', __('menu_updated'));
         } catch (\Exception $e) {

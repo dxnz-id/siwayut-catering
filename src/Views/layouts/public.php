@@ -19,7 +19,7 @@
             </a>
             <div class="flex items-center gap-3">
                 <?php component('lang-switcher') ?>
-                <?= $navExtra ?? '' ?>
+                <?php require __DIR__ . '/../partials/nav-extra.php' ?>
             </div>
         </div>
     </header>

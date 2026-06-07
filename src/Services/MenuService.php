@@ -30,10 +30,10 @@ class MenuService {
         return $this->menu->find($id);
     }
 
-    public function create(array $data, ?array $gambar = null): int {
+    public function create(array $data, ?array $image = null): int {
         $imagePath = null;
-        if ($gambar && $gambar['error'] !== UPLOAD_ERR_NO_FILE) {
-            $imagePath = $this->fileUpload->upload($gambar, 'menus');
+        if ($image && $image['error'] !== UPLOAD_ERR_NO_FILE) {
+            $imagePath = $this->fileUpload->upload($image, 'menus');
         }
 
         return $this->menu->create([
@@ -50,7 +50,7 @@ class MenuService {
         ]);
     }
 
-    public function update(int $id, array $data, ?array $gambar = null): bool {
+    public function update(int $id, array $data, ?array $image = null): bool {
         $updateData = [
             'name' => $data['name'],
             'description' => $data['description'] ?? '',
@@ -62,12 +62,12 @@ class MenuService {
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        if ($gambar && $gambar['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($image && $image['error'] !== UPLOAD_ERR_NO_FILE) {
             $menu = $this->menu->find($id);
             if ($menu && $menu['image']) {
                 $this->fileUpload->delete($menu['image']);
             }
-            $updateData['image'] = $this->fileUpload->upload($gambar, 'menus');
+            $updateData['image'] = $this->fileUpload->upload($image, 'menus');
         }
 
         return $this->menu->update($id, $updateData);

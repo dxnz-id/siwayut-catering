@@ -8,7 +8,7 @@ $filters = [
     [
         'label' => __('category'),
         'name' => 'category_id',
-        'options' => ['' => __('all_categories')] + ($katMap ?? []),
+        'options' => ['' => __('all_categories')] + ($categoryMap ?? []),
         'selected' => $filterCategory ?? '',
     ],
     [
@@ -55,7 +55,7 @@ $filters = [
                         <?php endif; ?>
                     </td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text font-medium"><?= e($menu['name']) ?></td>
-                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= e($katMap[$menu['category_id']] ?? __('unknown')) ?></td>
+                    <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= e($categoryMap[$menu['category_id']] ?? __('unknown')) ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-success font-medium">Rp <?= number_format((float)$menu['price'], 0, ',', '.') ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-danger font-medium">Rp <?= number_format((float)($menu['cost_price'] ?? 0), 0, ',', '.') ?></td>
                     <td class="px-4 py-3.5 text-sm border-b border-white/[0.06] align-middle text-text"><?= e($menu['minimum_portions']) ?> <?= __('portions') ?></td>
@@ -95,7 +95,7 @@ component('form/input', ['name' => 'name', 'label' => __('menu_name'), 'required
 component('form/textarea', ['name' => 'description', 'label' => __('description'), 'rows' => 4]);
 echo '<button type="button" onclick="generateDescription(this)" class="inline-flex items-center justify-center gap-2 px-3 py-1.5 text-[0.8125rem] rounded-lg text-sm font-medium leading-tight cursor-pointer border transition-all duration-150 no-underline whitespace-nowrap font-body hover:translate-y-[-1px] hover:shadow-md active:translate-y-0 bg-white/6 text-text border-border hover:bg-white/10 hover:text-text -mt-3 mb-5">' . __('generate_ai') . '</button>';
 echo '<div class="grid grid-cols-2 gap-4">';
-component('form/select', ['name' => 'category_id', 'label' => __('category'), 'options' => $katMap ?? [], 'placeholder' => __('select_category'), 'required' => true]);
+component('form/select', ['name' => 'category_id', 'label' => __('category'), 'options' => $categoryMap ?? [], 'placeholder' => __('select_category'), 'required' => true]);
 component('form/select', ['name' => 'event_id', 'label' => __('event'), 'options' => $eventMap ?? [], 'placeholder' => __('select_event'), 'required' => true]);
 echo '</div>';
 echo '<div class="grid grid-cols-2 gap-4">';
