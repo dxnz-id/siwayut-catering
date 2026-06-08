@@ -43,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$registerRoutes = require BASE_PATH . '/config/routes.php';
-$registerRoutes($router);
+$router->group(['middleware' => ['csrf']], function (Router $r): void {
+    (require BASE_PATH . '/routes/web.php')($r);
+    (require BASE_PATH . '/routes/api.php')($r);
+});
 $router->dispatch($request);
