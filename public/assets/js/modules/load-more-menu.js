@@ -21,38 +21,40 @@
     }
 
     function renderMenuCard(menu) {
-        var paths = getThumbPath(menu.image);
+        var paths = menu.image ? getThumbPath(menu.image) : null;
         var eventName = menu.event_name || null;
 
-        var html = '<a href="/menu/' + esc(menu.menu_code) + '" class="menu-card-link">';
-        html += '<div class="menu-card">';
-        html += '<div class="menu-img-container">';
+        var html = '<a href="/menu/' + esc(menu.menu_code) + '"';
+        html += ' class="bg-card-bg border border-border backdrop-blur-[16px] rounded-xl overflow-hidden flex flex-col no-underline text-inherit transition-all duration-300 hover:-translate-y-[5px] hover:border-gold/25 hover:shadow-xl group">';
 
-        if (menu.image) {
-            html += '<span class="progressive-wrap" style="display:inline-block;overflow:hidden;line-height:0;vertical-align:top;width:100%;height:100%;">';
-            html += '<img src="' + esc(paths.thumb) + '" data-full="' + esc(paths.full) + '" alt="' + esc(menu.name) + '"';
-            html += ' class="progressive-img blur-up" style="display:block;width:100%;height:100%;object-fit:cover"';
-            var safeFull = esc(paths.full).replace(/'/g, '&#39;');
-            html += ' onerror="this.onerror=null;this.src=\'' + safeFull + '\';this.classList.remove(\'blur-up\');this.classList.add(\'loaded\')">';
+        // Image area
+        html += '<div class="h-[180px] bg-gradient-to-br from-gold/20 to-accent-red/10 relative flex items-center justify-center text-white/15">';
+
+        if (paths) {
+            html += '<span class="progressive-wrap w-full h-full"';
+            html += ' style="display:inline-block;overflow:hidden;line-height:0;vertical-align:top;background:rgba(255,255,255,0.04) url(&quot;data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'rgba(255,255,255,0.2)\' stroke-width=\'1.5\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z\'/%3E%3C/svg%3E&quot;) center/20px no-repeat">';
+            html += '<img data-thumb="' + esc(paths.thumb) + '" data-full="' + esc(paths.full) + '" alt="' + esc(menu.name) + '" class="progressive-img" style="display:block;width:100%;height:100%;object-fit:cover;opacity:0">';
             html += '</span>';
         } else {
-            html += '<span style="font-size:3.5rem;">🍱</span>';
+            html += '<span class="text-6xl">\uD83C\uDF71</span>';
         }
 
         if (eventName) {
-            html += '<span class="menu-card-tag">' + esc(eventName) + '</span>';
+            html += '<span class="absolute bottom-3 left-3 bg-bg/80 border border-border backdrop-blur-[6px] text-gold text-xs font-semibold px-3 py-1 rounded-[6px]">' + esc(eventName) + '</span>';
         }
 
         html += '</div>';
-        html += '<div class="menu-card-body">';
-        html += '<h3 class="menu-card-title">' + esc(menu.name) + '</h3>';
-        html += '<p class="menu-card-desc">' + esc(menu.description || '') + '</p>';
-        html += '<div class="menu-card-meta">';
-        html += '<span class="menu-card-price">Rp ' + formatPrice(menu.price) + '</span>';
-        html += '<span class="menu-card-portions">Min. ' + esc(menu.minimum_portions) + ' Portions</span>';
+
+        // Content area
+        html += '<div class="p-5 flex flex-col flex-1">';
+        html += '<h3 class="text-lg font-bold mb-2 text-white font-display group-hover:text-gold transition-colors duration-200">' + esc(menu.name) + '</h3>';
+        html += '<p class="text-sm text-muted mb-5 flex-1 line-clamp-2">' + esc(menu.description || '') + '</p>';
+        html += '<div class="flex items-center justify-between border-t border-border pt-3 mt-auto">';
+        html += '<span class="font-display text-xl font-bold text-gold">Rp ' + formatPrice(menu.price) + '</span>';
+        html += '<span class="text-xs text-muted bg-white/5 px-2 py-0.5 rounded border border-border">Min. ' + esc(menu.minimum_portions) + ' Portions</span>';
         html += '</div>';
         html += '</div>';
-        html += '</div>';
+
         html += '</a>';
 
         return html;

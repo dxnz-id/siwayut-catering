@@ -36,6 +36,7 @@
     <?php endif; ?>
     <script src="/assets/js/modules/toast.js"></script>
     <script src="/assets/js/modules/progressive-image.js"></script>
+    <script src="/assets/js/modules/load-more-menu.js"></script>
     <?= $scriptsExtra ?? '' ?>
     <script src="/assets/js/app.js"></script>
 </body>
