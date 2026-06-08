@@ -54,6 +54,34 @@ function dbConfigured(): bool {
     return !empty($_ENV['DB_DATABASE'] ?? '');
 }
 
+function confirm(string $prompt): bool {
+    if (!stream_isatty(STDIN)) {
+        return false;
+    }
+    echo color('  CONFIRM ', 'yellow') . "  {$prompt} [y/N] ";
+    $input = strtolower(trim(readline()));
+    return in_array($input, ['y', 'yes'], true);
+}
+
+function isUnknownDatabaseError(PDOException $e): bool {
+    $code = $e->errorInfo[1] ?? 0;
+    return $code === 1049;
+}
+
+function resolveDb(): ?PDO {
+    try {
+        return getDb();
+    } catch (PDOException $e) {
+        $dbName = $_ENV['DB_DATABASE'] ?? '';
+        if ($dbName !== '' && isUnknownDatabaseError($e) && confirm("Database '" . $dbName . "' doesn't exist. Create it now?")) {
+            cmd_db_create();
+            return getDb();
+        }
+        error("Database connection failed: " . $e->getMessage());
+        return null;
+    }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Commands Registry
 // ─────────────────────────────────────────────────────────────────────────────
@@ -329,11 +357,8 @@ function runPhpMigration(PDO $db, string $file, string $name): void {
 // COMMAND: migrate
 // ─────────────────────────────────────────────────────────────────────────────
 function cmd_migrate(array $args): void {
-    try {
-        $db = getDb();
-    } catch (PDOException $e) {
-        error("Database connection failed: " . $e->getMessage());
-        line("Run " . color("php vanilla db:create", 'cyan') . " first.");
+    $db = resolveDb();
+    if (!$db) {
         return;
     }
 
@@ -377,10 +402,8 @@ function cmd_migrate(array $args): void {
 // COMMAND: migrate:fresh
 // ─────────────────────────────────────────────────────────────────────────────
 function cmd_migrate_fresh(array $args): void {
-    try {
-        $db = getDb();
-    } catch (PDOException $e) {
-        error("Database connection failed: " . $e->getMessage());
+    $db = resolveDb();
+    if (!$db) {
         return;
     }
 
@@ -404,10 +427,8 @@ function cmd_migrate_fresh(array $args): void {
 // COMMAND: migrate:status
 // ─────────────────────────────────────────────────────────────────────────────
 function cmd_migrate_status(array $args): void {
-    try {
-        $db = getDb();
-    } catch (PDOException $e) {
-        error("Database connection failed: " . $e->getMessage());
+    $db = resolveDb();
+    if (!$db) {
         return;
     }
 
@@ -439,10 +460,8 @@ function cmd_migrate_status(array $args): void {
 // COMMAND: migrate:rollback
 // ─────────────────────────────────────────────────────────────────────────────
 function cmd_migrate_rollback(array $args): void {
-    try {
-        $db = getDb();
-    } catch (PDOException $e) {
-        error("Database connection failed: " . $e->getMessage());
+    $db = resolveDb();
+    if (!$db) {
         return;
     }
 
@@ -495,7 +514,10 @@ function cmd_migrate_rollback(array $args): void {
 // COMMAND: migrate:reset
 // ─────────────────────────────────────────────────────────────────────────────
 function cmd_migrate_reset(array $args): void {
-    $db = getDb();
+    $db = resolveDb();
+    if (!$db) {
+        return;
+    }
     $stmt = $db->query("SELECT COALESCE(MAX(`batch`), 0) FROM `migrations`");
     while ((int) $stmt->fetchColumn() > 0) {
         cmd_migrate_rollback($args);
@@ -525,10 +547,8 @@ function cmd_db_seed(array $args): void {
         return;
     }
 
-    try {
-        $db = \App\Core\Database::getInstance();
-    } catch (PDOException $e) {
-        error("Database connection failed: " . $e->getMessage());
+    $db = resolveDb();
+    if (!$db) {
         return;
     }
 
