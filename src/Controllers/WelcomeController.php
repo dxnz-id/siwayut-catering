@@ -68,6 +68,7 @@ class WelcomeController extends BaseController {
 
     public function apiMenus(Request $request): void {
         $page = max(1, (int) ($request->input('page', '1')));
+        $search = trim($request->input('search', '') ?? '');
 
         $conditions = ['status' => 'active'];
         $categoryId = $request->input('category_id');
@@ -75,7 +76,7 @@ class WelcomeController extends BaseController {
             $conditions['category_id'] = (int) $categoryId;
         }
 
-        $result = $this->menuService->paginate($page, 9, $conditions);
+        $result = $this->menuService->paginate($page, 9, $conditions, $search);
 
         // Build category & event maps for the response
         $events = $this->eventService->getActive();

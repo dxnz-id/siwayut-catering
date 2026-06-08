@@ -124,7 +124,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
-            <?= date('d M Y', strtotime($order['event_date'])) ?>
+            <?= e(date('d M Y', strtotime($order['event_date'])) . (!empty($order['event_time']) ? ' — ' . date('H:i', strtotime($order['event_time'])) : '')) ?>
         </span>
         <span
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/5 text-xs text-muted font-medium">
@@ -229,10 +229,7 @@
                             <?php else: ?><span class="text-muted">-</span><?php endif; ?>
                         </div>
                         <div class="text-muted"><?= __('event_date') ?></div>
-                        <div class="text-text"><?php
-                        $dt = strtotime($order['event_date']);
-                        echo date('H:i', $dt) !== '12:00' ? date('d F Y, H:i', $dt) : date('d F Y', $dt);
-                        ?></div>
+                        <div class="text-text"><?= e(date('d F Y', strtotime($order['event_date'])) . (!empty($order['event_time']) ? ', ' . date('H:i', strtotime($order['event_time'])) : '')) ?></div>
                         <?php if ($order['occasion']): ?>
                             <div class="text-muted"><?= __('occasion') ?></div>
                             <div class="text-text">
@@ -439,14 +436,13 @@ $customOccasion = $isPredefined ? '' : $order['occasion'];
                         <div>
                             <label class="block text-sm font-medium text-text mb-1.5"><?= __('event_date') ?> <span
                                     class="text-danger">*</span></label>
-                            <input type="date" name="event_date" value="<?= e(substr($order['event_date'], 0, 10)) ?>"
+                            <input type="date" name="event_date" value="<?= e($order['event_date']) ?>"
                                 min="<?= date('Y-m-d') ?>" required
                                 class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-text mb-1.5"><?= __('event_time') ?></label>
-                            <input type="time" name="event_time" value="<?php $et = substr($order['event_date'], 11, 5);
-                            echo $et !== '12:00' ? e($et) : ''; ?>"
+                            <input type="time" name="event_time" value="<?= e(!empty($order['event_time']) ? substr($order['event_time'], 0, 5) : '') ?>"
                                 class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
                         </div>
                         <div class="relative">

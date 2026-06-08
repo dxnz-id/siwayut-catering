@@ -41,7 +41,7 @@ class OrderSeeder {
         $statuses = ['pending', 'processing', 'delivering', 'completed', 'cancelled'];
         $occasionOptions = ['birthday', 'wedding', 'corporate', 'family', 'arisan', 'khitanan', 'Ulang Tahun Perusahaan', 'Wisuda', 'Syukuran Rumah'];
 
-        $stmtOrder = $this->db->prepare("INSERT INTO orders (customer_id, event_date, total_price, delivery_address, notes, status, occasion, created_at, updated_at, order_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtOrder = $this->db->prepare("INSERT INTO orders (customer_id, event_date, event_time, total_price, delivery_address, notes, status, occasion, created_at, updated_at, order_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         $stmtItem = $this->db->prepare("INSERT INTO order_items (order_id, menu_id, quantity, price_at_time, subtotal) VALUES (?, ?, ?, ?, ?)");
 
@@ -56,9 +56,10 @@ class OrderSeeder {
             $totalPrice = $quantity * $menuPrice;
             $daysOffset = rand(1, 30);
             $eventDateBase = strtotime("+$daysOffset days");
-            $hour = rand(1, 5) === 1 ? 12 : rand(8, 20);
-            $minute = rand(0, 3) === 0 ? 0 : rand(0, 59);
-            $eventDate = date('Y-m-d', $eventDateBase) . sprintf(' %02d:%02d:00', $hour, $minute);
+            $hour = rand(1, 5) === 1 ? null : rand(8, 20);
+            $minute = $hour !== null ? (rand(0, 3) === 0 ? 0 : rand(0, 59)) : 0;
+            $eventDate = date('Y-m-d', $eventDateBase);
+            $eventTime = $hour !== null ? sprintf('%02d:%02d:00', $hour, $minute) : null;
             $status = $statuses[array_rand($statuses)];
 
             $notesOptions = [
@@ -83,7 +84,7 @@ class OrderSeeder {
             $orderNumber = 'ORD-' . date('Ymd', strtotime($now)) . '-' . str_pad((string)($i + 1), 4, '0', STR_PAD_LEFT);
 
             $stmtOrder->execute([
-                $customerId, $eventDate, $totalPrice,
+                $customerId, $eventDate, $eventTime, $totalPrice,
                 $deliveryAddress, $notes, $status, $occasion, $now, $now, $orderNumber
             ]);
 

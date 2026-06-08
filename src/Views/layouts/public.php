@@ -28,7 +28,7 @@
         <?= $content ?? '' ?>
     </main>
 
-    <?php component('footer') ?>
+    <?php if (empty($hideFooter)) component('footer') ?>
     <?php component('toast') ?>
 
     <?php if (\App\Core\Turnstile::enabled()): ?>
@@ -37,6 +37,8 @@
     <script src="/assets/js/modules/toast.js"></script>
     <script src="/assets/js/modules/progressive-image.js"></script>
     <script src="/assets/js/modules/load-more-menu.js"></script>
+    <script src="/assets/js/modules/cart-modal.js"></script>
+    <script src="/assets/js/modules/cart-page.js"></script>
     <?= $scriptsExtra ?? '' ?>
     <script src="/assets/js/app.js"></script>
 </body>

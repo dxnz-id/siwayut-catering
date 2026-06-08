@@ -100,6 +100,7 @@ class OrderService {
             'order_number' => 'TEMP',
             'customer_id' => $customerId,
             'event_date' => $data['event_date'],
+            'event_time' => !empty($data['event_time']) ? $data['event_time'] : null,
             'occasion' => $data['occasion'] ?? '',
             'total_price' => $totalPrice,
             'total_cost' => $totalCost,
@@ -266,6 +267,7 @@ LIMIT ?";
     public function updateOrder(int $id, array $data): void {
         $updateData = [
             'event_date' => $data['event_date'],
+            'event_time' => !empty($data['event_time']) ? $data['event_time'] : null,
             'occasion' => $data['occasion'],
             'delivery_address' => $data['delivery_address'],
             'notes' => $data['notes'] ?? '',

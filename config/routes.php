@@ -22,9 +22,16 @@ return function (Router $router): void {
 
         $r->post('/logout', [AuthController::class, 'logout']);
 
-        $r->get('/order-form',  [OrderController::class, 'publicForm']);
+        $r->get('/menu', [OrderController::class, 'publicMenu']);
+        $r->get('/cart', [OrderController::class, 'cartShow']);
+        $r->post('/cart/add', [OrderController::class, 'cartAdd']);
+        $r->post('/cart/update', [OrderController::class, 'cartUpdate']);
+        $r->post('/cart/remove', [OrderController::class, 'cartRemove']);
+        $r->post('/cart/remove-selected', [OrderController::class, 'cartRemoveSelected']);
+
+        $r->get('/checkout', [OrderController::class, 'checkoutShow']);
         $r->group(['middleware' => ['rate.limit:5,60']], function (Router $r): void {
-            $r->post('/order-form', [OrderController::class, 'publicSubmit']);
+            $r->post('/checkout', [OrderController::class, 'checkoutSubmit']);
         });
 
         $r->get('/track-order',      [OrderController::class, 'trackForm']);

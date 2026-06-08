@@ -38,7 +38,7 @@ td:last-child, th:last-child { text-align: right; }
     <?php if ($customer['phone'] ?? null): ?>
     <div class="row"><span class="row-label"><?= __('phone') ?></span><span class="row-value"><?= e($customer['phone']) ?></span></div>
     <?php endif; ?>
-    <div class="row"><span class="row-label"><?= __('event_date') ?></span><span class="row-value"><?= date('d/m/Y', strtotime($order['event_date'])) ?></span></div>
+    <div class="row"><span class="row-label"><?= __('event_date') ?></span><span class="row-value"><?= e(date('d/m/Y', strtotime($order['event_date'])) . (!empty($order['event_time']) ? ' ' . date('H:i', strtotime($order['event_time'])) : '')) ?></span></div>
     <?php if ($order['occasion']): ?>
     <div class="row"><span class="row-label"><?= __('occasion') ?></span><span class="row-value"><?= e($order['occasion']) ?></span></div>
     <?php endif; ?>

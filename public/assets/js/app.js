@@ -8,6 +8,8 @@
         try { window.AppModules?.fileUpload?.init?.(); } catch (e) { console.error(e); }
         try { window.AppModules?.progressiveImage?.init?.(); } catch (e) { console.error(e); }
         try { window.AppModules?.loadMoreMenu?.init?.(); } catch (e) { console.error(e); }
+        try { window.AppModules?.cartModal?.init?.(); } catch (e) { console.error(e); }
+        try { window.AppModules?.cartPage?.init?.(); } catch (e) { console.error(e); }
         try { window.AppModules?.aiDescription?.init?.(); } catch (e) { console.error(e); }
     });
 })();

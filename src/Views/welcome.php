@@ -18,7 +18,7 @@
                     </h1>
                     <p class="text-lg text-muted max-w-[700px] mx-auto mb-10 leading-relaxed"><?= __('hero_desc') ?></p>
                     <div class="flex items-center justify-center gap-5 flex-wrap">
-                        <a href="/order-form"
+                        <a href="/menu"
                             class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full text-base font-semibold no-underline whitespace-nowrap min-w-[210px] bg-gold border border-gold text-white shadow-[0_0_15px_var(--color-gold-glow)] hover:-translate-y-0.5 hover:shadow-[0_0_25px_var(--color-gold-glow)] transition-all duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="currentColor" class="shrink-0">

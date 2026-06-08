@@ -90,10 +90,7 @@ $statusStyles = [
                 <?= number_format((float) $order['total_price'], 0, ',', '.') ?></div>
 
             <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('event_date') ?></div>
-            <div class="text-text"><?php
-                $dt = strtotime($order['event_date']);
-                echo date('H:i', $dt) !== '12:00' ? date('d F Y, H:i', $dt) : date('d F Y', $dt);
-            ?></div>
+            <div class="text-text"><?= e(date('d F Y', strtotime($order['event_date'])) . (!empty($order['event_time']) ? ', ' . date('H:i', strtotime($order['event_time'])) : '')) ?></div>
 
             <div class="text-muted font-medium max-md:text-[0.8rem]"><?= __('address') ?></div>
             <div class="text-text"><?= nl2br(\App\Core\View::e($order['delivery_address'])) ?></div>

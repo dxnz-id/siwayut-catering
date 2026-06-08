@@ -8,6 +8,9 @@ use App\Core\{Request, Response, Session, Validator, Database, Turnstile, Logger
 use App\Exceptions\NotFoundException;
 use App\Services\OrderService;
 use App\Services\MenuService;
+use App\Services\CategoryService;
+use App\Services\EventService;
+use App\Services\CartService;
 use App\Models\Customer;
 
 class OrderController extends BaseController
@@ -15,7 +18,10 @@ class OrderController extends BaseController
     public function __construct(
         private OrderService $orderService,
         private MenuService $menuService,
-        private Customer $customer
+        private Customer $customer,
+        private CategoryService $categoryService,
+        private EventService $eventService,
+        private CartService $cartService
     ) {
         parent::__construct();
     }
@@ -42,33 +48,203 @@ class OrderController extends BaseController
         ], 'public');
     }
 
-    public function publicForm(Request $request): void
+    public function publicMenu(Request $request): void
     {
-        $menus = $this->menuService->all();
-        $activeMenus = array_filter($menus, fn($m) => ($m['status'] ?? 'active') === 'active');
+        $categories = $this->categoryService->all();
+        $initial = $this->menuService->paginate(1, 9, ['status' => 'active']);
 
-        $this->render('order/public-form', [
-            'title' => __('order_catering') . ' — Siwayut Catering',
-            'menus' => $activeMenus,
-            'navMode' => 'back_home',
+        $events = $this->eventService->getActive();
+        $eventMap = [];
+        foreach ($events as $ev) {
+            $eventMap[$ev['id']] = $ev['name'];
+        }
+        $categoryMap = [];
+        foreach ($categories as $cat) {
+            $categoryMap[$cat['id']] = $cat['name'];
+        }
+
+        foreach ($initial['data'] as &$m) {
+            $m['event_name'] = $eventMap[$m['event_id']] ?? null;
+            $m['category_name'] = $categoryMap[$m['category_id']] ?? null;
+        }
+        unset($m);
+
+        $cartCount = $this->cartService->count();
+
+        $this->render('order/menu', [
+            'title' => __('choose_menu') . ' — Siwayut Catering',
+            'categories' => $categories,
+            'initialMenus' => $initial['data'],
+            'totalMenus' => $initial['total'],
+            'perPage' => $initial['per_page'],
+            'currentPage' => $initial['current_page'],
+            'lastPage' => $initial['last_page'],
+            'cartCount' => $cartCount,
+            'navMode' => 'back',
         ], 'public');
     }
 
-    public function publicSubmit(Request $request): void
+    public function cartAdd(Request $request): void
     {
-        $data = $request->only(['name', 'event_date', 'event_time', 'occasion', 'occasion_custom', 'address', 'notes']);
-        $items = $request->input('items', []);
+        $menuId = (int) $request->input('menu_id');
+        $qty = max(1, (int) $request->input('quantity', 1));
 
-        // Keep raw date/time for form redisplay
+        $menu = $this->menuService->find($menuId);
+        if (!$menu) {
+            if ($request->isAjax()) {
+                Response::jsonError('Menu not found');
+            }
+            Session::flash('error', __('menu_not_found'));
+            $this->redirect('/menu');
+            return;
+        }
+
+        if ($qty < (int) $menu['minimum_portions']) {
+            if ($request->isAjax()) {
+                Response::jsonError('Minimum ' . (int) $menu['minimum_portions'] . ' portions');
+            }
+            Session::flash('error', __('min_portion') . ': ' . (int) $menu['minimum_portions']);
+            $this->redirect('/menu');
+            return;
+        }
+
+        $this->cartService->add($menuId, $qty);
+
+        $count = $this->cartService->count();
+        $total = $this->cartService->getTotal();
+
+        if ($request->isAjax()) {
+            Response::jsonSuccess([
+                'count' => $count,
+                'total' => $total,
+                'message' => __('added_to_cart'),
+            ]);
+            return;
+        }
+
+        Session::flash('success', __('added_to_cart'));
+        $this->redirect('/menu');
+    }
+
+    public function cartShow(Request $request): void
+    {
+        $items = $this->cartService->getItems();
+        $cartCount = $this->cartService->count();
+        $total = $this->cartService->getTotal();
+
+        $this->render('order/cart', [
+            'title' => __('cart') . ' — Siwayut Catering',
+            'items' => $items,
+            'cartCount' => $cartCount,
+            'total' => $total,
+            'navMode' => 'back',
+            'hideFooter' => true,
+        ], 'public');
+    }
+
+    public function cartUpdate(Request $request): void
+    {
+        if (!$request->isAjax()) {
+            $this->redirect('/cart');
+            return;
+        }
+
+        $menuId = (int) $request->input('menu_id');
+        $qty = max(0, (int) $request->input('quantity', 0));
+        $menu = $this->menuService->find($menuId);
+
+        if (!$menu) {
+            Response::jsonError('Menu not found');
+            return;
+        }
+
+        if ($qty > 0 && $qty < (int) $menu['minimum_portions']) {
+            Response::jsonError('Minimum ' . (int) $menu['minimum_portions'] . ' portions');
+            return;
+        }
+
+        $this->cartService->set($menuId, $qty);
+
+        Response::jsonSuccess([
+            'count' => $this->cartService->count(),
+            'total' => $this->cartService->getTotal(),
+            'subtotal' => $qty > 0 ? (float) $menu['price'] * $qty : 0,
+        ]);
+    }
+
+    public function cartRemove(Request $request): void
+    {
+        if (!$request->isAjax()) {
+            $this->redirect('/cart');
+            return;
+        }
+
+        $menuId = (int) $request->input('menu_id');
+        $this->cartService->remove($menuId);
+
+        Response::jsonSuccess([
+            'count' => $this->cartService->count(),
+            'total' => $this->cartService->getTotal(),
+        ]);
+    }
+
+    public function cartRemoveSelected(Request $request): void
+    {
+        if (!$request->isAjax()) {
+            $this->redirect('/cart');
+            return;
+        }
+
+        $menuIds = $request->input('menu_ids', []);
+        if (empty($menuIds) || !is_array($menuIds)) {
+            Response::jsonError('No items selected');
+            return;
+        }
+
+        foreach ($menuIds as $id) {
+            $this->cartService->remove((int) $id);
+        }
+
+        Response::jsonSuccess([
+            'count' => $this->cartService->count(),
+            'total' => $this->cartService->getTotal(),
+        ]);
+    }
+
+    public function checkoutShow(Request $request): void
+    {
+        $items = $this->cartService->getItems();
+        if (empty($items)) {
+            $this->redirect('/cart');
+            return;
+        }
+
+        $total = $this->cartService->getTotal();
+        $cartCount = $this->cartService->count();
+
+        $this->render('order/checkout', [
+            'title' => __('checkout') . ' — Siwayut Catering',
+            'items' => $items,
+            'total' => $total,
+            'cartCount' => $cartCount,
+            'navMode' => 'back',
+            'hideFooter' => true,
+        ], 'public');
+    }
+
+    public function checkoutSubmit(Request $request): void
+    {
+        $data = $request->only(['name', 'phone', 'event_date', 'event_time', 'occasion', 'occasion_custom', 'address', 'notes']);
+
         $rawDate = $data['event_date'];
         $rawTime = $data['event_time'] ?? '';
 
         $data['occasion'] = ($data['occasion'] ?? '') === '__other__' ? trim($data['occasion_custom'] ?? '') : ($data['occasion'] ?? '');
-        $data['event_date'] .= ' ' . ($data['event_time'] ?: '12:00') . ':00';
 
         $validator = new Validator();
         $validator->validate($data, [
             'name' => 'required|min:3|max:255',
+            'phone' => 'required|min:10|max:20',
             'event_date' => 'required|after_or_equal:today',
             'address' => 'required|min:10',
             'occasion' => 'required',
@@ -79,33 +255,32 @@ class OrderController extends BaseController
             $errors = $validator->errors();
             $firstError = reset($errors);
             Session::flash('error', $firstError);
-            $this->redirect('/order-form');
+            $this->redirect('/checkout');
         }
 
-        if (empty($items) || !is_array($items)) {
+        $items = $this->cartService->getItems();
+        if (empty($items)) {
             $this->withOldInput(array_merge($data, ['event_date' => $rawDate, 'event_time' => $rawTime]));
             Session::flash('error', __('select_menu_item'));
-            $this->redirect('/order-form');
+            $this->redirect('/checkout');
         }
 
         $occasion = $data['occasion'];
         $displayDate = date('d/m/Y', strtotime($data['event_date']));
         if (!empty($data['event_time'])) {
-            $displayDate = date('d/m/Y H:i', strtotime($data['event_date']));
+            $displayDate = date('d/m/Y', strtotime($data['event_date'])) . ' ' . date('H:i', strtotime($data['event_time']));
         }
 
-        // Build WhatsApp message
         $message = __('whatsapp_intro') . "\n\n"
             . __('whatsapp_name') . ": {$data['name']}\n"
+            . __('whatsapp_phone') . ": {$data['phone']}\n"
             . __('whatsapp_event_date') . ": {$displayDate}\n"
             . __('whatsapp_occasion') . ": {$occasion}\n"
             . __('whatsapp_address') . ": {$data['address']}\n"
             . __('whatsapp_menu_items') . ":\n";
 
         foreach ($items as $item) {
-            $menuId = (int) ($item['menu_id'] ?? 0);
-            $menu = $this->menuService->find($menuId);
-            $menuName = $menu['name'] ?? __('unknown');
+            $menuName = $item['name'] ?? __('unknown');
             $qty = (int) ($item['quantity'] ?? 1);
             $message .= "- {$menuName}: {$qty} " . __('whatsapp_portions') . "\n";
         }
@@ -116,7 +291,11 @@ class OrderController extends BaseController
 
         $message .= "\n" . __('whatsapp_thank_you');
 
-        $this->redirect('https://wa.me/6287865252313?text=' . urlencode($message));
+        $waNumber = $_ENV['WHATSAPP_NUMBER'] ?? '6287865252313';
+
+        $this->cartService->clear();
+
+        $this->redirect('https://wa.me/' . $waNumber . '?text=' . urlencode($message));
     }
 
     public function trackForm(Request $request): void
@@ -261,7 +440,7 @@ class OrderController extends BaseController
         fputcsv($out, [
             __('order_no'), __('customer'), __('phone'), __('items'), __('occasion'),
             __('total_price'), __('status'), __('payment'), __('payment_method'),
-            __('event_date'), __('delivery_address'), __('created_at'),
+            __('event_date'), __('event_time'), __('delivery_address'), __('created_at'),
         ], escape: "\\");
 
         foreach ($orders as $row) {
@@ -276,6 +455,7 @@ class OrderController extends BaseController
                 $row['payment_status'] ?? '',
                 $row['payment_method'] ?? '',
                 $row['event_date'] ?? '',
+                $row['event_time'] ?? '',
                 $row['delivery_address'] ?? '',
                 $row['created_at'] ?? '',
             ], escape: "\\");
@@ -291,7 +471,6 @@ class OrderController extends BaseController
         $items = $request->input('items', []);
 
         $data['occasion'] = $data['occasion'] === '__other__' ? trim($data['occasion_custom'] ?? '') : ($data['occasion'] ?? '');
-        $data['event_date'] .= ' ' . ($data['event_time'] ?: '12:00') . ':00';
 
         $validator = new Validator(Database::getInstance());
         $validator->validate($data, [
@@ -415,7 +594,6 @@ class OrderController extends BaseController
         }
 
         $data['occasion'] = ($data['occasion'] ?? '') === '__other__' ? trim($data['occasion_custom'] ?? '') : ($data['occasion'] ?? '');
-        $data['event_date'] .= ' ' . ($data['event_time'] ?: '12:00') . ':00';
 
         $validator = new Validator();
         $validator->validate($data, [

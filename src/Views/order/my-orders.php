@@ -6,7 +6,7 @@
         <div class="bg-card-bg border border-dashed border-border rounded-xl py-16 text-center">
             <div class="text-5xl mb-4 opacity-40">📋</div>
             <p class="text-muted mb-6"><?= __('no_orders_yet') ?></p>
-            <a href="/order-form"
+            <a href="/menu"
                 class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold no-underline bg-gold border border-gold text-white shadow-[0_0_12px_var(--color-gold-glow)] hover:-translate-y-0.5 transition-all duration-300"><?= __('order_now') ?></a>
         </div>
     <?php else: ?>
