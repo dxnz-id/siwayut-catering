@@ -47,6 +47,7 @@ cp .env.example .env   # kemudian edit kredensial database
 ## Memulai Cepat
 
 ```bash
+php vanilla key:generate
 php vanilla db:create
 php vanilla migrate
 php vanilla db:seed --class=AdminSeeder

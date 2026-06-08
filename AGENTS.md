@@ -10,6 +10,7 @@ php vanilla serve --port=8080
 php vanilla migrate          # Run SQL migrations from database/migrations/
 php vanilla migrate:fresh    # Drop all tables + re-migrate
 php vanilla db:seed          # Run seeders (AdminSeeder, MenuSeeder, OrderSeeder)
+php vanilla key:generate     # Generate APP_KEY for .env
 php vanilla make:controller  # Scaffold controllers/models/services/etc.
 php vanilla routes           # List registered routes
 

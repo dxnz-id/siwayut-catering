@@ -23,6 +23,7 @@ A catering management application based on **Vanilla PHP MVC** — featuring a p
 composer install
 npm install
 cp .env.example .env   # configure DB, APP_KEY, optional AI & Turnstile
+php vanilla key:generate
 npm run css:build
 php vanilla db:create
 php vanilla migrate
