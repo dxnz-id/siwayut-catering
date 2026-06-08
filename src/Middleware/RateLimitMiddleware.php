@@ -28,6 +28,14 @@ class RateLimitMiddleware implements MiddlewareInterface {
         $key = 'rl_' . md5($ip);
         $file = self::$storagePath . '/' . $key . '.json';
 
+        $now = time();
+        $windowStart = $now - $this->windowSeconds;
+
+        // Hapus file kalo udah expired (ga ada request dalam window)
+        if (file_exists($file) && filemtime($file) < $windowStart) {
+            @unlink($file);
+        }
+
         $data = ['requests' => []];
         if (file_exists($file)) {
             $content = @file_get_contents($file);
@@ -39,9 +47,12 @@ class RateLimitMiddleware implements MiddlewareInterface {
             }
         }
 
-        $now = time();
-        $windowStart = $now - $this->windowSeconds;
         $data['requests'] = array_values(array_filter($data['requests'], fn($t) => $t > $windowStart));
+
+        if (empty($data['requests'])) {
+            // Ga ada request dalam window — hapus file biar ga numpuk
+            if (file_exists($file)) @unlink($file);
+        }
 
         if (count($data['requests']) >= $this->maxRequests) {
             throw new HttpException(429, 'Too many requests. Please try again later.');
