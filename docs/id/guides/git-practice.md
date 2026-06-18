@@ -1,7 +1,5 @@
 # Git Practice — Pull Request Pertama Kamu
 
-> Versi bahasa Indonesia juga tersedia di [docs/id/guides/git-practice.md](../id/guides/git-practice.md)
-
 Panduan ini membantu kamu menjalankan **fork → clone → branch → commit → push → PR** untuk pertama kalinya.
 
 ## Prasyarat
