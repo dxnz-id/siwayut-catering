@@ -8,6 +8,8 @@
     </div>
 </div>
 
+<?php require __DIR__ . '/../partials/table-date-filter.php' ?>
+
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <div class="bg-[#111113] border border-white/5 rounded-xl p-4">
         <div class="text-[11px] text-muted uppercase tracking-wider font-semibold mb-1"><?= __('revenue') ?></div>
@@ -26,8 +28,6 @@
         <div class="text-xl font-bold font-display text-white"><?= (int) ($totals['orders'] ?? 0) ?></div>
     </div>
 </div>
-
-<?php require __DIR__ . '/../partials/table-date-filter.php' ?>
 
 <?php require __DIR__ . '/../partials/table-sort.php' ?>
 <div id="table-container" class="bg-[#18181b] border border-border rounded-xl overflow-hidden">

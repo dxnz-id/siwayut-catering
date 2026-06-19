@@ -204,19 +204,27 @@ LIMIT ? OFFSET ?";
         ];
     }
 
-    public function getTopMenus(int $limit = 5): array {
+    public function getTopMenus(int $limit = 5, ?string $startDate = null, ?string $endDate = null): array {
+        $where = "o.`status` != 'cancelled'";
+        $params = [];
+        if ($startDate && $endDate) {
+            $where .= " AND DATE(o.`created_at`) BETWEEN ? AND ?";
+            $params[] = $startDate;
+            $params[] = $endDate;
+        }
+        $params[] = $limit;
         $sql = "SELECT m.`id`, m.`name`, m.`price`, m.`cost_price`,
 SUM(oi.`quantity`) AS `total_qty`,
 COALESCE(SUM(oi.`quantity` * oi.`price_at_time`), 0) AS `total_revenue`,
 COALESCE(SUM(oi.`quantity` * oi.`cost_price_at_time`), 0) AS `total_cost`
 FROM `order_items` oi
-INNER JOIN `orders` o ON o.`id` = oi.`order_id` AND o.`status` != 'cancelled'
+INNER JOIN `orders` o ON o.`id` = oi.`order_id` AND {$where}
 INNER JOIN `menus` m ON m.`id` = oi.`menu_id`
 GROUP BY oi.`menu_id`
 ORDER BY `total_revenue` DESC
 LIMIT ?";
         $stmt = $this->order->db()->prepare($sql);
-        $stmt->execute([$limit]);
+        $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 

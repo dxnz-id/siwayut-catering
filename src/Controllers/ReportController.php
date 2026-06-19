@@ -37,11 +37,15 @@ class ReportController extends BaseController
 
     public function menuRevenue(Request $request): void
     {
-        $menus = $this->orderService->getTopMenus(100);
+        $dateFrom = $request->input('date_from', date('Y-m-01'));
+        $dateTo = $request->input('date_to', date('Y-m-t'));
+        $menus = $this->orderService->getTopMenus(100, $dateFrom, $dateTo);
 
         $this->render('report/menu-revenue', [
             'title' => __('menu_revenue'),
             'menus' => $menus,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
         ]);
     }
 
@@ -85,7 +89,9 @@ class ReportController extends BaseController
 
     public function exportMenuRevenueCsv(Request $request): void
     {
-        $menus = $this->orderService->getTopMenus(100);
+        $dateFrom = $request->input('date_from', date('Y-m-01'));
+        $dateTo = $request->input('date_to', date('Y-m-t'));
+        $menus = $this->orderService->getTopMenus(100, $dateFrom, $dateTo);
 
         ob_clean();
         header('Content-Type: text/csv; charset=utf-8');
