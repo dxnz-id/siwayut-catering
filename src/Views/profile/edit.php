@@ -115,7 +115,7 @@
             </h2>
             <p class="text-[11px] text-muted mb-6 ml-9"><?= __('leave_blank_password') ?></p>
 
-            <form method="POST" action="/profile">
+            <form method="POST" action="/profile/password">
                 <?= csrf_field() ?>
 
                 <div class="space-y-4 mb-6">
