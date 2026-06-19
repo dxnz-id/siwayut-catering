@@ -523,11 +523,14 @@ $customOccasion = $isPredefined ? '' : $order['occasion'];
                     <h4 class="text-sm font-semibold text-muted uppercase tracking-wider mb-3"><?= __('menu_items') ?>
                     </h4>
                     <div id="edit-menu-items-container" class="flex flex-col gap-3">
+                        <div class="hidden sm:flex items-start gap-2 mb-2 text-[11px] font-medium text-muted uppercase tracking-wider">
+                            <div class="flex-1"><?= __('menu') ?> <span class="text-danger">*</span></div>
+                            <div class="w-28 shrink-0"><?= __('qty') ?> <span class="text-danger">*</span></div>
+                            <div class="w-9 shrink-0"></div>
+                        </div>
                         <?php foreach ($items as $idx => $item): ?>
                             <div class="edit-menu-item-row flex items-start gap-2" data-index="<?= $idx ?>">
                                 <div class="flex-1">
-                                    <label class="block text-sm font-medium text-text mb-1.5"><?= __('menu') ?> <span
-                                            class="text-danger">*</span></label>
                                     <select name="items[<?= $idx ?>][menu_id]" required
                                         class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
                                         <option value="">-- <?= __('select_menu') ?> --</option>
@@ -539,8 +542,6 @@ $customOccasion = $isPredefined ? '' : $order['occasion'];
                                     </select>
                                 </div>
                                 <div class="w-28 shrink-0">
-                                    <label class="block text-sm font-medium text-text mb-1.5"><?= __('qty') ?> <span
-                                            class="text-danger">*</span></label>
                                     <input type="number" name="items[<?= $idx ?>][quantity]"
                                         value="<?= (int) $item['quantity'] ?>" min="1" required
                                         class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">
@@ -844,10 +845,10 @@ $customOccasion = $isPredefined ? '' : $order['occasion'];
             div.className = 'edit-menu-item-row flex items-start gap-2';
             div.dataset.index = idx;
             div.innerHTML =
-                '<div class="flex-1"><label class="block text-sm font-medium text-text mb-1.5"><?= __('menu') ?> <span class="text-danger">*</span></label>' +
+                '<div class="flex-1">' +
                 buildSelect(idx) +
                 '</div>' +
-                '<div class="w-28 shrink-0"><label class="block text-sm font-medium text-text mb-1.5"><?= __('qty') ?> <span class="text-danger">*</span></label>' +
+                '<div class="w-28 shrink-0">' +
                 '<input type="number" name="items[' + idx + '][quantity]" value="1" min="1" required class="w-full px-3 py-3 border border-border rounded-lg text-sm text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">' +
                 '</div>' +
                 '<button type="button" class="remove-edit-menu-item mt-6 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0" data-index="' + idx + '" title="<?= __('remove') ?>">' +

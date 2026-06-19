@@ -167,14 +167,22 @@ echo '</div>';
 component('form/input', ['name' => 'delivery_address', 'label' => __('delivery_address'), 'required' => true]);
 echo '<h4 class="mt-6 mb-4 pb-2 border-b border-border font-display font-semibold text-text" style="color:var(--color-text)">' . __('menu_items') . '</h4>';
 echo '<div id="menu-items-container" class="flex flex-col gap-3">';
+echo '<div class="hidden sm:flex items-start gap-2 mb-2 text-[11px] font-medium text-muted uppercase tracking-wider">';
+echo '    <div class="flex-1">' . __('menu') . ' <span class="text-danger">*</span></div>';
+echo '    <div class="w-28 shrink-0">' . __('qty') . ' <span class="text-danger">*</span></div>';
+echo '    <div class="w-9 shrink-0"></div>';
+echo '</div>';
 echo '    <div class="menu-item-row flex items-start gap-2" data-index="0">';
 echo '        <div class="flex-1">';
-$menuOpts = ['' => __('select_menu')];
-foreach ($menus as $m) { $menuOpts[$m['id']] = $m['name'] . ' (Rp ' . number_format((float)$m['price'], 0, ',', '.') . ')'; }
-component('form/select', ['name' => 'items[0][menu_id]', 'label' => __('menu'), 'options' => $menuOpts, 'required' => true]);
+echo '<select name="items[0][menu_id]" required class="w-full px-3 py-3 border border-border rounded-lg text-sm leading-relaxed text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">';
+echo '<option value="">' . __('select_menu') . '</option>';
+foreach ($menus as $m):
+    echo '<option value="' . (int)$m['id'] . '">' . e($m['name']) . ' (Rp ' . number_format((float)$m['price'], 0, ',', '.') . ')</option>';
+endforeach;
+echo '</select>';
 echo '        </div>';
 echo '        <div class="w-28 shrink-0">';
-component('form/input', ['name' => 'items[0][quantity]', 'label' => __('qty'), 'type' => 'number', 'value' => '1', 'min' => '1', 'required' => true]);
+echo '<input type="number" name="items[0][quantity]" value="1" min="1" required class="w-full px-3 py-3 border border-border rounded-lg text-sm leading-relaxed text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">';
 echo '        </div>';
 echo '        <button type="button" class="remove-menu-item mt-6 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0 hidden" data-index="0" title="' . __('remove') . '">';
 echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>';
@@ -231,6 +239,9 @@ function toggleOccasionAdmin(sel) {
     var occSel = document.querySelector('#createOrderModal-form select[name="occasion"]');
     if (occSel) {
         toggleOccasionAdmin(occSel);
+        occSel.addEventListener('change', function() {
+            toggleOccasionAdmin(this);
+        });
     }
     var container = document.getElementById('menu-items-container');
     var addBtn = document.getElementById('add-menu-item');
@@ -280,10 +291,10 @@ function toggleOccasionAdmin(sel) {
         div.className = 'menu-item-row flex items-start gap-2';
         div.dataset.index = newIndex;
         div.innerHTML =
-            '<div class="flex-1"><label class="block text-sm font-medium text-text mb-1.5"><?= __('menu') ?> <span class="text-danger">*</span></label>' +
+            '<div class="flex-1">' +
             buildSelect(newIndex) +
             '</div>' +
-            '<div class="w-28 shrink-0"><label class="block text-sm font-medium text-text mb-1.5"><?= __('qty') ?> <span class="text-danger">*</span></label>' +
+            '<div class="w-28 shrink-0">' +
             '<input type="number" name="items[' + newIndex + '][quantity]" value="1" min="1" required class="w-full px-3 py-3 border border-border rounded-lg text-sm leading-relaxed text-text bg-black/40 font-body focus:outline-none focus:border-primary focus:ring-3 focus:ring-primary-light">' +
             '</div>' +
             '<button type="button" class="remove-menu-item mt-6 w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition-all duration-150 cursor-pointer border-0 bg-transparent shrink-0" data-index="' + newIndex + '" title="<?= __('remove') ?>">' +
