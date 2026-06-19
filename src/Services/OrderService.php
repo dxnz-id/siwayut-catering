@@ -369,7 +369,7 @@ LIMIT ?";
             $menuItem = $this->menu->find((int)$item['menu_id']);
             if (!$menuItem) continue;
 
-            $quantity = max(1, (int)$item['quantity']);
+            $quantity = max((int)$menuItem['minimum_portions'], (int)$item['quantity']);
             $subtotal = $quantity * (float)$menuItem['price'];
             $costSubtotal = $quantity * (float)($menuItem['cost_price'] ?? 0);
             $totalPrice += $subtotal;

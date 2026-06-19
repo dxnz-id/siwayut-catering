@@ -763,7 +763,7 @@ $customOccasion = $isPredefined ? '' : $order['occasion'];
         if (!container || !addBtn) return;
 
         var menuData = <?= json_encode(array_map(function ($m) {
-            return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price']];
+            return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price'], 'minimum_portions' => (int) $m['minimum_portions']];
         }, $menus ?? []), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
 
         function buildSelect(idx) {
@@ -794,6 +794,48 @@ $customOccasion = $isPredefined ? '' : $order['occasion'];
                 });
             });
         }
+
+        function getEditMenuById(id) {
+            for (var i = 0; i < menuData.length; i++) {
+                if (String(menuData[i].id) === String(id)) return menuData[i];
+            }
+            return null;
+        }
+
+        // Set correct min for existing rows on page load
+        var existingRows = container.querySelectorAll('.edit-menu-item-row');
+        existingRows.forEach(function (row) {
+            var select = row.querySelector('select[name*="[menu_id]"]');
+            var qtyInput = row.querySelector('input[name*="[quantity]"]');
+            if (select && qtyInput) {
+                var menu = getEditMenuById(select.value);
+                if (menu && menu.minimum_portions > 1) {
+                    qtyInput.min = menu.minimum_portions;
+                    if (parseInt(qtyInput.value) < menu.minimum_portions) {
+                        qtyInput.value = menu.minimum_portions;
+                    }
+                }
+            }
+        });
+
+        // Update min quantity when menu selection changes
+        container.addEventListener('change', function (e) {
+            var select = e.target.closest('select[name*="[menu_id]"]');
+            if (!select) return;
+            var row = select.closest('.edit-menu-item-row');
+            if (!row) return;
+            var qtyInput = row.querySelector('input[name*="[quantity]"]');
+            if (!qtyInput) return;
+            var menu = getEditMenuById(select.value);
+            if (menu && menu.minimum_portions > 1) {
+                qtyInput.min = menu.minimum_portions;
+                if (parseInt(qtyInput.value) < menu.minimum_portions) {
+                    qtyInput.value = menu.minimum_portions;
+                }
+            } else {
+                qtyInput.min = 1;
+            }
+        });
 
         addBtn.addEventListener('click', function () {
             var rows = container.querySelectorAll('.edit-menu-item-row');

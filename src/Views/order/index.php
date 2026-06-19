@@ -208,7 +208,7 @@ require __DIR__ . '/../partials/create-modal.php';
 ?>
 <script>
 <?php $menuJson = json_encode(array_map(function($m) {
-    return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price']];
+    return ['id' => $m['id'], 'name' => $m['name'], 'price' => $m['price'], 'minimum_portions' => (int) $m['minimum_portions']];
 }, $menus), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
 function toggleOccasionAdmin(sel) {
     var custom = document.getElementById('occasion_custom');
@@ -299,6 +299,31 @@ function toggleOccasionAdmin(sel) {
         if (row) {
             row.remove();
             updateIndices();
+        }
+    });
+
+    // Update min quantity when menu selection changes
+    function getMenuById(id) {
+        for (var i = 0; i < menuList.length; i++) {
+            if (String(menuList[i].id) === String(id)) return menuList[i];
+        }
+        return null;
+    }
+    container.addEventListener('change', function(e) {
+        var select = e.target.closest('select[name*="[menu_id]"]');
+        if (!select) return;
+        var row = select.closest('.menu-item-row');
+        if (!row) return;
+        var qtyInput = row.querySelector('input[name*="[quantity]"]');
+        if (!qtyInput) return;
+        var menu = getMenuById(select.value);
+        if (menu && menu.minimum_portions > 1) {
+            qtyInput.min = menu.minimum_portions;
+            if (parseInt(qtyInput.value) < menu.minimum_portions) {
+                qtyInput.value = menu.minimum_portions;
+            }
+        } else {
+            qtyInput.min = 1;
         }
     });
 
