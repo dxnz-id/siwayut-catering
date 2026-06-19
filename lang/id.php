@@ -202,6 +202,7 @@ return [
 
     // Table Partials
     'no_data' => 'Tidak ada data.',
+    'no_data_period' => 'Tidak ada data untuk periode ini.',
     'created_at' => 'Dibuat',
     'updated_at' => 'Diperbarui',
     'previous' => '&laquo; Sebelumnya',

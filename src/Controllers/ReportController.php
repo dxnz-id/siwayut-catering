@@ -55,7 +55,13 @@ class ReportController extends BaseController
         $dateTo = $request->input('date_to', date('Y-m-t'));
         $result = $this->orderService->getRevenueByPeriod($dateFrom, $dateTo);
 
+        if (empty($result['rows'])) {
+            $this->redirectWithFlash('/reports/revenue', 'error', __('no_data_period'));
+            return;
+        }
+
         ob_clean();
+        echo "\xEF\xBB\xBF";
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="revenue-export.csv"');
 
@@ -71,16 +77,16 @@ class ReportController extends BaseController
             fputcsv($out, [
                 $row['date'],
                 (int) $row['orders'],
-                number_format((float) $row['revenue'], 0, ',', '.'),
-                number_format((float) $row['profit'], 0, ',', '.'),
+                (float) $row['revenue'],
+                (float) $row['profit'],
             ], escape: "\\");
         }
 
         fputcsv($out, [
             __('total'),
             (int) ($result['totals']['orders'] ?? 0),
-            number_format((float) ($result['totals']['revenue'] ?? 0), 0, ',', '.'),
-            number_format((float) ($result['totals']['profit'] ?? 0), 0, ',', '.'),
+            (float) ($result['totals']['revenue'] ?? 0),
+            (float) ($result['totals']['profit'] ?? 0),
         ], escape: "\\");
 
         fclose($out);
@@ -93,13 +99,20 @@ class ReportController extends BaseController
         $dateTo = $request->input('date_to', date('Y-m-t'));
         $menus = $this->orderService->getTopMenus(100, $dateFrom, $dateTo);
 
+        if (empty($menus)) {
+            $this->redirectWithFlash('/reports/menu-revenue', 'error', __('no_data_period'));
+            return;
+        }
+
         ob_clean();
+        echo "\xEF\xBB\xBF";
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="menu-revenue-export.csv"');
 
         $out = fopen('php://output', 'w');
 
         fputcsv($out, [__('menu_revenue')], escape: "\\");
+        fputcsv($out, ['Period: ' . $dateFrom . ' — ' . $dateTo], escape: "\\");
         fputcsv($out, [], escape: "\\");
 
         fputcsv($out, [
@@ -114,11 +127,11 @@ class ReportController extends BaseController
 
             fputcsv($out, [
                 $m['name'] ?? '',
-                number_format((float) ($m['price'] ?? 0), 0, ',', '.'),
-                number_format((float) ($m['cost_price'] ?? 0), 0, ',', '.'),
+                (float) ($m['price'] ?? 0),
+                (float) ($m['cost_price'] ?? 0),
                 (int) ($m['total_qty'] ?? 0),
-                number_format((float) ($m['total_revenue'] ?? 0), 0, ',', '.'),
-                number_format((float) (($m['total_revenue'] ?? 0) - ($m['total_cost'] ?? 0)), 0, ',', '.'),
+                (float) ($m['total_revenue'] ?? 0),
+                (float) (($m['total_revenue'] ?? 0) - ($m['total_cost'] ?? 0)),
                 number_format($margin, 1) . '%',
             ], escape: "\\");
         }

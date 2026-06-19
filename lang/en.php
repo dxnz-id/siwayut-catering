@@ -202,6 +202,7 @@ return [
 
     // Table Partials
     'no_data' => 'No data found.',
+    'no_data_period' => 'No data for this period.',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
     'previous' => '&laquo; Previous',
